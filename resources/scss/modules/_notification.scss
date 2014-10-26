@@ -1,0 +1,106 @@
+/* ====================================================================
+   ====================================================================
+
+                              Notification
+
+   ====================================================================
+   ==================================================================== */
+
+.Notification-container {
+    position: fixed;
+    z-index: 200;
+    top: 0;
+    right: 0;
+
+    @include larger-than($tablet-large) {
+        width: 25em;
+        max-width: 100%;
+    }
+
+    @include smaller-than($tablet-large) {
+        width: 80%;
+    }
+}
+
+.Notification {
+    display: block;
+    padding: 1.25em;
+    margin-bottom: 0.5em;
+    line-height: 1.5;
+
+    animation: Notification--slideIn 0.5s both;
+
+    max-height: 20em;
+    word-wrap: break-word;
+    overflow: auto;
+
+    @include clearfix;
+
+    .js &:hover {
+        @include link-cursor();
+    }
+}
+
+.Notification-dismiss {
+    float: right;
+    color: rgba($color-grey-dark-1, 0.5);
+    transition: color 0.2s ease;
+
+    .Notification:hover & {
+        color: $color-grey-dark-1;
+    }
+
+    .no-js & {
+        display: none;
+    }
+}
+
+.Notification--fixed {
+    animation: none;
+}
+
+.Notification.is-sliding-up {
+    animation-name: Notification--slideOut;
+}
+
+.js .Notification.is-hidden {
+    display: none;
+}
+
+.Notification--success {
+    @include Box--design-flat($color-green, false);
+}
+
+.Notification--warning {
+    @include Box--design-flat($color-orange, false);
+}
+
+.Notification--failed {
+    @include Box--design-flat($color-red, false);
+}
+
+.Notification--info {
+    @include Box--design-flat($color-blue, false);
+}
+
+@keyframes Notification--slideOut {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes Notification--slideIn {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

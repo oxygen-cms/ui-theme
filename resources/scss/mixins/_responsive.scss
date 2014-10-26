@@ -1,0 +1,52 @@
+/* ====================================================================
+   ====================================================================
+
+                             Mixins/Responsive
+
+   ====================================================================
+   ==================================================================== */
+
+@mixin between($min, $max) {
+    @if $fixed-size != false {
+        @if ($fixed-size >= $min + 1) and ($fixed-size <= $max) {
+            @content;
+        }
+    }
+    @else {
+        @media screen and (min-width: #{$min + 1}) and (max-width: #{$max}) {
+            @content;
+        }
+    }
+}
+
+@mixin larger-than($min) {
+    @if $fixed-size != false {
+        @if ($fixed-size >= $min + 1) {
+            @content;
+        }
+    }
+    @else {
+        @media screen and (min-width: #{$min + 1}) {
+            @content;
+        }
+    }
+}
+
+@mixin smaller-than($max) {
+    @if $fixed-size != false {
+        @if ($fixed-size <= $max) {
+            @content;
+        }
+    }
+    @else {
+        @media screen and (max-width: #{$max}) {
+            @content;
+        }
+    }
+}
+
+@mixin not($value) {
+    @if $value != true {
+        @content;
+    }
+}

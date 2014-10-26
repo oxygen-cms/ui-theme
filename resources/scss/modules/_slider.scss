@@ -1,0 +1,121 @@
+/* ====================================================================
+   ====================================================================
+
+                                Slider
+
+   ====================================================================
+   ==================================================================== */
+
+.Slider {
+    background-color: $color-grey-dark-1;
+    position: relative;
+    overflow: hidden;
+}
+
+.Slider-list {
+    @include list-reset;
+    padding-top: 66.6%;
+}
+
+.Slider-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    @include flex-container(row, center, center);
+
+    transition: transform 2s ease;
+}
+
+.no-js .Slider-item {
+    display: none;
+}
+
+.no-js .Slider-item:first-child {
+    display: block;
+}
+
+.Slider-item--slideInLeft,
+.Slider-item--slideInRight,
+.Slider-item--slideOutLeft,
+.Slider-item--slideOutRight {
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+}
+
+.Slider-item--slideInLeft {
+    animation-name: Slider--slideInLeft;
+}
+
+.Slider-item--slideInRight {
+    animation-name: Slider--slideInRight;
+}
+
+.Slider-item--slideOutLeft {
+    animation-name: Slider--slideOutLeft;
+}
+
+.Slider-item--slideOutRight {
+    animation-name: Slider--slideOutRight;
+}
+
+.Slider-item--current {
+}
+
+.Slider-item--hidden {
+    display: none !important;
+}
+
+.Slider--noTransition {
+    transition: none;
+}
+
+.Slider-back,
+.Slider-forward {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    transition: width 0.5s ease, background-color 0.5s ease;
+    z-index: 20;
+    cursor: pointer;
+    width: 1em;
+    text-align: center;
+    font-size: 5em;
+    color: $color-white;
+    padding: 0.2em;
+
+    &:hover {
+        width: 2em;
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+}
+
+.Slider-back {
+    left: 0;
+}
+
+.Slider-forward {
+    right: 0;
+}
+
+@keyframes Slider--slideInLeft {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes Slider--slideInRight {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes Slider--slideOutLeft {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+@keyframes Slider--slideOutRight {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(100%); }
+}

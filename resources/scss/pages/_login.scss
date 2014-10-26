@@ -1,0 +1,126 @@
+/* ====================================================================
+   ====================================================================
+
+                               Login
+
+   ====================================================================
+   ==================================================================== */
+
+.Login-message,
+.Login-form {
+    transition: transform 1.5s ease, opacity 1.5s ease, visibility 1.5s ease;
+}
+
+.Login-message {
+    width: 100%;
+    padding: 1em;
+    text-align: center;
+
+    .no-js & {
+        display: none;
+    }
+
+    .heading-alpha {
+        color: #eee;
+    }
+}
+
+.Login-form {
+    max-width: 90%;
+
+    .no-js & {
+        margin-top: 4em;
+    }
+}
+
+.Login--slideUp,
+.Login--slideDown {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.Login--slideUp {
+    transform: translateY(-150%);
+
+    &.Block--centered {
+        transform: translate(-50%, -150%);
+    }
+}
+
+.Login--slideDown {
+    transform: translateY(50%);
+
+    &.Block--centered {
+        transform: translate(-50%, 50%);
+    }
+}
+
+.Login-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    background-color: #000;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    transition: opacity 3s ease;
+}
+
+.js .Login--isHidden {
+    opacity: 0;
+}
+
+.Login-bodyTransition {
+    transition: opacity 1s ease;
+}
+
+.Login--noTransition {
+    transition: none;
+}
+
+/* ======================
+       Default Themes
+   ====================== */
+
+.Login-theme--autumn {
+    .Login-background--sharp { background-image: url('/packages/oxygen/ui/img/bg/autumn-min.jpg'); }
+    .Login-background--blur { background-image: url('/packages/oxygen/ui/img/bg/autumn-min-blur-100.jpg'); }
+}
+
+.Login-theme--city {
+    .Login-background--sharp { background-image: url('/packages/oxygen/ui/img/bg/city-min.jpg'); }
+    .Login-background--blur { background-image: url('/packages/oxygen/ui/img/bg/city-min-blur-100.jpg'); }
+}
+
+.Login-theme--clouds {
+    .Login-background--sharp { background-image: url('/packages/oxygen/ui/img/bg/clouds-min.jpg'); }
+    .Login-background--blur { background-image: url('/packages/oxygen/ui/img/bg/clouds-min-blur-100.jpg'); }
+}
+
+.Login-theme--coast {
+    .Login-background--sharp { background-image: url('/packages/oxygen/ui/img/bg/coast-min.jpg'); }
+    .Login-background--blur { background-image: url('/packages/oxygen/ui/img/bg/coast-min-blur-100.jpg'); }
+}
+
+.Login-theme--speckles {
+    .Login-background--sharp { background-image: url('/packages/oxygen/ui/img/bg/speckles-min.jpg'); }
+    .Login-background--blur { background-image: url('/packages/oxygen/ui/img/bg/speckles-min-blur-100.jpg'); }
+}
+
+.Login-theme--trees {
+    .Login-background--sharp { background-image: url('/packages/oxygen/ui/img/bg/trees-min.jpg'); }
+    .Login-background--blur { background-image: url('/packages/oxygen/ui/img/bg/trees-min-blur-250.jpg'); }
+}
+
+.Login-theme--waves {
+    .Login-background--sharp { background-image: url('/packages/oxygen/ui/img/bg/waves.jpg'); }
+    .Login-background--blur { background-image: url('/packages/oxygen/ui/img/bg/waves-blur.jpg'); }
+}
+
+.Login-theme--yosemite {
+    .Login-background--sharp { background-image: url('/packages/oxygen/ui/img/bg/yosemite-falls-min.jpg'); }
+    .Login-background--blur { background-image: url('/packages/oxygen/ui/img/bg/yosemite-falls-min-blur-250.jpg'); }
+}

@@ -1,0 +1,493 @@
+/* ====================================================================
+   ====================================================================
+
+                              Form
+
+   ====================================================================
+   ==================================================================== */
+
+@mixin Form-fullWidth() {
+    width: 100%;
+    @include larger-than($tablet-large) {
+        .Row & {
+            width: 90%;
+        }
+    }
+
+    .Row--single & {
+        width: 100%;
+    }
+}
+
+%Form-input {
+    display: inline-block;
+    max-width: 100%;
+    padding: 0.8em;
+
+    font-family: $font-default;
+    border: 1px solid $color-grey-light-1;
+    font-size: $base-font-size + px;
+    font-size: 1rem;
+    transition: border 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
+
+    &:focus {
+        outline: none;
+        box-shadow: inset 0 0 8px $color-grey-light-1;
+        background-color: $color-white;
+        border-color: $color-grey-dark-3;
+    }
+}
+
+%Form-input.Form-input--fullWidth {
+    @include Form-fullWidth();
+}
+
+%Form-input.Form-input--transparent {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.Form--compact .Row {
+    padding-bottom: 0;
+
+    &:last-child {
+        padding-bottom: 1em;
+    }
+}
+
+.Form--singleColumn .Row {
+    @include larger-than($tablet-large) {
+        display: block;
+    }
+}
+
+.Form-label {
+    display: block;
+    width: 10%;
+
+    @include smaller-than($tablet-large) {
+        padding-bottom: 1em;
+        width: auto;
+    }
+
+    .Form--singleColumn & {
+        padding-bottom: 1em;
+        width: auto;
+    }
+}
+
+.Form-footer {
+    @include flex-container(null, flex-end, center, '.flex-item', wrap);
+
+    & > * {
+        margin: 0 0.25em;
+    }
+}
+
+.no-js {
+    form {
+        @include clearfix;
+    }
+
+    .Form-footer {
+        float: right;
+    }
+}
+
+/* ============================
+          TOGGLE-SWITCH
+   ============================ */
+
+/* input */.Form-toggle:empty {
+    position: absolute;
+    left: -999em;
+}
+
+/* input */.Form-toggle:empty ~ /* label */.Form-toggle-label {
+    position: relative;
+    float: left;
+    height: 1.5em;
+    cursor: pointer;
+    user-select: none;
+}
+
+.Form-toggle:empty ~ .Form-toggle-label:before,
+.Form-toggle:empty ~ .Form-toggle-label:after {
+    position: absolute;
+    display: block;
+    content: ' ';
+    top: 0;
+    bottom: 0;
+    left: 0;
+    transition: all 100ms ease-in;
+}
+
+/* ------------------
+    TOGGLE CONTAINER
+   ------------------ */
+
+.Form-toggle:empty ~ .Form-toggle-label:before {
+    width: 3.6em;
+    background-color: $color-red;
+    border: 1px solid darken($color-red, 5%);
+}
+
+.Form-toggle:checked ~ .Form-toggle-label:before {
+    background-color: $color-green;
+    border: 1px solid darken($color-green, 5%);
+}
+
+/* ---------------
+      TOGGLE BAR
+   --------------- */
+
+.Form-toggle:empty ~ .Form-toggle-label:after {
+    width: 1em;
+    background-color: $color-white;
+    border: 1px solid $color-grey-dark-2;
+}
+
+.Form-toggle:checked ~ .Form-toggle-label:after {
+    margin-left: 2.6em;
+}
+
+/* ---------------
+      LABEL TEXT
+   --------------- */
+
+.Form-toggle ~ .Form-toggle-label span {
+    position: absolute;
+    padding-top: 0.18em;
+    left: 4.5em;
+    width: 10em;
+}
+
+.Form-toggle ~ .Form-toggle-label .on,
+.Form-toggle:checked ~ .Form-toggle-label .off {
+    display: none;
+}
+
+.Form-toggle ~ .Form-toggle-label .off,
+.Form-toggle:checked ~ .Form-toggle-label .on {
+    display: block;
+}
+
+/* ============================
+          FILE UPLOAD
+   ============================ */
+
+.FileUpload {
+    position: relative;
+    width: 20em;
+    height: 20em;
+    padding: 2em 0;
+    border: 2px dashed $color-grey-light-1;
+    background-color: $color-white-2;
+
+    @include flex-container(column, center);
+}
+
+.FileUpload--onDragOver {
+    border: 2px dashed $color-grey-dark-3;
+}
+
+.FileUpload input[type=file] {
+    position: absolute;
+    top: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.FileUpload input[type=file]:hover,
+.FileUpload input[type=file]:hover::-webkit-file-upload-button {
+    cursor: hand;
+    cursor: pointer;
+}
+
+.FileUpload-message {
+    display: block;
+    text-align: center;
+    font-size: 1.5em;
+    color: $color-grey-dark-2;
+    font-weight: bold;
+}
+
+.FileUpload-subMessage {
+    display: block;
+    text-align: center;
+    font-size: 1em;
+    padding: 1em;
+    color: $color-grey-dark-2;
+}
+
+.no-js .FileUpload--js {
+    display: none;
+}
+
+.js .FileUpload--noJs {
+    display: none;
+}
+
+.FileUpload-progress {
+    max-width: 20em;
+}
+
+/* ============================
+          Progress Bar
+   ============================ */
+
+.ProgressBar {
+    width: 100%;
+    margin: 1em 0;
+    border-radius: 0.5em;
+    background-color: $color-grey-light-1;
+    overflow: hidden;
+}
+
+.ProgressBar-fill {
+    display: block;
+    height: 2em;
+    width: 0;
+    position: relative;
+    background-color: $color-blue;
+    transition: width ease 0.5s, opacity ease 0.5s;
+}
+
+.ProgressBar-fill--jump {
+    transition: none;
+}
+
+.ProgressBar-fill:after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background-image:
+        linear-gradient(
+            -45deg,
+            rgba(255, 255, 255, .2) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(255, 255, 255, .2) 50%,
+            rgba(255, 255, 255, .2) 75%,
+            transparent 75%,
+            transparent
+    );
+    background-size: 50px 50px;
+    animation: ProgressBar-move 2s linear infinite;
+}
+
+@-webkit-keyframes ProgressBar-move {
+    0% {
+       background-position: 0 0;
+    }
+    100% {
+       background-position: 50px 50px;
+    }
+}
+
+.ProgressBar-text {
+    line-height: 2em;
+    margin: 0 1em;
+}
+
+.ProgressBar-message {
+    @include clearfix;
+}
+
+.ProgressBar-message-item {
+    float: left;
+}
+
+.ProgressBar-message-section {
+    float: right;
+    font-weight: bold;
+}
+
+/* ============================
+          CHECKBOX
+   ============================ */
+
+%Form-checkbox {
+    display: none;
+
+    & + .Form-checkbox-label {
+        cursor: pointer;
+    }
+
+    & + .Form-checkbox-label:before {
+        display: inline-block;
+        font-family: FontAwesome;
+        font-size: 1.15em;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        vertical-align: middle;
+        content: "\f096";
+        margin-right: 0.3em;
+        width: 1em;
+        animation: Form-checkbox-untick 180ms ease;
+    }
+
+    &:checked + .Form-checkbox-label:before {
+        content: "\f14a";
+        color: darken($color-blue, 25%);
+        animation: Form-checkbox-tick 180ms ease;
+    }
+
+    &:disabled + .Form-checkbox-label {
+        color: $color-grey-light-1;
+
+        &:before {
+            content: "\f0c8";
+            color: #ccc;
+        }
+    }
+}
+
+@keyframes Form-checkbox-tick {
+     0% {  transform: scale(0); }
+     90% {  transform: scale(1.2); }
+     100% {  transform: scale(1); }
+}
+
+@keyframes Form-checkbox-untick {
+    0% {  opacity: 0; transform: scale(1.4); }
+    100% {  opacity: 1; transform: scale(1); }
+}
+
+/* =====================
+          TAGGABLE
+   ===================== */
+
+.Form-taggable {
+    @extend %Form-input;
+    padding: 0.4em;
+}
+
+.Form-taggable .tag {
+    display: inline-block;
+    background-color: $color-grey-light-2;
+    border-radius: 0.5em;
+    padding: 0.5em 1em;
+    margin: 0.25em;
+    transition: width 0.3s ease;
+
+    &:first-child {
+        margin-left: 0;
+    }
+
+    &:last-child {
+        margin-right: 0;
+    }
+
+    span {
+        display: none;
+    }
+
+    .tag-i {
+        opacity: 0;
+        visibility: hidden;
+        cursor: pointer;
+        color: $color-grey-dark-2;
+        transition: all 0.3s ease;
+        width: 0;
+        margin-left: 0;
+
+        &:hover, &:active {
+            text-decoration: none;
+            color: $color-black;
+        }
+    }
+
+    &:hover .tag-i {
+        opacity: 1;
+        visibility: visible;
+        width: auto;
+        margin-left: 0.5em;
+    }
+}
+
+.Form-taggable .type-zone {
+    border: 0 none;
+    width: auto;
+    min-width: 1em;
+    padding: 0.5em;
+    display: inline-block;
+    font-family: $font-default;
+    font-size: $base-font-size + px;
+    font-size: 1rem;
+
+    &:focus {
+        outline: 0;
+    }
+}
+
+/* ============================
+          SEARCH
+   ============================ */
+
+%Form-search {
+    border-radius: 2em;
+}
+
+/* ============================
+          SEARCH
+   ============================ */
+
+%Form-radio {
+    margin-right: 0.5em;
+}
+
+/* =====================
+          GENERIC
+   ===================== */
+
+form {
+    max-width: 100%;
+}
+
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=number],
+input[type=search],
+select {
+    @extend %Form-input;
+    width: 20em;
+}
+
+input[type=number] {
+    width: 5em;
+}
+
+input[type=search] {
+    @extend %Form-search;
+}
+
+input[type=file] {
+    border: 0;
+    outline: none;
+    font-family: $font-default;
+}
+
+input[type=checkbox] {
+    @extend %Form-checkbox;
+}
+
+input[type=radio] {
+    @extend %Form-radio;
+}
+
+textarea {
+    @extend %Form-input;
+    @include Form-fullWidth();
+    display: block; /* Force newline */
+}
+
+textarea[type="hidden"] {
+    display: none;
+}
+
+select {
+    min-width: 5em;
+}

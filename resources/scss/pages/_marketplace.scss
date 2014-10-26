@@ -1,0 +1,63 @@
+/* ====================================================================
+   ====================================================================
+
+                               Marketplace
+
+   ====================================================================
+   ==================================================================== */
+
+.Marketplace-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.Marketplace-item-icon {
+    font-size: 15em;
+    color: $color-grey-light-1;
+}
+
+.Marketplace-item-label {
+    padding: 1em;
+    text-align: left;
+}
+
+.Marketplace-item-title {
+    margin-bottom: 0.5em;
+}
+
+.Marketplace-item-icons {
+    list-style-type: none;
+    margin: 0.5em 0 0 0;
+    padding: 0;
+    line-height: 1;
+    @include clearfix;
+
+    li {
+        float: right;
+        margin: 0.3em;
+        color: $color-grey-dark-1;
+    }
+}
+
+.Marketplace-item-rollover {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    height: 3em;
+    text-align: center;
+    color: #fff;
+    font-size: 1.5em;
+    font-family: Roboto Slab;
+    line-height: 3;
+    transform: translateY(-100%);
+    transition: all 0.2s ease;
+
+    .Marketplace-item:hover & {
+        transform: translateY(0);
+    }
+
+    &:hover {
+        background-color: $color-black;
+    }
+}

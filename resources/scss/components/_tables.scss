@@ -1,0 +1,56 @@
+/* ====================================================================
+   ====================================================================
+
+                            Components/Tables
+
+   ====================================================================
+   ==================================================================== */
+
+/* =================================
+                GENERIC
+   ================================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td,
+th {
+    border: 1px 0 1px 0 solid $color-grey-dark-3;
+}
+
+tbody tr {
+    &:nth-child(odd) {
+         background-color: $color-white;
+    }
+    &:nth-child(even) {
+         background-color: $color-white-1;
+    }
+
+    &.is-hidden {
+        display: none;
+    }
+}
+
+thead {
+    background-color: $color-white-2;
+}
+
+thead th {
+    font-size: 1.1em;
+}
+
+td,
+th {
+    padding: 10px;
+}
+
+table.centered-content {
+    text-align: center;
+}
+
+table.top-aligned-cells td,
+table.top-aligned-cells th {
+    vertical-align: top;
+}

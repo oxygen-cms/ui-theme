@@ -1,0 +1,91 @@
+/* ====================================================================
+   ====================================================================
+
+                                Box
+
+   ====================================================================
+   ==================================================================== */
+
+@mixin Box--design-flat($base-color: $color-white-2, $hover: true, $hover-color: null, $active-color: null, $border: false) {
+    // checks if the colour is grayscale
+    $grayscale: false;
+    @if(saturation($base-color) == 0%) {
+        $grayscale: true;
+    }
+
+   // background colour
+    background-color: $base-color;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+
+    @if($border == true) {
+        border-bottom: 0.25em solid darken($base-color, 10%);
+    }
+
+    @if($hover-color == null) {
+        @if($grayscale) {
+            $hover-color: darken($base-color, 10%);
+        } @else {
+            $hover-color: saturate($base-color, 15%);
+        }
+    }
+
+    @if($active-color == null) {
+        @if($grayscale) {
+            $active-color: darken($base-color, 15%);
+        } @else {
+            $active-color: saturate($base-color, 30%);
+        }
+    }
+
+    @if($hover) {
+        &:hover {
+            background-color: $hover-color;
+            @if($border == true) {
+                border-bottom-color: darken($base-color, 20%);
+            }
+        }
+
+        &:active {
+            background-color: $active-color;
+            @if($border == true) {
+                border-bottom-color: darken($base-color, 25%);
+            }
+        }
+    }
+}
+
+/**
+ * @author Lea Verou
+ */
+
+@mixin Box--design-checkerboard($color-a: $color-black, $color-b: rgba(0, 0, 0, 0), $size: 20px, $rotated: false) {
+    background-image:
+    -webkit-linear-gradient(45deg, $color-a 25%, $color-b 25%, $color-b 75%, $color-a 75%, $color-a 100%),
+    -webkit-linear-gradient(45deg, $color-a 25%, $color-b 25%, $color-b 75%, $color-a 75%, $color-a 100%);
+    background-size: $size $size;
+    @if($rotated == false) {
+        background-position: 0 0, ($size / 2) ($size / 2);
+    }
+}
+
+.Box {
+    display: inline-block;
+    width: 25em;
+    margin: 1em;
+    background-color: #fafafa;
+    text-decoration: none;
+    text-align: center;
+
+    &:hover, &:active {
+        text-decoration: none;
+    }
+
+    @include smaller-than($tablet-large) {
+        width: calc(100% - 2em);
+    }
+}
+
+.Box--border {
+    border: 1px solid #ccc;
+    padding: 2em;
+}

@@ -1,0 +1,1 @@
+<script src="/packages/oxygen/ui/js/output.js"></script>

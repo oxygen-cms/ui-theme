@@ -1,0 +1,92 @@
+/* ====================================================================
+   ====================================================================
+
+                                Header
+
+   ====================================================================
+   ==================================================================== */
+
+.Header {
+    padding: 0.5em;
+    border-bottom: 1px solid $color-grey-light-1;
+
+    @include smaller-than($tablet-large) {
+        @include flex-container(column);
+    }
+
+    @include larger-than($tablet-large) {
+        @include flex-container(row, flex-start, center);
+        padding: 1.5em;
+    }
+}
+
+.Header--normal {
+    padding: 1em 1.5em;
+
+    .Header-title {
+        @include larger-than($tablet-large) {
+            margin-left: 5em;
+        }
+    }
+}
+
+.Header--tiny {
+    padding: 0.5em 0;
+}
+
+.Header--main {
+    padding: 1.5em;
+}
+
+.Header:last-child {
+    border-bottom: 0;
+}
+
+.Header--noBorder {
+    border-bottom: 0;
+}
+
+.Header-back {
+    margin-bottom: 1em;
+    margin-right: 1em;
+
+    @include smaller-than($tablet-large) {
+        display: none;
+    }
+
+    @include larger-than($tablet-large) {
+        margin-bottom: 0;
+    }
+}
+
+.Header-toolbar {
+    @include flex-container(null, flex-start, center, '.flex-item', wrap);
+
+    & > * {
+        margin: 0 0.25em;
+    }
+
+    @include smaller-than($tablet-large) {
+        margin-top: 1em;
+    }
+
+    @include larger-than($tablet-large) {
+        @include align-right();
+    }
+}
+
+.Header-toolbar--alignLeft {
+    float: left !important;
+}
+
+.Header-toolbar--padding {
+    padding: 1em 0;
+}
+
+.Header-subtitle {
+    color: $color-grey-dark-3;
+
+    &:before {
+        content: "\00a0";
+    }
+}

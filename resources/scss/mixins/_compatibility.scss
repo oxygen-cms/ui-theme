@@ -1,0 +1,40 @@
+/* ====================================================================
+   ====================================================================
+
+                            Mixins/Compatibility
+
+   ====================================================================
+   ==================================================================== */
+
+@mixin opacity($opacity) {
+    opacity: $opacity;
+    filter: alpha(opacity = $opacity * 100);
+}
+
+@function strip-unit($num) {
+    @return $num / ($num * 0 + 1);
+}
+
+@mixin flex {
+    .flexbox & {
+        @content;
+    }
+}
+
+@mixin no-flex {
+    .no-flexbox & {
+         @content;
+    }
+}
+
+@mixin clearfix {
+    &:before,
+    &:after {
+        content: " ";
+        display: table;
+    }
+
+    &:after {
+        clear: both;
+    }
+}

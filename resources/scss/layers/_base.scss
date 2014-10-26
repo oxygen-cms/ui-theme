@@ -1,0 +1,48 @@
+/* ====================================================================
+   ====================================================================
+
+                               Layers/Base
+
+   ====================================================================
+   ==================================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    font-size: 87.5%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+
+    background-color: $color-white-1;
+    font-family: $font-default;
+
+    @include smaller-than($tablet-large) {
+        min-width: $mobile-small;
+    }
+}
+
+/* body */.Body--noScroll {
+    overflow: hidden;
+}
+
+pre {
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.no-wrap {
+    white-space: nowrap;
+    word-wrap: normal;
+    display: block;
+}

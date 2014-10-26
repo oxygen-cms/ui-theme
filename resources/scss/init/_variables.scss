@@ -1,0 +1,61 @@
+/* ====================================================================
+   ====================================================================
+
+                               Init/Variables
+
+   ====================================================================
+   ==================================================================== */
+
+/* ===============
+        COLORS
+   =============== */
+
+$color-black: #000;
+
+$color-grey-dark-0: #000;
+$color-grey-dark-1: #333;
+$color-grey-dark-2: #666;
+$color-grey-dark-3: #888;
+
+$color-grey-light-1: #ccc;
+$color-grey-light-2: #eee;
+$color-grey-light-3: #fff;
+
+$color-white-1: #fbfbfb;
+$color-white-2: #fdfdfd;
+$color-white: #ffffff;
+
+$color-red: #ff6f55;
+$color-orange: #ff851b;
+$color-blue: #83c8fc;
+$color-green: #2ecc40;
+
+/* ================
+     SCREEN SIZES
+   ================ */
+
+$mobile-small: 240px;
+$mobile-large: 320px;
+$tablet-small: 480px;
+$tablet-large: 768px;
+$screen-small: 920px;
+$screen-medium: 1024px;
+$screen-large: 1280px;
+$screen-max: 1440px;
+
+/* ================
+        FONTS
+   ================ */
+
+$font-default: 'Roboto', sans-serif;
+
+/* ===============
+      DEFAULTS
+   =============== */
+
+$base-font-size: 14; // sizing in pixels
+$fixed-size: false !default;
+$no-media-queries: false !default;
+$ie-8: false !default;
+$ie-9: false !default;
+$use-unsafe-vertical-align: false !default;

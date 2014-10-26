@@ -1,0 +1,39 @@
+/* ====================================================================
+   ====================================================================
+
+                                Notice
+
+   ====================================================================
+   ==================================================================== */
+
+.Notice {
+    width: 100%;
+    padding: 0.5em 0;
+    text-align: center;
+    height: 4em;
+    line-height: 3;
+
+    @include smaller-than($tablet-large) {
+        display: none;
+    }
+}
+
+.Notice--isHidden {
+    display: none;
+}
+
+.Notice--ie {
+    background-color: $color-blue;
+}
+
+.Notice--jsDisabled {
+    background-color: $color-red;
+}
+
+.js .Notice--jsDisabled {
+    display: none;
+}
+
+.Notice--jsError {
+    background-color: $color-red;
+}

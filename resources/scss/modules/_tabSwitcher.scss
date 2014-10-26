@@ -1,0 +1,48 @@
+/* ====================================================================
+   ====================================================================
+
+                              TabSwitcher
+
+   ====================================================================
+   ==================================================================== */
+
+.TabSwitcher-content [data-tab] {
+    display: none;
+}
+
+.TabSwitcher-content .TabSwitcher--isActive {
+    display: block;
+}
+
+.Accordion-section {
+    display: block;
+    width: 100%;
+    background-color: transparent;
+    padding: 0.5em 0;
+    cursor: pointer;
+    transition: all 0.5s ease;
+
+    &.TabSwitcher--isActive {
+      margin-bottom: 1em;
+      border-bottom: 1px solid $color-grey-light-1;
+    }
+}
+
+.Accordion-section-message {
+    margin-left: 0.5em;
+    @extend .heading-gamma;
+}
+
+.Accordion-section-icon {
+    color: $color-grey-dark-2;
+    transition: transform 0.5s ease;
+
+    .Accordion-section:hover & {
+      color: $color-black;
+    }
+
+    .TabSwitcher--isActive & {
+        transform: rotate(90deg);
+    }
+}
+

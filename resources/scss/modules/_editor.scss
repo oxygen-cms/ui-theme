@@ -1,0 +1,168 @@
+/* ====================================================================
+   ====================================================================
+
+                               Editor
+
+   ====================================================================
+   ==================================================================== */
+
+$Editor-background: lighten($color-grey-light-2, 5%);
+$Editor-border: $color-grey-light-1;
+
+$Editor-background--dark: $color-grey-dark-1;
+$Editor-border--dark: $color-grey-dark-1;
+
+.Editor {
+    background-color: $color-white;
+    width: 100%;
+    overflow: hidden;
+
+    @include larger-than($tablet-large) {
+        width: 90%;
+    }
+}
+
+.Editor.FullscreenToggle--isFullscreen {
+    @include flex-container(column);
+}
+
+.Editor-content {
+    position: relative;
+
+    .js & {
+        //border: 1px solid $Editor-border;
+    }
+
+    .Editor--dark & {
+        //border-color: $Editor-border--dark;
+    }
+
+    .FullscreenToggle--isFullscreen & {
+        flex: 1;
+    }
+}
+
+.js .Editor-header + .Editor-content {
+    border-top: 0;
+}
+
+.Editor-header,
+.Editor-footer {
+    @extend .Header-toolbar;
+
+    background-color: $Editor-background;
+    border: 1px solid $Editor-border;
+    min-height: 4em;
+    padding: 0.5em;
+
+    & > * {
+        margin: 0 0.25em;
+    }
+
+    .Editor--dark & {
+        background-color: $Editor-background--dark;
+        border: 0;
+    }
+}
+
+.no-js .Editor-header,
+.no-js .Editor-footer {
+    display: none;
+}
+
+// specifity hax
+.FullscreenToggle--isFullscreen .Editor-footer.Editor-footer.Editor-footer {
+    display: flex;
+}
+
+.Editor-footer.Editor-footer.Editor-footer {
+    display: none;
+}
+
+/* ---------------
+       CONTENT
+   --------------- */
+
+.Editor-textarea.Editor-textarea {
+    margin: 0;
+    width: 100%;
+
+    .js & {
+        display: none;
+    }
+}
+
+.ace_editor,
+.cke_chrome,
+.Editor-preview {
+    position: absolute !important; // overrides position: relative in ace_editor
+    top: 0;
+    width: 100%;
+    height: 100%;
+    transition: width 0.2s ease, transform 0.2s ease;
+}
+
+.cke_chrome {
+    left: 0;
+}
+
+.ace_editor {
+    left: 0;
+
+    &.Editor--hidden {
+        transform: translateX(-100%);
+    }
+}
+
+.Editor-preview {
+    border: 0; // reset <iframe> border
+    right: 0;
+
+    &.Editor--hidden {
+        transform: translateX(100%);
+    }
+}
+
+.Editor-content--isSplit .Editor-preview {
+    border-left: 1px solid $Editor-border;
+
+    .Editor--dark & {
+        border-color: $Editor-border--dark;
+    }
+}
+
+/* ---------------
+     CKEditor Hax
+   --------------- */
+
+.cke_chrome {
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.cke_inner {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column;
+}
+
+.cke_contents {
+    flex: 1;
+    height: 100% !important;
+    position: relative !important;
+}
+
+.cke_wysiwyg_frame, .cke_wysiwyg_div {
+    position: absolute !important;
+    top: 0;
+    bottom: 0;
+}
+
+.cke_dialog_background_cover {
+    background-color: #000 !important;
+    opacity: 0.8 !important;
+}

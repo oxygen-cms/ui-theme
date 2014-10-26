@@ -1,0 +1,30 @@
+/* ====================================================================
+   ====================================================================
+
+                             Mixins/Utility
+
+   ====================================================================
+   ==================================================================== */
+
+@mixin link-reset {
+    text-decoration: none !important;
+    color: inherit;
+    outline: none;
+}
+
+@mixin link-cursor {
+    &:hover {
+        cursor: hand;
+        cursor: pointer;
+    }
+}
+
+@mixin list-reset {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+@mixin unselectable {
+    user-select: none;
+}

@@ -1,0 +1,27 @@
+{
+  "name": "ckeditor",
+  "description": "JavaScript WYSIWYG web text editor.",
+  "keywords": [
+    "ckeditor",
+    "fckeditor",
+    "editor",
+    "wysiwyg",
+    "html",
+    "richtext",
+    "text",
+    "javascript"
+  ],
+  "authors": "CKSource - Frederico Knabben (http://cksource.com)",
+  "license": "http://ckeditor.com/about/license",
+  "homepage": "http://ckeditor.com",
+  "_release": "fe25860449",
+  "_resolution": {
+    "type": "branch",
+    "branch": "full/latest",
+    "commit": "fe258604491af861b44b48e48c3e9a997ff7b2ad"
+  },
+  "_source": "git://github.com/ckeditor/ckeditor-releases.git",
+  "_target": "full/latest",
+  "_originalSource": "ckeditor",
+  "_direct": true
+}

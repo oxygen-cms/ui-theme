@@ -1,0 +1,192 @@
+/* ====================================================================
+   ====================================================================
+
+                                MainNav
+
+   ====================================================================
+   ==================================================================== */
+
+.MainNav {
+    background-color: $color-grey-dark-1;
+
+    @include smaller-than($tablet-large) {
+        overflow: auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+        transform: translateX(-20em);
+        width: 20em;
+        height: 100%;
+        transition: transform 0.2s ease;
+    }
+
+    @include larger-than($tablet-large) {
+        @include clearfix;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 75;
+    }
+}
+
+.MainNav-spacer {
+    height: 4em;
+}
+
+@include smaller-than($tablet-large) {
+    .MainNav-spacer--main {
+        display: none;
+    }
+}
+
+@include larger-than($tablet-large) {
+    .MainNav-spacer--mobile {
+        display: none;
+    }
+}
+
+.MainNav-list {
+    @include list-reset;
+    @include clearfix;
+}
+
+.MainNav-item {
+    display: block;
+
+    @include smaller-than($tablet-large) {
+        min-height: 4em;
+    }
+
+    @include larger-than($tablet-large) {
+        float: left;
+        height: 4em;
+    }
+}
+
+.MainNav-list--primary {
+    @include larger-than($tablet-large) {
+        float: left;
+    }
+}
+
+.MainNav-list--secondary {
+    @include smaller-than($tablet-large) {
+        border-top: 1px solid $color-grey-light-1;
+    }
+    @include larger-than($tablet-large) {
+        float: right;
+    }
+}
+
+.MainNav-link {
+    display: block;
+    padding: 1em;
+    line-height: 2;
+
+    @include link-reset;
+    @include link-cursor;
+    color: $color-white;
+    background-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.2s ease;
+
+    @include smaller-than($tablet-large) {
+        width: 100%;
+    }
+
+    &:hover {
+        background-color: lighten($color-grey-dark-1, 5%);
+    }
+
+    &:active {
+        background-color: lighten($color-grey-dark-1, 10%);
+    }
+}
+
+.no-js .Dropdown-container .MainNav-link .Icon {
+    display: none;
+}
+
+.MainNav-border {
+    display: block;
+    border-right: 1px solid $color-grey-light-1;
+    margin: 0 1em;
+
+    @include smaller-than($tablet-large) {
+        border-right: 0;
+        margin: 0;
+        min-height: 0;
+        height: 1px;
+        border-bottom: 1px solid $color-grey-light-1;
+    }
+}
+
+.MainNav-mobileBar {
+    background-color: $color-grey-dark-1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    @include larger-than($tablet-large) {
+        display: none;
+    }
+}
+
+.MainNav-open {
+    @include link-reset;
+    color: $color-white;
+    padding: 0 0.5em;
+    font-size: 2em;
+    line-height: 2;
+}
+
+.MainNav-close {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+/* ====================
+        HEADROOM
+   ==================== */
+
+@include larger-than($tablet-large) {
+
+    .Headroom {
+        transition: transform 0.2s linear;
+    }
+
+    .Headroom--pinned {
+        transform: translateY(0%);
+    }
+
+    .Headroom--unpinned {
+        transform: translateY(-100%);
+    }
+
+}
+
+/* =======================
+      OFF-CANVAS TOGGLE
+   ======================= */
+
+@include smaller-than($tablet-large) {
+
+    #navigation:target {
+        transform: translateX(0);
+    }
+
+    #navigation:target ~ .AdminPage {
+        transform: translateX(20em);
+    }
+
+    #navigation:target ~ .AdminPage .MainNav-close {
+        display: block;
+    }
+
+}
