@@ -176,16 +176,17 @@ a {
 pre, code {
   font-family: Menlo, Monaco, monospace; }
 
+pre {
+  background-color: #fbfbfb;
+  border: 1px solid #eee;
+  margin: 1em 0;
+  padding: 1em; }
+
 img, canvas {
   max-width: 100%; }
 
 .Content {
   margin: 1em 0; }
-  .Content pre {
-    margin: 1em 0;
-    padding: 1em;
-    background-color: #fbfbfb;
-    border: 1px solid #eee; }
 
 /* ====================================================================
    ====================================================================
@@ -509,17 +510,18 @@ button, input[type="submit"], input[type="button"] {
 .ButtonTabGroup .Button, .ButtonTabGroup .Dialog .vex-dialog-button, .Dialog .ButtonTabGroup .vex-dialog-button {
   display: inline-block;
   margin: 0;
-  border-radius: 0; }
+  border-radius: 0;
+  border-right: 1px solid #d4d4d4; }
 
 .ButtonTabGroup .Button:first-child, .ButtonTabGroup .Dialog .vex-dialog-button:first-child, .Dialog .ButtonTabGroup .vex-dialog-button:first-child {
-  border-right-width: 0;
   border-top-left-radius: 0.5em;
   border-bottom-left-radius: 0.5em; }
 
 .ButtonTabGroup .Button:last-child, .ButtonTabGroup .Dialog .vex-dialog-button:last-child, .Dialog .ButtonTabGroup .vex-dialog-button:last-child {
   border-left-width: 0;
   border-top-right-radius: 0.5em;
-  border-bottom-right-radius: 0.5em; }
+  border-bottom-right-radius: 0.5em;
+  border-right: 0; }
 
 /* ====================================================================
    ====================================================================
@@ -719,6 +721,9 @@ button, input[type="submit"], input[type="button"] {
 
 .Dropdown-button {
   margin: 0; }
+
+.Dropdown-container .ButtonTabGroup .Button:last-child, .Dropdown-container .ButtonTabGroup .Dialog .vex-dialog-button:last-child, .Dialog .Dropdown-container .ButtonTabGroup .vex-dialog-button:last-child {
+  line-height: 1.5; }
 
 .Dropdown--round .Dropdown-itemContainer:first-child .Dropdown-item, .Dropdown--round .Dropdown-item.Dropdown-itemContainer:first-child {
   border-top-left-radius: 0.5em;

@@ -15,18 +15,16 @@ window.Oxygen.Dropdown = class Dropdown
         $(document).on("click", @handleGlobalClick.bind(@))
 
     @handleClick: (event) ->
-        target = $(event.target)
-        container = undefined
-        if target.hasClass(@classes.dropdownToggle)
-          container = target
-        else
-          container = target.parent()
+        container = $(event.target)
+        while !container.hasClass(@classes.dropdownToggle)
+            return if container.is("a[href], form")
+            container = container.parent()
         dropdown = container.find("." + @classes.dropdownList)
         if dropdown.hasClass(@classes.isActive)
-          dropdown.removeClass(@classes.isActive)
+            dropdown.removeClass(@classes.isActive)
         else
-          $("." + @classes.dropdownList).removeClass(@classes.isActive)
-          dropdown.addClass(@classes.isActive)
+            $("." + @classes.dropdownList).removeClass(@classes.isActive)
+            dropdown.addClass(@classes.isActive)
 
     @handleGlobalClick: (event) ->
         target = $(event.target)

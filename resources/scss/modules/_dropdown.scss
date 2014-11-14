@@ -41,6 +41,10 @@
     margin: 0;
 }
 
+.Dropdown-container .ButtonTabGroup .Button:last-child {
+    line-height: 1.5;
+}
+
 .Dropdown--round .Dropdown-itemContainer:first-child .Dropdown-item,
 .Dropdown--round .Dropdown-item.Dropdown-itemContainer:first-child {
     border-top-left-radius: 0.5em;

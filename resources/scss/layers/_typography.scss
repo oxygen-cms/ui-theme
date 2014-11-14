@@ -115,6 +115,13 @@ pre, code {
     font-family: Menlo, Monaco, monospace;
 }
 
+pre {
+    background-color: $color-white-1;
+    border: 1px solid $color-grey-light-2;
+    margin: 1em 0;
+    padding: 1em;
+}
+
 img, canvas {
     max-width: 100%;
 }
@@ -125,11 +132,4 @@ img, canvas {
     h1 { @extend .heading-beta; }
     h2 { @extend .heading-gamma; }
     h3 { @extend .heading-delta; }
-
-    pre {
-        margin: 1em 0;
-        padding: 1em;
-        background-color: $color-white-1;
-        border: 1px solid $color-grey-light-2;
-    }
 }

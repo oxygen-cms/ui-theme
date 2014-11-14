@@ -179,18 +179,17 @@ input[type="button"] {
     display: inline-block;
     margin: 0;
     border-radius: 0;
+    border-right: 1px solid darken($color-grey-light-2, 10%);
 }
 
 .ButtonTabGroup .Button:first-child {
-    //margin-left: 1em;
-    border-right-width: 0;
     border-top-left-radius: 0.5em;
     border-bottom-left-radius: 0.5em;
 }
 
 .ButtonTabGroup .Button:last-child {
-    //margin-right: 1em;
     border-left-width: 0;
     border-top-right-radius: 0.5em;
     border-bottom-right-radius: 0.5em;
+    border-right: 0;
 }

@@ -375,13 +375,13 @@
     };
 
     Dropdown.handleClick = function(event) {
-      var container, dropdown, target;
-      target = $(event.target);
-      container = void 0;
-      if (target.hasClass(this.classes.dropdownToggle)) {
-        container = target;
-      } else {
-        container = target.parent();
+      var container, dropdown;
+      container = $(event.target);
+      while (!container.hasClass(this.classes.dropdownToggle)) {
+        if (container.is("a[href], form")) {
+          return;
+        }
+        container = container.parent();
       }
       dropdown = container.find("." + this.classes.dropdownList);
       if (dropdown.hasClass(this.classes.isActive)) {
