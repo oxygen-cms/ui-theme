@@ -21,6 +21,7 @@ window.Oxygen.Form = class Form
         submitOnKeydown: "Form--submitOnKeydown"
         sendAjax: "Form--sendAjax"
         sendAjaxOnChange: "Form--sendAjaxOnChange"
+        autoSubmit: "Form--autoSubmit",
         taggableInput: ".Form-taggable"
 
     @findAll: ->
@@ -47,6 +48,10 @@ window.Oxygen.Form = class Form
         # Control/Command S to save
         if @form.hasClass(Form.classes.submitOnKeydown)
             $(document.body).on("keydown", @handleKeydown)
+
+        # Auto Submit
+        if @form.hasClass(Form.classes.autoSubmit)
+            @form.find('button[type="submit"]')[0].click();
         return
 
     handleChange: (event) =>

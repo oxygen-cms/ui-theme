@@ -31,6 +31,10 @@
 .Accordion-section-message {
     margin-left: 0.5em;
     @extend .heading-gamma;
+
+    .Form--dark & {
+        color: $color-white;
+    }
 }
 
 .Accordion-section-icon {
@@ -41,7 +45,12 @@
       color: $color-black;
     }
 
-    .TabSwitcher--isActive & {
+    .Form--dark &,
+    .Form--dark .Accordion-section:hover & {
+      color: $color-white;
+    }
+
+    .TabSwitcher--isActive > & {
         transform: rotate(90deg);
     }
 }

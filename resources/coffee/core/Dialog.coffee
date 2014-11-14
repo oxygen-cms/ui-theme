@@ -7,7 +7,11 @@ window.Oxygen.Dialog = class Dialog
 
     @registerEvents: ->
         $("[data-dialog-type=\"confirm\"]").on("click", @handleConfirmClick)
-        return
+        $("[data-dialog-type=\"alert\"]").on("click", @handleAlertClick)
+
+    @handleAlertClick: (event) ->
+        target = $(event.currentTarget)
+        vex.dialog.alert target.attr("data-dialog-message")
 
     @handleConfirmClick: (event, customConfig) ->
         target = $(event.currentTarget)

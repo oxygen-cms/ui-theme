@@ -185,7 +185,7 @@ img, canvas {
     margin: 1em 0;
     padding: 1em;
     background-color: #fbfbfb;
-    border: 1px solud #eee; }
+    border: 1px solid #eee; }
 
 /* ====================================================================
    ====================================================================
@@ -241,6 +241,22 @@ img, canvas {
   -webkit-transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%); }
+
+.Block--noBorder {
+  border: 0; }
+
+.Block--noMargin {
+  margin: 0; }
+
+.Block--noPadding {
+  padding: 0; }
+
+.ContentPreview {
+  border: 0;
+  border-top: 2px inset #333;
+  background-color: #ffffff;
+  width: 100%;
+  height: 100%; }
 
 /* ====================================================================
    ====================================================================
@@ -774,6 +790,9 @@ button, input[type="submit"], input[type="button"] {
   overflow: hidden;
   width: 90%; }
 
+.Editor.Editor--fullWidth {
+  width: 100%; }
+
 .flexbox .Editor.FullscreenToggle--isFullscreen {
   display: -webkit-box;
   display: -webkit-flex;
@@ -930,8 +949,9 @@ button, input[type="submit"], input[type="button"] {
 .Notification {
   display: block;
   padding: 1.25em;
-  margin-bottom: 0.5em;
+  margin: 0.5em 0.5em 0 0;
   line-height: 1.5;
+  border-radius: 0.5em;
   -webkit-animation: Notification--slideIn 0.5s both;
   animation: Notification--slideIn 0.5s both;
   max-height: 20em;
@@ -1067,6 +1087,9 @@ button, input[type="submit"], input[type="button"] {
   .Row--single .Form-taggable.Form-input--fullWidth, .Row--single input[type=text].Form-input--fullWidth, .Row--single input[type=password].Form-input--fullWidth, .Row--single input[type=email].Form-input--fullWidth, .Row--single input[type=number].Form-input--fullWidth, .Row--single input[type=search].Form-input--fullWidth, .Row--single select.Form-input--fullWidth, .Row--single textarea.Form-input--fullWidth {
     width: 100%; }
 
+.Form-taggable.Form-input--narrow, input[type=text].Form-input--narrow, input[type=password].Form-input--narrow, input[type=email].Form-input--narrow, input[type=number].Form-input--narrow, input[type=search].Form-input--narrow, select.Form-input--narrow, textarea.Form-input--narrow {
+  width: 6em; }
+
 .Form-taggable.Form-input--transparent, input[type=text].Form-input--transparent, input[type=password].Form-input--transparent, input[type=email].Form-input--transparent, input[type=number].Form-input--transparent, input[type=search].Form-input--transparent, select.Form-input--transparent, textarea.Form-input--transparent {
   background-color: rgba(255, 255, 255, 0.5); }
 
@@ -1082,8 +1105,12 @@ button, input[type="submit"], input[type="button"] {
   display: block;
   width: 10%; }
   .Form--singleColumn .Form-label {
-    padding-bottom: 1em;
+    padding: 0.5em 0 0.5em 0;
     width: auto; }
+  .Form--dark .Form-label {
+    color: #ffffff; }
+  .Form-label.Form-label--inline {
+    display: inline-block; }
 
 .flexbox .Form-footer {
   display: -webkit-box;
@@ -1320,6 +1347,8 @@ input[type=checkbox] {
   display: none; }
   input[type=checkbox] + .Form-checkbox-label {
     cursor: pointer; }
+    .Form--dark input[type=checkbox] + .Form-checkbox-label {
+      color: #ffffff; }
   input[type=checkbox] + .Form-checkbox-label:before {
     display: inline-block;
     font-family: FontAwesome;
@@ -1554,10 +1583,10 @@ select {
   margin-right: 1em;
   margin-bottom: 0; }
 
-.Header-toolbar, .Editor-header, .Editor-footer {
+.Header-toolbar, .Editor-header, .Editor-footer, .ImageEditor-toolbar {
   margin-left: auto;
   float: right !important; }
-  .flexbox .Header-toolbar, .flexbox .Editor-header, .flexbox .Editor-footer {
+  .flexbox .Header-toolbar, .flexbox .Editor-header, .flexbox .Editor-footer, .flexbox .ImageEditor-toolbar {
     display: -webkit-box;
     display: -webkit-flex;
     display: -moz-box;
@@ -1576,7 +1605,7 @@ select {
     -webkit-flex-wrap: wrap;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap; }
-  .Header-toolbar > *, .Header-toolbar > .Editor-header, .Header-toolbar > .Editor-footer {
+  .Header-toolbar > *, .Header-toolbar > .Editor-header, .Header-toolbar > .Editor-footer, .Header-toolbar > .ImageEditor-toolbar {
     margin: 0 0.25em; }
 
 .Header-toolbar--alignLeft {
@@ -1589,6 +1618,10 @@ select {
   color: #888; }
   .Header-subtitle:before {
     content: "\00a0"; }
+
+.Header-icon {
+  color: #888;
+  margin-left: 0.5em; }
 
 /* ====================================================================
    ====================================================================
@@ -1620,7 +1653,8 @@ select {
    ==================================================================== */
 .ImageEditor {
   width: 100%;
-  background-color: #888; }
+  background-color: #888;
+  height: 90vh; }
   .flexbox .ImageEditor {
     display: -webkit-box;
     display: -webkit-flex;
@@ -1639,11 +1673,14 @@ select {
     display: table; }
   .no-flexbox .ImageEditor:after {
     clear: both; }
+  .ImageEditor.FullscreenToggle--isFullscreen {
+    height: 100%; }
 
 .ImageEditor-content {
   overflow: auto;
   width: 70%;
   border: 4px solid #333;
+  border-right: 0;
   background-image: -webkit-linear-gradient(45deg, #666 25%, rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0) 75%, #666 75%, #666 100%), -webkit-linear-gradient(45deg, #666 25%, rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0) 75%, #666 75%, #666 100%);
   background-size: 20px 20px;
   background-position: 0 0, 10px 10px; }
@@ -1658,7 +1695,7 @@ select {
     -moz-box-align: center;
     -ms-flex-align: center;
     align-items: center; }
-  .ImageEditor-content img, .ImageEditor-content canvas {
+  .ImageEditor-content img {
     margin: 0 auto; }
 
 .ImageEditor-toolbar > *:first-child {
@@ -1668,9 +1705,7 @@ select {
 
 .ImageEditor-panel {
   width: 30%;
-  min-height: 30em;
-  max-height: 60em;
-  padding: 2em;
+  height: 100%;
   background-color: #333; }
   .flexbox .ImageEditor-panel {
     display: -webkit-box;
@@ -1690,15 +1725,26 @@ select {
     display: table; }
   .no-flexbox .ImageEditor-panel > .flex-item:after {
     clear: both; }
-  .FullscreenToggle--isFullscreen .ImageEditor-panel {
-    height: 100%;
-    max-height: 100%; }
-  .ImageEditor-panel .TabSwitcher-content {
+  .ImageEditor-panel > .TabSwitcher-content {
     overflow: scroll;
-    background-color: #404040;
-    padding: 1em; }
-  .ImageEditor-panel p {
-    color: #ffffff; }
+    border-top: 2px groove #6f6f6f;
+    border-bottom: 2px groove #6f6f6f; }
+
+.ImageEditor-padded {
+  padding: 1em; }
+
+.ImageEditor-flex {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -moz-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1; }
+
+.ImageEditor-apply, .ImageEditor-save {
+  margin-left: 1em; }
+
+[data-tab="simple"] {
+  -webkit-font-smoothing: antialiased; }
 
 /* ====================================================================
    ====================================================================
@@ -2123,6 +2169,8 @@ select {
 
 .Accordion-section-message {
   margin-left: 0.5em; }
+  .Form--dark .Accordion-section-message {
+    color: #ffffff; }
 
 .Accordion-section-icon {
   color: #666;
@@ -2130,7 +2178,9 @@ select {
   transition: transform 0.5s ease; }
   .Accordion-section:hover .Accordion-section-icon {
     color: #000; }
-  .TabSwitcher--isActive .Accordion-section-icon {
+  .Form--dark .Accordion-section-icon, .Form--dark .Accordion-section:hover .Accordion-section-icon {
+    color: #ffffff; }
+  .TabSwitcher--isActive > .Accordion-section-icon {
     -webkit-transform: rotate(90deg);
     -ms-transform: rotate(90deg);
     transform: rotate(90deg); }
@@ -2392,24 +2442,64 @@ select {
   .Marketplace-item-rollover:hover {
     background-color: #000; }
 
+/* ====================================================================
+   ====================================================================
+
+                               Content
+
+   ====================================================================
+   ==================================================================== */
+.Content-container {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  z-index: 2; }
+
+.Content-container--fill {
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 500; }
+
+.Content-container--noTransition {
+  -webkit-transition: none;
+  transition: none; }
+
+.Content-preview {
+  display: block;
+  border: 0;
+  background-color: #ffffff;
+  width: 100%;
+  height: 100%; }
+
+.Content-collapseToggle {
+  position: absolute;
+  top: 1em;
+  right: 1em; }
+  .no-js .Content-collapseToggle {
+    display: none; }
+
 /*!
- *  Font Awesome 4.1.0 by @davegandy - http://fontawesome.io - @fontawesome
+ *  Font Awesome 4.2.0 by @davegandy - http://fontawesome.io - @fontawesome
  *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
  */
 /* FONT PATH
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: url('../fonts/fontawesome-webfont.eot?v=4.0.3');
-  src: url('../fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), url('../fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('../fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('../fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
+  src: url('../fonts/fontawesome-webfont.eot?v=4.2.0');
+  src: url('../fonts/fontawesome-webfont.eot?#iefix&v=4.2.0') format('embedded-opentype'), url('../fonts/fontawesome-webfont.woff?v=4.2.0') format('woff'), url('../fonts/fontawesome-webfont.ttf?v=4.2.0') format('truetype'), url('../fonts/fontawesome-webfont.svg?v=4.2.0#fontawesomeregular') format('svg');
   font-weight: normal;
   font-style: normal; }
 
 .Icon {
   display: inline-block;
   font-family: FontAwesome;
-  font-style: normal;
   font-weight: normal;
+  text-rendering: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
@@ -2417,7 +2507,7 @@ select {
 .Icon-lg {
   font-size: 1.33333em;
   line-height: 0.75em;
-  vertical-align: -25%; }
+  vertical-align: -15%; }
 
 .Icon-2x {
   font-size: 2em; }
@@ -2468,24 +2558,19 @@ select {
   margin-left: 0.3em; }
 
 .Icon-spin {
-  -webkit-animation: spin 2s infinite linear;
-  animation: spin 2s infinite linear; }
+  -webkit-animation: fa-spin 2s infinite linear;
+  animation: fa-spin 2s infinite linear; }
 
-@-webkit-keyframes spin {
+@-webkit-keyframes fa-spin {
   0% {
-    -webkit-transform: rotate(0deg); }
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg); }
 
   100% {
-    -webkit-transform: rotate(359deg); } }
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg); } }
 
-@-ms-keyframes spin {
-  0% {
-    -ms-transform: rotate(0deg); }
-
-  100% {
-    -ms-transform: rotate(359deg); } }
-
-@keyframes spin {
+@keyframes fa-spin {
   0% {
     -webkit-transform: rotate(0deg);
     -ms-transform: rotate(0deg);
@@ -2497,34 +2582,38 @@ select {
     transform: rotate(359deg); } }
 
 .Icon-rotate-90 {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
   -webkit-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
   transform: rotate(90deg); }
 
 .Icon-rotate-180 {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
   -webkit-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
   transform: rotate(180deg); }
 
 .Icon-rotate-270 {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
   -webkit-transform: rotate(270deg);
   -ms-transform: rotate(270deg);
   transform: rotate(270deg); }
 
 .Icon-flip-horizontal {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0);
   -webkit-transform: scale(-1, 1);
   -ms-transform: scale(-1, 1);
   transform: scale(-1, 1); }
 
 .Icon-flip-vertical {
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=$rotation);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
   -webkit-transform: scale(1, -1);
   -ms-transform: scale(1, -1);
   transform: scale(1, -1); }
+
+:root .Icon-rotate-90, :root .Icon-rotate-180, :root .Icon-rotate-270, :root .Icon-flip-horizontal, :root .Icon-flip-vertical {
+  -webkit-filter: none;
+  filter: none; }
 
 .Icon-stack {
   position: relative;
@@ -2590,7 +2679,7 @@ select {
 .Icon-check:before {
   content: "\f00c"; }
 
-.Icon-times:before {
+.Icon-remove:before, .Icon-close:before, .Icon-times:before {
   content: "\f00d"; }
 
 .Icon-search-plus:before {
@@ -2911,7 +3000,7 @@ select {
 .Icon-arrows-h:before {
   content: "\f07e"; }
 
-.Icon-bar-chart-o:before {
+.Icon-bar-chart-o:before, .Icon-bar-chart:before {
   content: "\f080"; }
 
 .Icon-twitter-square:before {
@@ -3700,7 +3789,7 @@ select {
 .Icon-digg:before {
   content: "\f1a6"; }
 
-.Icon-pied-piper-square:before, .Icon-pied-piper:before {
+.Icon-pied-piper:before {
   content: "\f1a7"; }
 
 .Icon-pied-piper-alt:before {
@@ -3808,7 +3897,7 @@ select {
 .Icon-jsfiddle:before {
   content: "\f1cc"; }
 
-.Icon-life-bouy:before, .Icon-life-saver:before, .Icon-support:before, .Icon-life-ring:before {
+.Icon-life-bouy:before, .Icon-life-buoy:before, .Icon-life-saver:before, .Icon-support:before, .Icon-life-ring:before {
   content: "\f1cd"; }
 
 .Icon-circle-o-notch:before {
@@ -3867,3 +3956,123 @@ select {
 
 .Icon-bomb:before {
   content: "\f1e2"; }
+
+.Icon-soccer-ball-o:before, .Icon-futbol-o:before {
+  content: "\f1e3"; }
+
+.Icon-tty:before {
+  content: "\f1e4"; }
+
+.Icon-binoculars:before {
+  content: "\f1e5"; }
+
+.Icon-plug:before {
+  content: "\f1e6"; }
+
+.Icon-slideshare:before {
+  content: "\f1e7"; }
+
+.Icon-twitch:before {
+  content: "\f1e8"; }
+
+.Icon-yelp:before {
+  content: "\f1e9"; }
+
+.Icon-newspaper-o:before {
+  content: "\f1ea"; }
+
+.Icon-wifi:before {
+  content: "\f1eb"; }
+
+.Icon-calculator:before {
+  content: "\f1ec"; }
+
+.Icon-paypal:before {
+  content: "\f1ed"; }
+
+.Icon-google-wallet:before {
+  content: "\f1ee"; }
+
+.Icon-cc-visa:before {
+  content: "\f1f0"; }
+
+.Icon-cc-mastercard:before {
+  content: "\f1f1"; }
+
+.Icon-cc-discover:before {
+  content: "\f1f2"; }
+
+.Icon-cc-amex:before {
+  content: "\f1f3"; }
+
+.Icon-cc-paypal:before {
+  content: "\f1f4"; }
+
+.Icon-cc-stripe:before {
+  content: "\f1f5"; }
+
+.Icon-bell-slash:before {
+  content: "\f1f6"; }
+
+.Icon-bell-slash-o:before {
+  content: "\f1f7"; }
+
+.Icon-trash:before {
+  content: "\f1f8"; }
+
+.Icon-copyright:before {
+  content: "\f1f9"; }
+
+.Icon-at:before {
+  content: "\f1fa"; }
+
+.Icon-eyedropper:before {
+  content: "\f1fb"; }
+
+.Icon-paint-brush:before {
+  content: "\f1fc"; }
+
+.Icon-birthday-cake:before {
+  content: "\f1fd"; }
+
+.Icon-area-chart:before {
+  content: "\f1fe"; }
+
+.Icon-pie-chart:before {
+  content: "\f200"; }
+
+.Icon-line-chart:before {
+  content: "\f201"; }
+
+.Icon-lastfm:before {
+  content: "\f202"; }
+
+.Icon-lastfm-square:before {
+  content: "\f203"; }
+
+.Icon-toggle-off:before {
+  content: "\f204"; }
+
+.Icon-toggle-on:before {
+  content: "\f205"; }
+
+.Icon-bicycle:before {
+  content: "\f206"; }
+
+.Icon-bus:before {
+  content: "\f207"; }
+
+.Icon-ioxhost:before {
+  content: "\f208"; }
+
+.Icon-angellist:before {
+  content: "\f209"; }
+
+.Icon-cc:before {
+  content: "\f20a"; }
+
+.Icon-shekel:before, .Icon-sheqel:before, .Icon-ils:before {
+  content: "\f20b"; }
+
+.Icon-meanpath:before {
+  content: "\f20c"; }

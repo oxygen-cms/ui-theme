@@ -18,8 +18,15 @@ window.Oxygen.TabSwitcher = class TabSwitcher
 
     @findAll: ->
         $("." + TabSwitcher.classes.tabs).each ->
-            TabSwitcher.list.push new TabSwitcher($(@), $(@).parent().parent().find("." + TabSwitcher.classes.content))
-        return
+            tabs = $(@)
+            if tabs.hasClass(TabSwitcher.classes.content)
+                container = tabs
+            else
+                container = tabs.siblings("." + TabSwitcher.classes.content)
+
+            container = tabs.parent().siblings("." + TabSwitcher.classes.content)  if container.length == 0
+
+            TabSwitcher.list.push new TabSwitcher(tabs, container)
 
     # -----------------
     #       Object
@@ -30,25 +37,21 @@ window.Oxygen.TabSwitcher = class TabSwitcher
         @container = container
         @findDefault()
         @registerEvents()
-        return
 
     findDefault: ->
-        tab = @tabs.find("[data-default-tab]").attr("data-switch-to-tab");
+        tab = @tabs.children("[data-default-tab]").attr("data-switch-to-tab");
         @setTo(tab);
-        return
 
     registerEvents: ->
-        @tabs.find("[data-switch-to-tab]").on("click", @handleClick)
-        return
+        @tabs.children("[data-switch-to-tab]").on("click", @handleClick)
 
     handleClick: (event) =>
         tab = $(event.currentTarget).attr("data-switch-to-tab")
         @setTo(tab);
-        return
 
     setTo: (tab) ->
-        @container.find("[data-tab]").removeClass(TabSwitcher.classes.active)
-        @container.find("[data-tab=\"" + tab + "\"]").addClass(TabSwitcher.classes.active)
-        @tabs.find("[data-switch-to-tab]").removeClass(TabSwitcher.classes.active)
-        @tabs.find("[data-switch-to-tab=\"" + tab + "\"]").addClass(TabSwitcher.classes.active)
-        return
+        @current = tab
+        @container.children("[data-tab]").removeClass(TabSwitcher.classes.active)
+        @container.children("[data-tab=\"" + tab + "\"]").addClass(TabSwitcher.classes.active)
+        @tabs.children("[data-switch-to-tab]").removeClass(TabSwitcher.classes.active)
+        @tabs.children("[data-switch-to-tab=\"" + tab + "\"]").addClass(TabSwitcher.classes.active)

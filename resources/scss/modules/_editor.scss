@@ -22,6 +22,10 @@ $Editor-border--dark: $color-grey-dark-1;
     }
 }
 
+.Editor.Editor--fullWidth {
+    width: 100%;
+}
+
 .Editor.FullscreenToggle--isFullscreen {
     @include flex-container(column);
 }

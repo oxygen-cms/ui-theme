@@ -1,5 +1,5 @@
 (function() {
-  var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, PreviewInterface, ProgressBar, Slider, SplitViewInterface, TabSwitcher, Toggle, Upload,
+  var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, PreviewInterface, ProgressBar, Slider, SplitViewInterface, TabSwitcher, Toggle, Upload, base64Encode,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -42,6 +42,7 @@
       var content, e;
       try {
         content = $.parseJSON(response.responseText);
+        console.error(content);
         new Notification({
           content: "Exception of type <code class=\"no-wrap\">" + content.error.type + "</code>with message <code class=\"no-wrap\">" + content.error.message + "</code>thrown at <code class=\"no-wrap\">" + content.error.file + ":" + content.error.line + "</code>",
           status: "failed"
@@ -75,6 +76,7 @@
       submitOnKeydown: "Form--submitOnKeydown",
       sendAjax: "Form--sendAjax",
       sendAjaxOnChange: "Form--sendAjaxOnChange",
+      autoSubmit: "Form--autoSubmit",
       taggableInput: ".Form-taggable"
     };
 
@@ -109,6 +111,9 @@
       }
       if (this.form.hasClass(Form.classes.submitOnKeydown)) {
         $(document.body).on("keydown", this.handleKeydown);
+      }
+      if (this.form.hasClass(Form.classes.autoSubmit)) {
+        this.form.find('button[type="submit"]')[0].click();
       }
     };
 
@@ -336,17 +341,17 @@
       this.message.hide();
       fill = this.fill;
       fill.addClass(ProgressBar.classes.noTransition);
-      setTimeout(function() {
+      return setTimeout(function() {
         fill.css("width", "0");
         return setTimeout(function() {
           fill.removeClass(ProgressBar.classes.noTransition);
           return callback();
-        }, 0);
-      }, 0);
+        }, 5);
+      }, 5);
     };
 
     ProgressBar.prototype.resetAfter = function(time) {
-      setTimeout(this.reset.bind(this), time);
+      return setTimeout(this.reset.bind(this), time);
     };
 
     return ProgressBar;
@@ -471,8 +476,18 @@
     TabSwitcher.list = [];
 
     TabSwitcher.findAll = function() {
-      $("." + TabSwitcher.classes.tabs).each(function() {
-        return TabSwitcher.list.push(new TabSwitcher($(this), $(this).parent().parent().find("." + TabSwitcher.classes.content)));
+      return $("." + TabSwitcher.classes.tabs).each(function() {
+        var container, tabs;
+        tabs = $(this);
+        if (tabs.hasClass(TabSwitcher.classes.content)) {
+          container = tabs;
+        } else {
+          container = tabs.siblings("." + TabSwitcher.classes.content);
+        }
+        if (container.length === 0) {
+          container = tabs.parent().siblings("." + TabSwitcher.classes.content);
+        }
+        return TabSwitcher.list.push(new TabSwitcher(tabs, container));
       });
     };
 
@@ -482,30 +497,30 @@
       this.container = container;
       this.findDefault();
       this.registerEvents();
-      return;
     }
 
     TabSwitcher.prototype.findDefault = function() {
       var tab;
-      tab = this.tabs.find("[data-default-tab]").attr("data-switch-to-tab");
-      this.setTo(tab);
+      tab = this.tabs.children("[data-default-tab]").attr("data-switch-to-tab");
+      return this.setTo(tab);
     };
 
     TabSwitcher.prototype.registerEvents = function() {
-      this.tabs.find("[data-switch-to-tab]").on("click", this.handleClick);
+      return this.tabs.children("[data-switch-to-tab]").on("click", this.handleClick);
     };
 
     TabSwitcher.prototype.handleClick = function(event) {
       var tab;
       tab = $(event.currentTarget).attr("data-switch-to-tab");
-      this.setTo(tab);
+      return this.setTo(tab);
     };
 
     TabSwitcher.prototype.setTo = function(tab) {
-      this.container.find("[data-tab]").removeClass(TabSwitcher.classes.active);
-      this.container.find("[data-tab=\"" + tab + "\"]").addClass(TabSwitcher.classes.active);
-      this.tabs.find("[data-switch-to-tab]").removeClass(TabSwitcher.classes.active);
-      this.tabs.find("[data-switch-to-tab=\"" + tab + "\"]").addClass(TabSwitcher.classes.active);
+      this.current = tab;
+      this.container.children("[data-tab]").removeClass(TabSwitcher.classes.active);
+      this.container.children("[data-tab=\"" + tab + "\"]").addClass(TabSwitcher.classes.active);
+      this.tabs.children("[data-switch-to-tab]").removeClass(TabSwitcher.classes.active);
+      return this.tabs.children("[data-switch-to-tab=\"" + tab + "\"]").addClass(TabSwitcher.classes.active);
     };
 
     return TabSwitcher;
@@ -773,6 +788,13 @@
 
     Dialog.registerEvents = function() {
       $("[data-dialog-type=\"confirm\"]").on("click", this.handleConfirmClick);
+      return $("[data-dialog-type=\"alert\"]").on("click", this.handleAlertClick);
+    };
+
+    Dialog.handleAlertClick = function(event) {
+      var target;
+      target = $(event.currentTarget);
+      return vex.dialog.alert(target.attr("data-dialog-message"));
     };
 
     Dialog.handleConfirmClick = function(event, customConfig) {
@@ -1170,184 +1192,313 @@
 
   window.Oxygen.ImageEditor = ImageEditor = (function() {
     function ImageEditor(container) {
-      this.handleControlChange = __bind(this.handleControlChange, this);
-      this.saveActual = __bind(this.saveActual, this);
+      this.handleResizeInputChange = __bind(this.handleResizeInputChange, this);
+      this.handleCropRelease = __bind(this.handleCropRelease, this);
+      this.handleCropInputChange = __bind(this.handleCropInputChange, this);
+      this.handleCropSelect = __bind(this.handleCropSelect, this);
+      this.handleCropDisable = __bind(this.handleCropDisable, this);
+      this.handleCropEnable = __bind(this.handleCropEnable, this);
+      this.onRequestProgress = __bind(this.onRequestProgress, this);
+      this.onRequestEnd = __bind(this.onRequestEnd, this);
       this.handleSave = __bind(this.handleSave, this);
-      this.handleReset = __bind(this.handleReset, this);
-      this.handleMacroSubmit = __bind(this.handleMacroSubmit, this);
-      this.handleRenderFinished = __bind(this.handleRenderFinished, this);
-      this.handleBlockFinished = __bind(this.handleBlockFinished, this);
+      this.handlePreview = __bind(this.handlePreview, this);
+      var that;
       this.container = container;
       this.image = this.container.find("." + ImageEditor.classes.layout.image);
       if (!this.image.length) {
         throw new Error("<img> element doesn't exist");
       }
-      this.form = this.image.closest("form");
+      this.forms = {
+        simple: this.image.parent().parent().find("." + ImageEditor.classes.form.simple),
+        advanced: this.image.parent().parent().find("." + ImageEditor.classes.form.advanced)
+      };
+      this.fields = {
+        crop: {
+          x: this.container.find('[name="crop[x]"]'),
+          y: this.container.find('[name="crop[y]"]'),
+          width: this.container.find('[name="crop[width]"]'),
+          height: this.container.find('[name="crop[height]"]')
+        },
+        resize: {
+          width: this.container.find('[name="resize[width]"]'),
+          height: this.container.find('[name="resize[height]"]'),
+          keepAspectRatio: this.container.find('[name="resize[keepAspectRatio]"][value="true"]')
+        },
+        macro: this.container.find('[name="macro"]'),
+        name: this.container.find('[name="name"]'),
+        slug: this.container.find('[name="slug"]')
+      };
+      that = this;
+      this.image[0].onload = function() {
+        console.log('Image Loaded');
+        if (that.imageDimensions == null) {
+          that.imageDimensions = {
+            cropX: 0,
+            cropY: 0
+          };
+        }
+        that.imageDimensions.width = this.clientWidth;
+        that.imageDimensions.height = this.clientHeight;
+        that.imageDimensions.naturalWidth = this.naturalWidth;
+        that.imageDimensions.naturalHeight = this.naturalHeight;
+        that.imageDimensions.ratio = this.naturalWidth / this.naturalHeight;
+        that.fields.resize.width.val(that.imageDimensions.naturalWidth);
+        that.fields.resize.height.val(that.imageDimensions.naturalHeight);
+        return that.handleCropEnable();
+      };
       this.progressBar = new ProgressBar(this.container.find("." + ImageEditor.classes.form.progressBar));
       this.fullscreenToggle = new FullscreenToggle(this.container.find("." + ImageEditor.classes.button.toggleFullscreen), this.container, (function() {}), (function() {}));
-      this.simpleControls = this.container.find("." + ImageEditor.classes.form.control);
-      this.container.find("." + ImageEditor.classes.button.submitMacro).on("click", this.handleMacroSubmit);
-      this.container.find("." + ImageEditor.classes.button.reset).on("click", this.handleReset);
+      this.container.find("." + ImageEditor.classes.button.apply).on("click", this.handlePreview);
       this.container.find("." + ImageEditor.classes.button.save).on("click", this.handleSave);
-      this.simpleControls.on("change", this.handleControlChange);
-      this.setMacro(this.constructMacroFromString(""));
-      this.process();
-      Caman.Event.listen(this.caman, "blockFinished", this.handleBlockFinished);
-      Caman.Event.listen(this.caman, "renderFinished", this.handleRenderFinished);
-
-      /*jcrop_api = null
-      @image.Jcrop({
-          onChange: @.onChange
-          onSelect: @.onSelect
-          onRelease: @.onRelease
-      }, () ->
-              jcrop_api = this;
-      );
-       */
-      ImageEditor.list.push(this);
-      return;
+      this.container.find("." + ImageEditor.classes.form.crop).on("change", this.handleCropInputChange);
+      this.container.find("." + ImageEditor.classes.form.resize).on("change", this.handleResizeInputChange);
+      this.jCropApi = null;
+      this.cropDisableCounter = 2;
     }
 
-    ImageEditor.prototype.setMacro = function(object) {
-      this.macro = object;
-    };
-
-    ImageEditor.prototype.process = function(revert) {
-      if (revert == null) {
-        revert = false;
-      }
-      console.log("ImageEditor.process()");
-      this.progressBar.setup();
-      this.blocksFinished = 0;
-      if (revert) {
-        this.caman.revert(false);
-      }
-      this.caman = Caman(this.image[0], this.macro["function"]);
-    };
-
-    ImageEditor.prototype.handleBlockFinished = function(job) {
-      this.blocksFinished++;
-      console.log(this.blocksFinished + " in " + job.totalBlocks * this.macro.stages);
-      this.progressBar.transitionTo(this.blocksFinished, job.totalBlocks * this.macro.stages);
-    };
-
-
-    /*handleRevertBlockFinished: (job) =>
-        console.log "RevertBlockFinished"
-        return
-     */
-
-    ImageEditor.prototype.handleRenderFinished = function() {
-      console.log("ImageEditor.handleRenderFinished()");
-      this.progressBar.transitionTo(1, 1);
-      this.progressBar.resetAfter(500);
-      this.image = this.container.find("." + ImageEditor.classes.layout.image);
-      if (!this.image.length) {
-        throw new Error("<canvas> element doesn't exist");
-      }
-    };
-
-    ImageEditor.prototype.handleMacroSubmit = function(event) {
-      var value;
-      value = this.container.find("." + ImageEditor.classes.form.macro).val();
-      this.setMacro(this.constructMacroFromString(value));
-      this.process();
-    };
-
-    ImageEditor.prototype.handleReset = function(event) {
-      if (this.caman) {
-        this.caman.reset(false);
-        new Notification({
-          content: "Reset Successful",
-          status: "success"
-        });
-      } else {
-        new Notification({
-          content: "Nothing to Reset",
-          status: "failed"
-        });
-      }
-      this.simpleControls.each(function(index, value) {
-        $(value).val(0);
+    ImageEditor.prototype.handlePreview = function() {
+      this.applyChanges(this.gatherData());
+      return this.progressNotification = new Notification({
+        content: "Processing Image",
+        status: "success"
       });
     };
 
-    ImageEditor.prototype.handleSave = function(event) {
-      var type;
-      type = this.form.find("[name=type]").val();
-      console.log(type);
-      this.caman.canvas.toBlob(this.saveActual, type);
-    };
-
-    ImageEditor.prototype.saveActual = function(blob) {
-      var formData, upload;
-      formData = Form.getFormDataObject(this.form);
-      formData.append("image", blob);
-      upload = new Upload(this.container.find("." + ImageEditor.classes.form.progressBar), this.form, formData);
-      upload.send();
-    };
-
-    ImageEditor.prototype.handleControlChange = function(event) {
-      var values;
-      values = [];
-      this.simpleControls.each(function(index, value) {
-        var element;
-        element = $(value);
-        values[element.attr("data-controls")] = element.val();
+    ImageEditor.prototype.handleSave = function() {
+      var data;
+      data = this.gatherData();
+      data.save = true;
+      data.name = this.fields.name.val();
+      data.slug = this.fields.slug.val();
+      this.applyChanges(data);
+      return this.progressNotification = new Notification({
+        content: "Saving Image",
+        status: "success"
       });
-      this.setMacro(this.constructMacroFromValues(values));
-      console.log(this.macro);
-      this.process(true);
     };
 
-    ImageEditor.prototype.constructMacroFromValues = function(values) {
-      var name, string, _i, _len, _ref;
-      string = "";
-      _ref = ImageEditor.controls;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        name = _ref[_i];
-        if (values[name] !== "0") {
-          string += "." + name + ("(" + values[name] + ")");
+    ImageEditor.prototype.gatherData = function() {
+      var mode;
+      mode = TabSwitcher.list[0].current;
+      switch (mode) {
+        case "simple":
+          return this.getSimpleData();
+        case "advanced":
+          return this.getAdvancedData();
+        default:
+          return {};
+      }
+    };
+
+    ImageEditor.prototype.getSimpleData = function() {
+      return this.removeDefaultFields(Form.getFormData(this.forms.simple));
+    };
+
+    ImageEditor.prototype.removeDefaultFields = function(formData) {
+      var defaults, item, key, resize;
+      resize = (function(_this) {
+        return function(formData) {
+          return (!formData["resize[width]"] || formData["resize[width]"] === _this.imageDimensions.naturalWidth.toString()) && (!formData["resize[height]"] || formData["resize[height]"] === _this.imageDimensions.naturalHeight.toString());
+        };
+      })(this);
+      defaults = {
+        "fit[position]": (function(_this) {
+          return function(item) {
+            return item === "center";
+          };
+        })(this),
+        "resize[width]": (function(_this) {
+          return function(item, formData) {
+            return resize(formData);
+          };
+        })(this),
+        "resize[height]": (function(_this) {
+          return function(item, formData) {
+            return resize(formData);
+          };
+        })(this),
+        "resize[keepAspectRatio]": (function(_this) {
+          return function(item, formData) {
+            return resize(formData);
+          };
+        })(this),
+        "gamma": (function(_this) {
+          return function(item) {
+            return item === "1";
+          };
+        })(this),
+        "greyscale": (function(_this) {
+          return function(item) {
+            return item === "false";
+          };
+        })(this),
+        "invert": (function(_this) {
+          return function(item) {
+            return item === "false";
+          };
+        })(this),
+        "rotate[backgroundColor]": (function(_this) {
+          return function(item) {
+            return item === "#ffffff";
+          };
+        })(this),
+        "crop[x]": (function(_this) {
+          return function(item) {
+            return _this.imageDimensions.cropX = item === "" ? 0 : parseInt(item);
+          };
+        })(this),
+        "crop[y]": (function(_this) {
+          return function(item) {
+            return _this.imageDimensions.cropY = item === "" ? 0 : parseInt(item);
+          };
+        })(this)
+      };
+      for (key in formData) {
+        item = formData[key];
+        if (defaults[key] && defaults[key](item, formData)) {
+          delete formData[key];
+        } else if (item === "0" || item === "") {
+          delete formData[key];
         }
       }
-      return this.constructMacroFromString(string);
+      return formData;
     };
 
-    ImageEditor.prototype.constructMacroFromString = function(string) {
-      string = string.trim();
-      if (string.length > 1 && string.charAt(0) !== ".") {
-        string = "." + string;
-      }
-      return this.constructMacroFromRaw("this" + string + ".render();");
+    ImageEditor.prototype.getAdvancedData = function() {
+      return JSON.parse(this.fields.macro.val());
     };
 
-    ImageEditor.prototype.constructMacroFromRaw = function(functionBody) {
-      var e, full, stages;
-      full = "try {" + functionBody + "} catch(e) { new Oxygen.Notification({ content: \"Invalid Macro\", status: \"failed\", log: e }); }";
-      stages = functionBody.match(/\./g).length - 1;
-      try {
-        return {
-          stages: stages,
-          "function": new Function(full)
-        };
-      } catch (_error) {
-        e = _error;
+    ImageEditor.prototype.applyChanges = function(data) {
+      var i, that;
+      if (this.progressTimer != null) {
         new Notification({
-          content: "Invalid Macro Syntax",
-          status: "failed",
-          log: {
-            exception: e,
-            macro: full
-          }
+          content: "Already Processing",
+          status: "failed"
         });
+        return;
+      }
+      $.ajax({
+        type: "GET",
+        url: this.image.attr("data-root"),
+        data: data,
+        contentType: false,
+        success: this.onRequestEnd,
+        error: (function(_this) {
+          return function() {
+            _this.progressNotification.hide();
+            return Ajax.handleError();
+          };
+        })(this),
+        xhr: (function(_this) {
+          return function() {
+            var object;
+            object = window.ActiveXObject ? new ActiveXObject("XMLHttp") : new XMLHttpRequest();
+            object.addEventListener("progress", _this.onRequestProgress);
+            object.overrideMimeType("text/plain; charset=x-user-defined");
+            return object;
+          };
+        })(this)
+      });
+      i = 0;
+      that = this;
+      return this.progressTimer = setInterval(function() {
+        if (i < 75) {
+          i++;
+        }
+        return that.progressBar.transitionTo(i, 100);
+      }, 50);
+    };
+
+    ImageEditor.prototype.onRequestEnd = function(response, status, request) {
+      clearInterval(this.progressTimer);
+      this.progressTimer = null;
+      this.progressNotification.hide();
+      if (this.jCropApi != null) {
+        this.jCropApi.destroy();
+      }
+      this.jCropApi = null;
+      this.forms.simple.attr("data-changed", false);
+      this.forms.advanced.attr("data-changed", false);
+      this.image[0].src = "data:image/jpeg;base64," + base64Encode(response);
+      this.progressBar.transitionTo(1, 1);
+      return this.progressBar.resetAfter(1000);
+    };
+
+    ImageEditor.prototype.onRequestProgress = function(e) {
+      clearInterval(this.progressTimer);
+      if (e.lengthComputable) {
+        return this.progressBar.transitionTo(Math.round(e.loaded / e.total * 25) + 75, 100);
+      }
+    };
+
+    ImageEditor.prototype.handleCropEnable = function() {
+      var that;
+      if ((this.jCropApi != null)) {
+        return this.jCropApi.enable();
+      } else {
+        that = this;
+        return this.image.Jcrop({
+          onChange: this.handleCropSelect,
+          onSelect: this.handleCropSelect,
+          onRelease: this.handleCropRelease
+        }, function() {
+          return that.jCropApi = this;
+        });
+      }
+    };
+
+    ImageEditor.prototype.handleCropDisable = function() {
+      return this.jCropApi.disable();
+    };
+
+    ImageEditor.prototype.handleCropSelect = function(c) {
+      if (this.cropDisableCounter > 1) {
+        this.fields.crop.x.val(Math.round(c.x / this.imageDimensions.width * this.imageDimensions.naturalWidth + this.imageDimensions.cropX));
+        this.fields.crop.y.val(Math.round(c.y / this.imageDimensions.height * this.imageDimensions.naturalHeight + this.imageDimensions.cropY));
+        this.fields.crop.width.val(Math.round(c.w / this.imageDimensions.width * this.imageDimensions.naturalWidth));
+        return this.fields.crop.height.val(Math.round(c.h / this.imageDimensions.height * this.imageDimensions.naturalHeight));
+      } else {
+        return this.cropDisableCounter++;
+      }
+    };
+
+    ImageEditor.prototype.handleCropInputChange = function() {
+      var x, y;
+      if (this.jCropApi == null) {
+        return;
+      }
+      x = this.fields.crop.x.val() / this.imageDimensions.naturalWidth * this.imageDimensions.width - this.imageDimensions.cropX;
+      y = this.fields.crop.y.val() / this.imageDimensions.naturalHeight * this.imageDimensions.height - this.imageDimensions.cropY;
+      this.cropDisableCounter = 0;
+      return this.jCropApi.setSelect([x, y, x + this.fields.crop.width.val() / this.imageDimensions.naturalWidth * this.imageDimensions.width, y + this.fields.crop.height.val() / this.imageDimensions.naturalHeight * this.imageDimensions.height]);
+    };
+
+    ImageEditor.prototype.handleCropRelease = function() {
+      this.fields.crop.x.val(0);
+      this.fields.crop.y.val(0);
+      this.fields.crop.width.val(0);
+      return this.fields.crop.height.val(0);
+    };
+
+    ImageEditor.prototype.handleResizeInputChange = function(e) {
+      var name, value;
+      if (this.fields.resize.keepAspectRatio[0].checked) {
+        name = e.target.name;
+        value = $(e.target).val();
+        console.log(name, value);
+        if (name === 'resize[width]') {
+          return this.fields.resize.height.val(Math.round(value / this.imageDimensions.ratio));
+        } else {
+          return this.fields.resize.width.val(Math.round(value * this.imageDimensions.ratio));
+        }
       }
     };
 
     ImageEditor.list = [];
 
     ImageEditor.initialize = function() {
-      $("." + ImageEditor.classes.layout.container).each(function() {
-        new ImageEditor($(this));
+      return $("." + ImageEditor.classes.layout.container).each(function() {
+        return ImageEditor.list.push(new ImageEditor($(this)));
       });
     };
 
@@ -1357,19 +1508,18 @@
         image: "ImageEditor-image"
       },
       button: {
-        submitMacro: "ImageEditor-submitMacro",
-        reset: "ImageEditor-reset",
+        toggleFullscreen: "ImageEditor-toggleFullscreen",
         save: "ImageEditor-save",
-        toggleFullscreen: "ImageEditor-toggleFullscreen"
+        apply: "ImageEditor-apply"
       },
       form: {
-        control: "ImageEditor-control",
+        simple: "ImageEditor-form--simple",
+        advanced: "ImageEditor-form--advanced",
         progressBar: "ImageEditor-progress",
-        macro: "ImageEditor-macro"
+        crop: "ImageEditor-crop-input",
+        resize: "ImageEditor-resize-input"
       }
     };
-
-    ImageEditor.controls = ["brightness", "contrast", "saturation", "vibrance", "exposure", "hue", "sepia", "gamma", "noise", "clip", "sharpen", "stackBlur"];
 
     return ImageEditor;
 
@@ -1400,6 +1550,34 @@
         loginForm.removeClass("Login--slideUp");
       }
     };
+  };
+
+  base64Encode = function(inputStr) {
+    var b64, byte1, byte2, byte3, enc1, enc2, enc3, enc4, i, outputStr;
+    b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    outputStr = "";
+    i = 0;
+    while (i < inputStr.length) {
+      byte1 = inputStr.charCodeAt(i++) & 0xff;
+      byte2 = inputStr.charCodeAt(i++) & 0xff;
+      byte3 = inputStr.charCodeAt(i++) & 0xff;
+      enc1 = byte1 >> 2;
+      enc2 = ((byte1 & 3) << 4) | (byte2 >> 4);
+      enc3 = void 0;
+      enc4 = void 0;
+      if (isNaN(byte2)) {
+        enc3 = enc4 = 64;
+      } else {
+        enc3 = ((byte2 & 15) << 2) | (byte3 >> 6);
+        if (isNaN(byte3)) {
+          enc4 = 64;
+        } else {
+          enc4 = byte3 & 63;
+        }
+      }
+      outputStr += b64.charAt(enc1) + b64.charAt(enc2) + b64.charAt(enc3) + b64.charAt(enc4);
+    }
+    return outputStr;
   };
 
   MainNav.headroom();

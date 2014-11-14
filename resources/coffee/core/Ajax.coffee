@@ -41,6 +41,8 @@ window.Oxygen.Ajax = class Ajax
         try
             content = $.parseJSON(response.responseText)
 
+            console.error(content)
+
             new Notification({
                 content:
                     "Exception of type <code class=\"no-wrap\">" + content.error.type +
@@ -48,7 +50,7 @@ window.Oxygen.Ajax = class Ajax
                     "</code>thrown at <code class=\"no-wrap\">" + content.error.file + ":" + content.error.line +
                     "</code>"
                 status: "failed"
-            });
+            })
         catch e
             console.error(response.responseText)
 

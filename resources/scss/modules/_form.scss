@@ -43,6 +43,10 @@
     @include Form-fullWidth();
 }
 
+%Form-input.Form-input--narrow {
+    width: 6em;
+}
+
 %Form-input.Form-input--transparent {
     background-color: rgba(255, 255, 255, 0.5);
 }
@@ -69,12 +73,22 @@
         padding-bottom: 1em;
         width: auto;
     }
-
+  
     .Form--singleColumn & {
-        padding-bottom: 1em;
+        padding: 0.5em 0 0.5em 0;
         width: auto;
     }
+
+    .Form--dark & {
+        color: $color-white;
+    }
+
+    &.Form-label--inline {
+        display: inline-block;
+    }
 }
+
+
 
 .Form-footer {
     @include flex-container(null, flex-end, center, '.flex-item', wrap);
@@ -313,6 +327,10 @@
 
     & + .Form-checkbox-label {
         cursor: pointer;
+
+        .Form--dark & {
+            color: $color-white;
+        }
     }
 
     & + .Form-checkbox-label:before {

@@ -64,10 +64,8 @@ window.Oxygen.ProgressBar = class ProgressBar
             setTimeout( ->
                 fill.removeClass(ProgressBar.classes.noTransition);
                 callback()
-            , 0)
-        , 0)
-        return
+            , 5)
+        , 5)
 
     resetAfter: (time) ->
         setTimeout(@reset.bind(this), time)
-        return

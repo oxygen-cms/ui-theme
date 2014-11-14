@@ -15,10 +15,42 @@ window.Oxygen.ImageEditor = class ImageEditor
     constructor: (container) ->
         @container = container
         @image = @container.find("." + ImageEditor.classes.layout.image)
-
         throw new Error("<img> element doesn't exist")  unless @image.length
 
-        @form = @image.closest("form")
+        @forms = {
+          simple: @image.parent().parent().find("." + ImageEditor.classes.form.simple)
+          advanced: @image.parent().parent().find("." + ImageEditor.classes.form.advanced)
+        }
+
+        @fields = {
+          crop: {
+            x: @container.find('[name="crop[x]"]')
+            y: @container.find('[name="crop[y]"]')
+            width: @container.find('[name="crop[width]"]')
+            height: @container.find('[name="crop[height]"]')
+          },
+          resize: {
+            width: @container.find('[name="resize[width]"]')
+            height: @container.find('[name="resize[height]"]')
+            keepAspectRatio: @container.find('[name="resize[keepAspectRatio]"][value="true"]')
+          },
+          macro: @container.find('[name="macro"]')
+          name: @container.find('[name="name"]')
+          slug: @container.find('[name="slug"]')
+        }
+
+        that = @
+        @image[0].onload = ->
+            console.log 'Image Loaded'
+            that.imageDimensions = { cropX: 0, cropY: 0 } unless that.imageDimensions?
+            that.imageDimensions.width = this.clientWidth
+            that.imageDimensions.height = this.clientHeight
+            that.imageDimensions.naturalWidth = this.naturalWidth
+            that.imageDimensions.naturalHeight = this.naturalHeight
+            that.imageDimensions.ratio = this.naturalWidth / this.naturalHeight
+            that.fields.resize.width.val(that.imageDimensions.naturalWidth)
+            that.fields.resize.height.val(that.imageDimensions.naturalHeight)
+            that.handleCropEnable()
 
         @progressBar = new ProgressBar(
             @container.find("." + ImageEditor.classes.form.progressBar)
@@ -28,189 +60,219 @@ window.Oxygen.ImageEditor = class ImageEditor
             @container,
             ( -> ), ( -> )
         )
-        @simpleControls = @container.find("." + ImageEditor.classes.form.control)
 
-        @container.find("." + ImageEditor.classes.button.submitMacro).on("click", @handleMacroSubmit)
-        @container.find("." + ImageEditor.classes.button.reset).on("click", @handleReset)
+        @container.find("." + ImageEditor.classes.button.apply).on("click", @handlePreview)
         @container.find("." + ImageEditor.classes.button.save).on("click", @handleSave)
-        @simpleControls.on("change", @handleControlChange)
+        @container.find("." + ImageEditor.classes.form.crop).on("change", @handleCropInputChange)
+        @container.find("." + ImageEditor.classes.form.resize).on("change", @handleResizeInputChange)
 
-        @setMacro(@constructMacroFromString(""))
-        @process()
+        @jCropApi = null
+        @cropDisableCounter = 2
 
-        Caman.Event.listen(@caman, "blockFinished", @handleBlockFinished)
-        #Caman.Event.listen(@caman, "revertBlockFinished", @handleRevertBlockFinished)
-        Caman.Event.listen(@caman, "renderFinished", @handleRenderFinished)
+    handlePreview: () =>
+        @applyChanges @gatherData()
 
-        ###jcrop_api = null
-        @image.Jcrop({
-            onChange: @.onChange
-            onSelect: @.onSelect
-            onRelease: @.onRelease
-        }, () ->
-                jcrop_api = this;
-        );###
+        @progressNotification = new Notification({
+          content: "Processing Image"
+          status: "success"
+        })
 
-        ImageEditor.list.push(this)
-        return
+    handleSave: () =>
+        data = @gatherData()
+        data.save = true
+        data.name = @fields.name.val()
+        data.slug = @fields.slug.val()
+        @applyChanges data
 
-    setMacro: (object) ->
-        @macro = object
-        return
+        @progressNotification = new Notification({
+          content: "Saving Image"
+          status: "success"
+        })
 
-    process: (revert = false) ->
-        console.log "ImageEditor.process()"
-        @progressBar.setup()
-        @blocksFinished = 0
-        if revert
-            @caman.revert(false)
-        @caman = Caman(@image[0], @macro.function)
-        return
+    gatherData: () ->
+        mode = TabSwitcher.list[0].current
+        switch mode
+            when "simple" then @getSimpleData()
+            when "advanced" then @getAdvancedData()
+            else {}
 
-    handleBlockFinished: (job) =>
-        @blocksFinished++
-        console.log @blocksFinished + " in " + job.totalBlocks * @macro.stages
-        @progressBar.transitionTo(@blocksFinished, job.totalBlocks * @macro.stages)
-        return
+    getSimpleData: () ->
+        @removeDefaultFields(Form.getFormData(@forms.simple))
 
-    ###handleRevertBlockFinished: (job) =>
-        console.log "RevertBlockFinished"
-        return###
+    removeDefaultFields: (formData) ->
+        resize = (formData) =>
+            return \
+                (!formData["resize[width]"] || formData["resize[width]"] == @imageDimensions.naturalWidth.toString()) &&
+                (!formData["resize[height]"] || formData["resize[height]"] == @imageDimensions.naturalHeight.toString())
 
-    handleRenderFinished: =>
-        console.log "ImageEditor.handleRenderFinished()"
-        # Reset the progress bar ready for next time.
-        @progressBar.transitionTo 1, 1
-        @progressBar.resetAfter 500
+        defaults = {
+            "fit[position]": (item) =>
+                return item == "center"
+            "resize[width]": (item, formData) =>
+                resize(formData)
+            "resize[height]": (item, formData) =>
+                resize(formData)
+            "resize[keepAspectRatio]": (item, formData) =>
+                resize(formData)
+            "gamma": (item) =>
+                return item == "1"
+            "greyscale": (item) =>
+                return item == "false"
+            "invert": (item) =>
+                return item == "false"
+            "rotate[backgroundColor]": (item) =>
+                return item == "#ffffff"
+            "crop[x]": (item) =>
+                @imageDimensions.cropX = if item == "" then 0 else parseInt(item)
+            "crop[y]": (item) =>
+                @imageDimensions.cropY = if item == "" then 0 else parseInt(item)
+        }
 
-        # Find the image again because it has
-        # been transformed into a <canvas> element.
-        # without this the 2nd render will fail.
-        @image = @container.find("." + ImageEditor.classes.layout.image)
-        throw new Error("<canvas> element doesn't exist")  unless @image.length
-        return
+        for key, item of formData
+            if(defaults[key] and defaults[key](item, formData))
+                delete formData[key]
+            else if(item == "0" || item == "")
+                delete formData[key]
 
-    handleMacroSubmit: (event) =>
-        value = @container.find("." + ImageEditor.classes.form.macro).val()
-        @setMacro @constructMacroFromString(value)
-        @process()
-        return
+        return formData
 
-    handleReset: (event) =>
-        if @caman
-            @caman.reset(false)
-            new Notification(
-                content: "Reset Successful"
-                status: "success"
-            )
-        else
-            new Notification(
-                content: "Nothing to Reset"
+    getAdvancedData: () ->
+        JSON.parse @fields.macro.val()
+
+    # --------------------------------------------
+    #                     REQUEST
+    # --------------------------------------------
+
+    applyChanges: (data) ->
+        if @progressTimer?
+            new Notification({
+                content: "Already Processing"
                 status: "failed"
-            )
-
-        @simpleControls.each (index, value) ->
-            $(value).val(0)
+            })
             return
-        return
 
-    handleSave: (event) =>
-        type = @form.find("[name=type]").val()
-        console.log(type)
-        @caman.canvas.toBlob(@saveActual, type)
-        return
+        $.ajax({
+            type:           "GET"
+            url:            @image.attr("data-root")
+            data:           data
+            contentType:    false
+            success:        @onRequestEnd
+            error:          =>
+                @progressNotification.hide()
+                Ajax.handleError()
+            xhr:            =>
+                object = if window.ActiveXObject then new ActiveXObject("XMLHttp") else new XMLHttpRequest()
+                object.addEventListener("progress", @onRequestProgress)
+                object.overrideMimeType("text/plain; charset=x-user-defined");
+                return object
+        })
+        i = 0
+        that = @
+        @progressTimer = setInterval( ->
+            if(i < 75)
+                i++
+            that.progressBar.transitionTo(i, 100)
+        , 50)
 
-    saveActual: (blob) =>
-        formData = Form.getFormDataObject(@form)
-        formData.append("image", blob)
+    onRequestEnd: (response, status, request) =>
+        clearInterval(@progressTimer)
+        @progressTimer = null
+        @progressNotification.hide()
+        @jCropApi.destroy() if @jCropApi?
+        @jCropApi = null
+        @forms.simple.attr("data-changed", false)
+        @forms.advanced.attr("data-changed", false)
 
-        upload = new Upload(
-            @container.find("." + ImageEditor.classes.form.progressBar),
-            @form
-            formData
-        )
-        upload.send()
-        return
+        @image[0].src = "data:image/jpeg;base64," + base64Encode(response);
 
-    handleControlChange: (event) =>
-        values = []
-        @simpleControls.each (index, value) ->
-            element = $(value)
-            values[element.attr("data-controls")] = element.val()
-            return
-        @setMacro @constructMacroFromValues(values)
-        console.log @macro
-        @process(true)
-        return
+        @progressBar.transitionTo(1, 1)
+        @progressBar.resetAfter(1000)
 
-    constructMacroFromValues: (values) ->
-        string = ""
-        for name in ImageEditor.controls
-            string += "." + name + "(#{values[name]})"  if values[name] != "0"
-        return @constructMacroFromString(string)
+    onRequestProgress: (e) =>
+        clearInterval(@progressTimer)
+        if e.lengthComputable
+            @progressBar.transitionTo(Math.round(e.loaded / e.total * 25) + 75, 100)
 
-    constructMacroFromString: (string) ->
-        string = string.trim() # remove whitespace on either side
-        string = "." + string  if string.length > 1 and string.charAt(0) isnt "." # the first '.' is optional
-        return @constructMacroFromRaw("this" + string + ".render();")
+    # --------------------------------------------
+    #                     CROP
+    # --------------------------------------------
 
-    constructMacroFromRaw: (functionBody) ->
-        full = "try {" + functionBody + "} catch(e) { new Oxygen.Notification({ content: \"Invalid Macro\", status: \"failed\", log: e }); }";
-        stages = functionBody.match(/\./g).length - 1
+    handleCropEnable: () =>
+        if(@jCropApi?)
+            @jCropApi.enable();
+        else
+            that = @
+            @image.Jcrop({
+                onChange: @handleCropSelect
+                onSelect: @handleCropSelect
+                onRelease: @handleCropRelease
+            }, () ->
+                that.jCropApi = @
+            );
 
-        try
-            return {
-                stages: stages
-                function: new Function(full)
-            }
-        catch e
-            new Notification(
-              content: "Invalid Macro Syntax"
-              status: "failed"
-              log:
-                exception: e
-                macro: full
-            )
-        return
+    handleCropDisable: () =>
+        @jCropApi.disable()
+
+    handleCropSelect: (c) =>
+        if(@cropDisableCounter > 1)
+            @fields.crop.x.val(Math.round(c.x / @imageDimensions.width * @imageDimensions.naturalWidth + @imageDimensions.cropX))
+            @fields.crop.y.val(Math.round(c.y / @imageDimensions.height * @imageDimensions.naturalHeight + @imageDimensions.cropY))
+            @fields.crop.width.val(Math.round(c.w / @imageDimensions.width * @imageDimensions.naturalWidth))
+            @fields.crop.height.val(Math.round(c.h / @imageDimensions.height * @imageDimensions.naturalHeight))
+        else
+            @cropDisableCounter++
+
+    handleCropInputChange: () =>
+        if(!@jCropApi?) then return
+        x = @fields.crop.x.val() / @imageDimensions.naturalWidth * @imageDimensions.width - @imageDimensions.cropX
+        y = @fields.crop.y.val() / @imageDimensions.naturalHeight * @imageDimensions.height - @imageDimensions.cropY
+        @cropDisableCounter = 0
+        @jCropApi.setSelect([
+            x,
+            y,
+            x + @fields.crop.width.val() / @imageDimensions.naturalWidth * @imageDimensions.width,
+            y + @fields.crop.height.val() / @imageDimensions.naturalHeight * @imageDimensions.height
+        ])
+
+    handleCropRelease: () =>
+        @fields.crop.x.val(0)
+        @fields.crop.y.val(0)
+        @fields.crop.width.val(0)
+        @fields.crop.height.val(0)
+
+    handleResizeInputChange: (e) =>
+        if(@fields.resize.keepAspectRatio[0].checked)
+            name = e.target.name
+            value = $(e.target).val()
+            console.log(name, value)
+            if(name == 'resize[width]')
+                @fields.resize.height.val(Math.round(value / @imageDimensions.ratio))
+            else
+                @fields.resize.width.val(Math.round(value * @imageDimensions.ratio))
 
     # -----------------
     #        Static
     # -----------------
 
-    @list = []
+    @list: []
 
     @initialize: () ->
         $("." + ImageEditor.classes.layout.container).each( ->
-            new ImageEditor($(this))
-            return
+            ImageEditor.list.push new ImageEditor($(this))
         )
-        return
 
-    @classes =
+    @classes: {
         layout:
-            container: "ImageEditor"
-            image: "ImageEditor-image"
+          container: "ImageEditor"
+          image: "ImageEditor-image"
         button:
-            submitMacro: "ImageEditor-submitMacro"
-            reset: "ImageEditor-reset"
-            save: "ImageEditor-save"
-            toggleFullscreen: "ImageEditor-toggleFullscreen"
+          toggleFullscreen: "ImageEditor-toggleFullscreen"
+          save: "ImageEditor-save"
+          apply: "ImageEditor-apply"
         form:
-            control: "ImageEditor-control"
-            progressBar: "ImageEditor-progress"
-            macro: "ImageEditor-macro"
-
-    @controls: [
-        "brightness",
-        "contrast",
-        "saturation",
-        "vibrance",
-        "exposure",
-        "hue",
-        "sepia",
-        "gamma",
-        "noise",
-        "clip",
-        "sharpen",
-        "stackBlur"
-    ]
+          simple: "ImageEditor-form--simple"
+          advanced: "ImageEditor-form--advanced"
+          progressBar: "ImageEditor-progress"
+          crop: "ImageEditor-crop-input"
+          resize: "ImageEditor-resize-input"
+    }

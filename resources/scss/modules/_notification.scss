@@ -25,8 +25,9 @@
 .Notification {
     display: block;
     padding: 1.25em;
-    margin-bottom: 0.5em;
+    margin: 0.5em 0.5em 0 0;
     line-height: 1.5;
+    border-radius: 0.5em;
 
     animation: Notification--slideIn 0.5s both;
 
