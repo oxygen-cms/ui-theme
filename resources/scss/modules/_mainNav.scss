@@ -8,12 +8,12 @@
 
 .MainNav {
     background-color: $color-grey-dark-1;
+    position: fixed;
+    top: 0;
+    left: 0;
 
     @include smaller-than($tablet-large) {
         overflow: auto;
-        position: fixed;
-        top: 0;
-        left: 0;
         transform: translateX(-20em);
         width: 20em;
         height: 100%;
@@ -22,11 +22,7 @@
 
     @include larger-than($tablet-large) {
         @include clearfix;
-        position: fixed;
-        top: 0;
-        left: 0;
         width: 100%;
-        z-index: 75;
     }
 }
 
@@ -181,11 +177,11 @@
         transform: translateX(0);
     }
 
-    #navigation:target ~ .AdminPage {
+    #navigation:target ~ .Page {
         transform: translateX(20em);
     }
 
-    #navigation:target ~ .AdminPage .MainNav-close {
+    #navigation:target ~ .Page .MainNav-close {
         display: block;
     }
 
