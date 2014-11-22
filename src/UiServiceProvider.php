@@ -23,6 +23,7 @@ class UiServiceProvider extends ServiceProvider {
 
         $this->addStylesheetsToLayout();
 		$this->addScriptsToLayout();
+        $this->addNavigationTransitions();
 	}
 
     /**
@@ -51,6 +52,16 @@ class UiServiceProvider extends ServiceProvider {
         $this->app['events']->listen('oxygen.layout.body.after', function() {
             echo $this->app['view']->make('oxygen/ui::bodyLast')->render();
         }, -1);
+    }
+
+    /**
+     * Adds navigation transitions to the view.
+     */
+
+    public function addNavigationTransitions() {
+        $this->app['events']->listen('oxygen.layout.headers', function() {
+            header('Link: </packages/oxygen/ui/css/entering.css>;rel=transition-entering-stylesheet;scope=*');
+        });
     }
 
 	/**

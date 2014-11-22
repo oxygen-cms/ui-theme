@@ -12,7 +12,7 @@
 <script src="/packages/oxygen/ui/bower_components/ckeditor/ckeditor.js"></script>
 
 <!-- Image Editor -->
-<script src="/packages/oxygen/ui/bower_components/caman/dist/caman.full.js"></script>
+<!--<script src="/packages/oxygen/ui/bower_components/caman/dist/caman.full.js"></script>-->
 <script src="/packages/oxygen/ui/bower_components/Jcrop/js/jquery.Jcrop.min.js"></script>
-<script src="/packages/oxygen/ui/bower_components/blueimp-canvas-to-blob/js/canvas-to-blob.js"></script>
+<!--<script src="/packages/oxygen/ui/bower_components/blueimp-canvas-to-blob/js/canvas-to-blob.js"></script>-->
 <link rel="stylesheet" href="/packages/oxygen/ui/bower_components/Jcrop/css/jquery.Jcrop.css" type="text/css">

@@ -1186,8 +1186,6 @@
 
   })();
 
-  Caman.DEBUG = true;
-
   window.Oxygen || (window.Oxygen = {});
 
   window.Oxygen.ImageEditor = ImageEditor = (function() {

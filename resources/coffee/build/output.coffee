@@ -1123,9 +1123,6 @@ window.Oxygen.Editor.SplitViewInterface = class SplitViewInterface
 #             ImageEditor
 # ================================
 
-Caman.DEBUG = true
-#Caman.allowRevert = false
-
 window.Oxygen or= {}
 window.Oxygen.ImageEditor = class ImageEditor
 
