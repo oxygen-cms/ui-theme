@@ -59,9 +59,9 @@ class UiServiceProvider extends ServiceProvider {
      */
 
     public function addNavigationTransitions() {
-        $this->app['events']->listen('oxygen.layout.headers', function() {
+        /*$this->app['events']->listen('oxygen.layout.headers', function() {
             header('Link: </packages/oxygen/ui/css/entering.css>;rel=transition-entering-stylesheet;scope=*');
-        });
+        });*/
     }
 
 	/**

@@ -1,3 +1,7 @@
+<?php
+    use Oxygen\Core\Html\Editor\Editor;
+?>
+
 <!-- Core -->
 <script src="/packages/oxygen/ui/bower_components/jquery/dist/jquery.min.js"></script>
 <script src="/packages/oxygen/ui/bower_components/headroom.js/dist/headroom.min.js"></script>
@@ -8,8 +12,10 @@
 <script src="/packages/oxygen/ui/bower_components/taggingJS/tagging.min.js"></script>
 
 <!-- Code Editor -->
-<script src="/packages/oxygen/ui/bower_components/ace-builds/src-min/ace.js"></script>
-<script src="/packages/oxygen/ui/bower_components/ckeditor/ckeditor.js"></script>
+<?php if(Editor::$includeScripts): ?>
+    <script src="/packages/oxygen/ui/bower_components/ace-builds/src-min/ace.js"></script>
+    <script src="/packages/oxygen/ui/bower_components/ckeditor/ckeditor.js"></script>
+<?php endif; ?>
 
 <!-- Image Editor -->
 <!--<script src="/packages/oxygen/ui/bower_components/caman/dist/caman.full.js"></script>-->
