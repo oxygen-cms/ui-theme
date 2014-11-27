@@ -7,19 +7,26 @@
    ==================================================================== */
 
 .Row {
+    @extend .Row--visual;
+    @extend .Row--layout;
+}
+
+.Row--layout {
     @include larger-than($tablet-large) {
-        @include flex-container(row, flex-start, center);
-    }
-
-    padding: 1em;
-
-    .Row & {
-        padding: 1em 0;
+        @include flex-container(row, flex-start, center, '.flex-item', wrap);
     }
 }
 
-.Row--noLayout {
+.Row--wrap {
+    flex-wrap: wrap;
+}
+
+.Row--visual {
     padding: 1em;
+
+    .Row & {
+      padding: 1em 0;
+    }
 }
 
 .Row--alignTop {
@@ -39,13 +46,54 @@
     margin: -0.5em;
 }
 
-.Cell-aside {
-    @include larger-than($tablet-large) {
-        width: 25%;
-        margin-right: 2em;
+@include larger-than($tablet-large) {
+    .Cell-oneThird,
+    .Cell-twoThirds {
+        margin-right: 2.5%;
+        margin-bottom: 2.5%;
+
+        .Row--singleLine & {
+            margin-bottom: 0;
+        }
+
+        .Row--equalCells &:nth-child(3n) {
+            margin-right: 0;
+        }
+    }
+
+    .Cell-oneThird {
+        width: 31.6666666%;
+    }
+
+    .Cell-twoThirds {
+        width: 65.83333333%;
+    }
+
+    .Cell-oneHalf {
+        margin-right: 2.5%;
+        width: 48.75%;
+
+        .Row--equalCells &:nth-child(2n) {
+          margin-right: 0;
+        }
+    }
+
+    .Cell--last {
+        margin-right: 0;
     }
 }
 
-.Cell-flex {
-    flex: 1;
+@include smaller-than($tablet-large) {
+    .Cell-oneThird,
+    .Cell-twoThirds,
+    .Cell-oneHalf {
+        display: block;
+        margin-bottom: 0.5em;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
 }
+
+

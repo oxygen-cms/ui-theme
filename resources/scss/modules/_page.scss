@@ -19,8 +19,6 @@
 
 .Block {
     max-width: 100em;
-    margin-left: auto;
-    margin-right: auto;
 
     border: 1px solid $color-grey-light-2;
     background-color: $color-white;
@@ -28,7 +26,7 @@
     padding: 0.5em;
 
     @include larger-than($tablet-large) {
-        margin-bottom: 2em;
+        margin-bottom: 1em;
     }
 
     @include clearfix;
@@ -40,6 +38,8 @@
 
 .Block--mini {
     width: 30em;
+    margin-left: auto;
+    margin-right: auto;
     @include smaller-than($tablet-small) {
         width: 100%;
     }
@@ -61,6 +61,16 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.Block--link {
+    text-decoration: none;
+    text-align: center;
+    padding: 2em;
+
+    &:hover, &:active {
+      text-decoration: none;
+    }
 }
 
 .Block--noBorder {

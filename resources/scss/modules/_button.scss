@@ -50,28 +50,17 @@ input[type="button"] {
 .Button--back,
 .Button--forward {
     @include Box--design-flat($color-grey-light-2);
+
     position: relative;
     z-index: 1;
 
     &:before {
-        @include Box--design-flat($color-grey-light-2);
         position: absolute;
-        top: 3.5px;
-        z-index: -1;
-        display: block;
-        width: 2.1em;
-        height: 80%;
-        border-radius: 0.15em;
+        top: 0;
         content: "";
-        transform: rotate(45deg);
-    }
-
-    &:hover:before {
-        background-color: darken($color-grey-light-2, 10%);
-    }
-
-    &:active:before {
-        background-color: darken($color-grey-light-2, 15%);
+        font-size: 0px; line-height: 0%; width: 0px;
+        border-top: 20px solid transparent;
+        border-bottom: 20px solid transparent;
     }
 }
 
@@ -81,23 +70,39 @@ input[type="button"] {
 }
 
 .Button--back {
-    margin-left: 1em;
-    border-top-left-radius: 0.15em;
-    border-bottom-left-radius: 0.15em;
-}
+    padding-left: 1em;
 
-.Button--back:before {
-    left: -1.05em;
+    &:before {
+        left: -15px;
+        border-right: 20px solid $color-grey-light-2;
+        transition: border-right-color 0.2s ease;
+    }
+
+    &:hover:before {
+        border-right-color: darken($color-grey-light-2, 10%)
+    }
+
+    &:active:before {
+        border-right-color: darken($color-grey-light-2, 15%)
+    }
 }
 
 .Button--forward {
-    margin-right: 1em;
-    border-top-right-radius: 0.15em;
-    border-bottom-right-radius: 0.15em;
-}
+    padding-right: 1em;
 
-.Button--forward:before {
-    right: -1.05em;
+    &:before {
+        right: -15px;
+        border-left: 20px solid $color-grey-light-2;
+        transition: border-left-color 0.2s ease;
+    }
+
+    &:hover:before {
+        border-left-color: darken($color-grey-light-2, 10%)
+    }
+
+    &:active:before {
+        border-left-color: darken($color-grey-light-2, 15%)
+    }
 }
 
 .Button[disabled] {
@@ -106,19 +111,12 @@ input[type="button"] {
     color: $color-grey-light-1;
     cursor: default !important;
 
-    &.Button--back:before,
-    &.Button--forward:before {
-        background-color: $color-white;
-    }
-
     &.Button--back:before {
-        border-bottom: 1px solid $color-grey-light-1;
-        border-left: 1px solid $color-grey-light-1;
+        border: 0;
     }
 
     &.Button--forward:before {
-        border-top: 1px solid $color-grey-light-1;
-        border-right: 1px solid $color-grey-light-1;
+        border: 0;
     }
 }
 

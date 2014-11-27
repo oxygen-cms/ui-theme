@@ -67,25 +67,3 @@
         background-position: 0 0, ($size / 2) ($size / 2);
     }
 }
-
-.Box {
-    display: inline-block;
-    width: 25em;
-    margin: 1em;
-    background-color: #fafafa;
-    text-decoration: none;
-    text-align: center;
-
-    &:hover, &:active {
-        text-decoration: none;
-    }
-
-    @include smaller-than($tablet-large) {
-        width: calc(100% - 2em);
-    }
-}
-
-.Box--border {
-    border: 1px solid #ccc;
-    padding: 2em;
-}

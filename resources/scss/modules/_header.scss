@@ -8,34 +8,40 @@
 
 .Header {
     padding: 0.5em;
-    border-bottom: 1px solid $color-grey-light-1;
-
-    @include smaller-than($tablet-large) {
-        @include flex-container(column);
-    }
-
-    @include larger-than($tablet-large) {
-        @include flex-container(row, flex-start, center);
-        padding: 1.5em;
-    }
 }
 
-.Header--normal {
-    padding: 1em 1.5em;
+.Header--tiny,
+.Header--small,
+.Header--normal,
+.Header--main {
+    border-bottom: 1px solid $color-grey-light-1;
 
-    .Header-title {
-        @include larger-than($tablet-large) {
-            margin-left: 5em;
-        }
+    @include flex-container(column);
+
+    @include larger-than($tablet-large) {
+      @include flex-container(row, flex-start, center);
+      padding: 1.5em;
     }
 }
 
 .Header--tiny {
-    padding: 0.5em 0;
+  padding: 0.5em 0;
+}
+
+.Header--normal {
+    padding: 1em 1.5em;
 }
 
 .Header--main {
-    padding: 1.5em;
+  padding: 1.5em;
+}
+
+.Header--block {
+    padding: 1em;
+
+    .Header-title {
+        margin-top: 0.5em;
+    }
 }
 
 .Header:last-child {
@@ -71,12 +77,19 @@
     }
 
     @include larger-than($tablet-large) {
-        @include align-right();
+        float: right;
+        margin-left: auto;
     }
+
+    &.Header-toolbar--alignLeft {
+        float: left;
+    }
+
 }
 
-.Header-toolbar--alignLeft {
-    float: left !important;
+.Header--block .Header-toolbar {
+    margin-top: 1em;
+    float: none;
 }
 
 .Header-toolbar--padding {
