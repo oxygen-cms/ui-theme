@@ -7,7 +7,9 @@
    ==================================================================== */
 
 .Page {
+    max-width: 100em;
     min-height: 100%;
+    margin: 0 auto;
     padding: 0.5em;
     transition: transform 0.2s ease;
     background-color: $color-white-1;
@@ -18,8 +20,6 @@
 }
 
 .Block {
-    max-width: 100em;
-
     border: 1px solid $color-grey-light-2;
     background-color: $color-white;
     margin-bottom: 0.5em;

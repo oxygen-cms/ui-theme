@@ -201,7 +201,9 @@ img, canvas {
    ====================================================================
    ==================================================================== */
 .Page {
+  max-width: 100em;
   min-height: 100%;
+  margin: 0 auto;
   padding: 0.5em;
   -webkit-transition: -webkit-transform 0.2s ease;
   transition: transform 0.2s ease;
@@ -211,7 +213,6 @@ img, canvas {
       padding: 2em; } }
 
 .Block {
-  max-width: 100em;
   border: 1px solid #eee;
   background-color: #ffffff;
   margin-bottom: 0.5em;
