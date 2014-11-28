@@ -1,7 +1,7 @@
 /* ====================================================================
    ====================================================================
 
-                            Components/Tables
+                            Modules/Table
 
    ====================================================================
    ==================================================================== */
@@ -46,11 +46,11 @@ th {
     padding: 10px;
 }
 
-table.centered-content {
+table.Table--centeredContent {
     text-align: center;
 }
 
-table.top-aligned-cells td,
-table.top-aligned-cells th {
+table.Table--topAlignedCells td,
+table.Table--topAlignedCells th {
     vertical-align: top;
 }

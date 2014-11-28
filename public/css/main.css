@@ -2363,6 +2363,45 @@ select {
 /* ====================================================================
    ====================================================================
 
+                            Modules/Table
+
+   ====================================================================
+   ==================================================================== */
+/* =================================
+                GENERIC
+   ================================= */
+table {
+  width: 100%;
+  border-collapse: collapse; }
+
+td, th {
+  border: 1px 0 1px 0 solid #888; }
+
+tbody tr:nth-child(odd) {
+  background-color: #ffffff; }
+tbody tr:nth-child(even) {
+  background-color: #fbfbfb; }
+tbody tr.is-hidden {
+  display: none; }
+
+thead {
+  background-color: #fdfdfd; }
+
+thead th {
+  font-size: 1.1em; }
+
+td, th {
+  padding: 10px; }
+
+table.Table--centeredContent {
+  text-align: center; }
+
+table.Table--topAlignedCells td, table.Table--topAlignedCells th {
+  vertical-align: top; }
+
+/* ====================================================================
+   ====================================================================
+
                                Tooltip
 
    ====================================================================
