@@ -6,11 +6,6 @@
    ====================================================================
    ==================================================================== */
 
-.Icon--huge {
-    font-size: 10em;
-    color: $color-grey-dark-1;
-}
-
 .Icon--pushUp {
     margin-top: 14px;
     margin-top: 1rem;
@@ -22,4 +17,26 @@
 
 .Icon--pushRight {
     margin-right: 0.3em;
+}
+
+.Icon-container {
+    text-align: center;
+    padding: 1em;
+    background-color: $color-grey-light-2;
+}
+
+.Icon--gigantic {
+    font-size: 15em;
+}
+
+.Icon--huge {
+    font-size: 10em;
+}
+
+.Icon--dark {
+  color: $color-grey-dark-1;
+}
+
+.Icon--light {
+    color: $color-grey-light-1;
 }

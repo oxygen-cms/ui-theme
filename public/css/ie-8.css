@@ -1665,10 +1665,6 @@ select {
 
    ====================================================================
    ==================================================================== */
-.Icon--huge {
-  font-size: 10em;
-  color: #333; }
-
 .Icon--pushUp {
   margin-top: 14px;
   margin-top: 1rem; }
@@ -1678,6 +1674,23 @@ select {
 
 .Icon--pushRight {
   margin-right: 0.3em; }
+
+.Icon-container {
+  text-align: center;
+  padding: 1em;
+  background-color: #eee; }
+
+.Icon--gigantic {
+  font-size: 15em; }
+
+.Icon--huge {
+  font-size: 10em; }
+
+.Icon--dark {
+  color: #333; }
+
+.Icon--light {
+  color: #ccc; }
 
 /* ====================================================================
    ====================================================================
@@ -2428,10 +2441,6 @@ select {
   text-decoration: none; }
   .Marketplace-item:hover {
     text-decoration: none; }
-
-.Marketplace-item-icon {
-  font-size: 15em;
-  color: #ccc; }
 
 .Marketplace-item-icons {
   list-style-type: none;
