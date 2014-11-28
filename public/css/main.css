@@ -1629,7 +1629,7 @@ select {
 .Header--tiny {
   padding: 0.5em 0; }
 
-.Header--normal {
+.Header--small {
   padding: 1em 1.5em; }
 
 .Header--main {
@@ -1656,36 +1656,40 @@ select {
     .Header-back {
       margin-bottom: 0; } }
 
-.flexbox .Header-toolbar, .flexbox .Editor-header, .flexbox .Editor-footer, .flexbox .ImageEditor-toolbar {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: start;
-  -webkit-justify-content: flex-start;
-  -moz-box-pack: start;
-  -ms-flex-pack: start;
-  justify-content: flex-start;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  -moz-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-flex-wrap: wrap;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap; }
-.Header-toolbar > *, .Header-toolbar > .Editor-header, .Header-toolbar > .Editor-footer, .Header-toolbar > .ImageEditor-toolbar {
-  margin: 0 0.25em; }
-@media screen and (max-width: 768px) {
-  .Header-toolbar {
-    margin-top: 1em; } }
-@media screen and (min-width: 769px) {
-  .Header-toolbar {
-    float: right;
-    margin-left: auto; } }
-.Header-toolbar.Header-toolbar--alignLeft, .Header-toolbar--alignLeft.Editor-header, .Header-toolbar--alignLeft.Editor-footer, .Header-toolbar--alignLeft.ImageEditor-toolbar {
-  float: left; }
+.Header-toolbar, .Editor-header, .Editor-footer, .ImageEditor-toolbar {
+  -webkit-align-content: space-between;
+  -ms-flex-line-pack: justify;
+  align-content: space-between; }
+  .flexbox .Header-toolbar, .flexbox .Editor-header, .flexbox .Editor-footer, .flexbox .ImageEditor-toolbar {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+    -moz-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap; }
+  .Header-toolbar > *, .Header-toolbar > .Editor-header, .Header-toolbar > .Editor-footer, .Header-toolbar > .ImageEditor-toolbar {
+    margin: 0 0.25em; }
+  @media screen and (max-width: 768px) {
+    .Header-toolbar {
+      margin-top: 1em; } }
+  @media screen and (min-width: 769px) {
+    .Header-toolbar {
+      float: right;
+      margin-left: auto; } }
+  .Header-toolbar.Header-toolbar--alignLeft, .Header-toolbar--alignLeft.Editor-header, .Header-toolbar--alignLeft.Editor-footer, .Header-toolbar--alignLeft.ImageEditor-toolbar {
+    float: left; }
 
 .Header--block .Header-toolbar, .Header--block .Editor-header, .Header--block .Editor-footer, .Header--block .ImageEditor-toolbar {
   margin-top: 1em;

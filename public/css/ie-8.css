@@ -1590,7 +1590,7 @@ select {
 .Header--tiny {
   padding: 0.5em 0; }
 
-.Header--normal {
+.Header--small {
   padding: 1em 1.5em; }
 
 .Header--main {
@@ -1613,6 +1613,9 @@ select {
   margin-bottom: 0; }
 
 .Header-toolbar, .Editor-header, .Editor-footer, .ImageEditor-toolbar {
+  -webkit-align-content: space-between;
+  -ms-flex-line-pack: justify;
+  align-content: space-between;
   float: right;
   margin-left: auto; }
   .flexbox .Header-toolbar, .flexbox .Editor-header, .flexbox .Editor-footer, .flexbox .ImageEditor-toolbar {
