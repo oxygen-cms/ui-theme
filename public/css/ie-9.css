@@ -2378,7 +2378,9 @@ table {
   border-collapse: collapse; }
 
 td, th {
-  border: 1px 0 1px 0 solid #888; }
+  border-width: 1px 0 1px 0;
+  border-style: solid;
+  border-color: #888; }
 
 tbody tr:nth-child(odd) {
   background-color: #ffffff; }
@@ -2394,7 +2396,7 @@ thead th {
   font-size: 1.1em; }
 
 td, th {
-  padding: 10px; }
+  padding: 1em; }
 
 table.Table--centeredContent {
   text-align: center; }

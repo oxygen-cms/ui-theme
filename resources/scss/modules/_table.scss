@@ -17,7 +17,9 @@ table {
 
 td,
 th {
-    border: 1px 0 1px 0 solid $color-grey-dark-3;
+    border-width: 1px 0 1px 0;
+    border-style: solid;
+    border-color: $color-grey-dark-3;
 }
 
 tbody tr {
@@ -43,7 +45,7 @@ thead th {
 
 td,
 th {
-    padding: 10px;
+    padding: 1em;
 }
 
 table.Table--centeredContent {
