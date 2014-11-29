@@ -1185,6 +1185,9 @@ button, input[type="submit"], input[type="button"] {
 .no-js .Form-footer {
   float: right; }
 
+.Form--inline {
+  display: inline; }
+
 /* ============================
           TOGGLE-SWITCH
    ============================ */
