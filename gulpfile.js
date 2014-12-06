@@ -70,8 +70,31 @@ gulp.task("coffee", ["coffee-concat"], function() {
         }));
 });
 
-gulp.task("js-vendor", shell.task([
-    'rsync -rp --delete resources/coffee/vendor public/js'
+gulp.task("vendor", shell.task([
+    'mkdir -p public/vendor',
+    // Modernizr
+    'rsync -a resources/vendor/modernizr-2.8.3.min.js public/vendor/modernizr.min.js',
+    // Ace
+    'rsync -ar --delete bower_components/ace-builds/src-min/ public/vendor/ace',
+    // JQuery
+    'rsync -a bower_components/jquery/dist/jquery.min.js public/vendor/jquery.min.js',
+    'rsync -a bower_components/jquery/dist/jquery.min.map public/vendor/jquery.min.map',
+    // Vex
+    'mkdir -p public/vendor/vex',
+    'rsync -a bower_components/vex/js/vex.combined.min.js public/vendor/vex/vex.min.js',
+    'rsync -a bower_components/vex/css/vex.css public/vendor/vex/vex.css',
+    // Headroom
+    'rsync -a bower_components/headroom.js/dist/headroom.min.js public/vendor/headroom.min.js',
+    // Tagging
+    'rsync -a bower_components/taggingJS/tagging.js public/vendor/tagging.js',
+    // CkEditor
+    'mkdir -p public/vendor/ckeditor-skins',
+    'rsync -ar --delete resources/vendor/ckeditor-skins public/vendor/ckeditor-skins',
+    'rsync -ar --delete bower_components/ckeditor public/vendor',
+    // JCrop
+    'mkdir -p public/vendor/jcrop',
+    'rsync -a bower_components/Jcrop/js/jquery.Jcrop.min.js public/vendor/jcrop/jcrop.min.js',
+    'rsync -a bower_components/Jcrop/css/jquery.Jcrop.min.css public/vendor/jcrop/jcrop.min.css'
 ]));
 
 /* ==============

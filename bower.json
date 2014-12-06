@@ -1,5 +1,5 @@
 {
-  "name": "oxygen/core",
+  "name": "oxygen/ui",
   "version": "0.1",
   "authors": [
     "Chris Chamberlain <c.chamberlain@iinet.net.au>"
@@ -18,7 +18,7 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "public/bower_components",
+    "bower_components",
     "test",
     "tests"
   ],
@@ -32,5 +32,8 @@
     "Jcrop": "~0.9.12",
     "vex": "~2.2.1",
     "smoothstate": "~0.5.1"
+  },
+  "resolutions": {
+    "jquery": "1.x"
   }
 }
