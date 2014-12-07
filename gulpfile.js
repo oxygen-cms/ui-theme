@@ -89,8 +89,8 @@ gulp.task("vendor", shell.task([
     'rsync -a bower_components/taggingJS/tagging.js public/vendor/tagging.js',
     // CkEditor
     'mkdir -p public/vendor/ckeditor-skins',
-    'rsync -ar --delete resources/vendor/ckeditor-skins public/vendor/ckeditor-skins',
-    'rsync -ar --delete bower_components/ckeditor public/vendor',
+    'rsync -ar --delete resources/vendor/ckeditor-skins/ public/vendor/ckeditor-skins',
+    'rsync -ar --delete bower_components/ckeditor/ public/vendor/ckeditor',
     // JCrop
     'mkdir -p public/vendor/jcrop',
     'rsync -a bower_components/Jcrop/js/jquery.Jcrop.min.js public/vendor/jcrop/jcrop.min.js',
