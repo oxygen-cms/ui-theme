@@ -8,6 +8,18 @@
 <script src="/packages/oxygen/ui/vendor/vex/vex.min.js"></script>
 <script>vex.defaultOptions.className = 'Dialog';</script>
 <link rel="stylesheet" href="/packages/oxygen/ui/vendor/vex/vex.css" />
+<script>
+    paceOptions = {
+        restartOnRequestAfter: 0,
+        ghostTime: 50,
+        //startOnPageLoad: false,
+        elements: false,
+        ajax: {
+            trackMethods: ['GET', 'POST']
+        }
+    };
+</script>
+<script src="/packages/oxygen/ui/vendor/pace.min.js"></script>
 <!--<script src="/packages/oxygen/ui/bower_components/smoothstate/jquery.smoothState.js"></script>-->
 <script src="/packages/oxygen/ui/vendor/tagging.js"></script>
 

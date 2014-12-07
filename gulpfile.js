@@ -83,6 +83,8 @@ gulp.task("vendor", shell.task([
     'mkdir -p public/vendor/vex',
     'rsync -a bower_components/vex/js/vex.combined.min.js public/vendor/vex/vex.min.js',
     'rsync -a bower_components/vex/css/vex.css public/vendor/vex/vex.css',
+    // Pace,
+    'rsync -a bower_components/pace/pace.min.js public/vendor/pace.min.js',
     // Headroom
     'rsync -a bower_components/headroom.js/dist/headroom.min.js public/vendor/headroom.min.js',
     // Tagging

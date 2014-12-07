@@ -1,39 +1,40 @@
 {
-  "name": "oxygen/ui",
-  "version": "0.1",
-  "authors": [
-    "Chris Chamberlain <c.chamberlain@iinet.net.au>"
-  ],
-  "description": "Oxygen - the little framework for big ideas",
-  "keywords": [
-    "oxygen",
-    "Core",
-    "framework",
-    "php",
-    "composer",
-    "laravel",
-    "custom"
-  ],
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
-  "dependencies": {
-    "jquery": "~2.1.1",
-    "blueimp-canvas-to-blob": "~2.1.0",
-    "headroom.js": "~0.7.0",
-    "ace-builds": "~1.1.6",
-    "ckeditor": "#full/latest",
-    "caman": "~4.1.2",
-    "Jcrop": "~0.9.12",
-    "vex": "~2.2.1",
-    "smoothstate": "~0.5.1"
-  },
-  "resolutions": {
-    "jquery": "1.x"
-  }
+    "name": "oxygen/ui",
+    "version": "0.1",
+    "authors": [
+        "Chris Chamberlain <c.chamberlain@iinet.net.au>"
+    ],
+    "description": "Oxygen - the little framework for big ideas",
+    "keywords": [
+        "oxygen",
+        "Core",
+        "framework",
+        "php",
+        "composer",
+        "laravel",
+        "custom"
+    ],
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ],
+    "dependencies": {
+        "jquery": "~2.1.1",
+        "blueimp-canvas-to-blob": "~2.1.0",
+        "headroom.js": "~0.7.0",
+        "ace-builds": "~1.1.6",
+        "ckeditor": "#full/latest",
+        "caman": "~4.1.2",
+        "Jcrop": "~0.9.12",
+        "vex": "~2.2.1",
+        "pace": "~1.0.2",
+        "smoothstate": "~0.5.1"
+    },
+    "resolutions": {
+        "jquery": "1.x"
+    }
 }
