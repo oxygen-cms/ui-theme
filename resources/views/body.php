@@ -11,7 +11,8 @@
 <script>
     paceOptions = {
         restartOnRequestAfter: 0,
-        ghostTime: 50,
+        ghostTime: 10,
+        restartOnPushState: false,
         //startOnPageLoad: false,
         elements: false,
         ajax: {
@@ -20,14 +21,14 @@
     };
 </script>
 <script src="/packages/oxygen/ui/vendor/pace.min.js"></script>
-<!--<script src="/packages/oxygen/ui/bower_components/smoothstate/jquery.smoothState.js"></script>-->
+<script src="/packages/oxygen/ui/vendor/smoothState.js"></script>
 <script src="/packages/oxygen/ui/vendor/tagging.js"></script>
 
 <!-- Code Editor -->
-<?php if(Editor::$includeScripts): ?>
+<?php /*if(Editor::$includeScripts):*/ ?>
     <script src="/packages/oxygen/ui/vendor/ace/ace.js"></script>
     <script src="/packages/oxygen/ui/vendor/ckeditor/ckeditor.js"></script>
-<?php endif; ?>
+<?php /*endif;*/ ?>
 
 <!-- Image Editor -->
 <script src="/packages/oxygen/ui/vendor/jcrop/jcrop.min.js"></script>

@@ -23,17 +23,18 @@ window.Oxygen.Ajax = class Ajax
     @fireLink: (event) ->
         event.preventDefault();
         @sendAjax("GET", $(event.target).attr("href"), null)
-        return
 
     # handles a successful response
     @handleSuccess: (data) =>
         if(data.redirect)
-            window.location.replace(data.redirect)
-        else
-            new Notification(data);
+            if user.smoothState && user.smoothState.enabled
+                Oxygen.smoothState.load(data.redirect, false, true) # ignores the cache
+            else
+                window.location.replace(data.redirect)
+
+        new Notification(data);
 
         @handleSuccessCallback(data)
-        return
 
     # handles an error during an ajax request
     @handleError: (response, textStatus, errorThrown) =>

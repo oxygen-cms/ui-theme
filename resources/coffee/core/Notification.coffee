@@ -37,9 +37,8 @@ window.Oxygen.Notification = class Notification
             )
             @show()
         else
-            console.error("Invalid Arguments For New Notification")
-            console.error(options)
-        return
+            console.log("Invalid Arguments For New Notification")
+            console.log(options)
 
     show: ->
         @message.appendTo("." + Notification.classes.container)

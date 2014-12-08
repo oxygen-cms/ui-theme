@@ -1829,6 +1829,75 @@ select {
   -webkit-box-shadow: 0 0 10px #83c8fc, 0 0 5px #83c8fc;
   box-shadow: 0 0 10px #83c8fc, 0 0 5px #83c8fc; }
 
+.Page--isEntering .Block, .Page--isExiting .Block {
+  -webkit-animation: Block--enter 0.15s ease-in both;
+  animation: Block--enter 0.15s ease-in both; }
+
+.Page--isEntering .Block:nth-child(2) {
+  -webkit-animation-delay: 0.1s;
+  animation-delay: 0.1s; }
+.Page--isEntering .Block:nth-child(3) {
+  -webkit-animation-delay: 0.2s;
+  animation-delay: 0.2s; }
+.Page--isEntering .Block:nth-child(4) {
+  -webkit-animation-delay: 0.3s;
+  animation-delay: 0.3s; }
+.Page--isEntering .Block:nth-child(5) {
+  -webkit-animation-delay: 0.4s;
+  animation-delay: 0.4s; }
+.Page--isEntering .Block:nth-child(6) {
+  -webkit-animation-delay: 0.5s;
+  animation-delay: 0.5s; }
+.Page--isEntering .Block:nth-child(7) {
+  -webkit-animation-delay: 0.6s;
+  animation-delay: 0.6s; }
+
+.Page--isExiting .Block {
+  -webkit-animation-direction: reverse;
+  animation-direction: reverse; }
+  .Page--isExiting .Block:nth-last-child(2) {
+    -webkit-animation-delay: 0.1s;
+    animation-delay: 0.1s; }
+  .Page--isExiting .Block:nth-last-child(3) {
+    -webkit-animation-delay: 0.2s;
+    animation-delay: 0.2s; }
+  .Page--isExiting .Block:nth-last-child(4) {
+    -webkit-animation-delay: 0.3s;
+    animation-delay: 0.3s; }
+  .Page--isExiting .Block:nth-last-child(5) {
+    -webkit-animation-delay: 0.4s;
+    animation-delay: 0.4s; }
+  .Page--isExiting .Block:nth-last-child(6) {
+    -webkit-animation-delay: 0.5s;
+    animation-delay: 0.5s; }
+  .Page--isExiting .Block:nth-last-child(7) {
+    -webkit-animation-delay: 0.6s;
+    animation-delay: 0.6s; }
+
+@-webkit-keyframes Block--enter {
+  from {
+    -webkit-transform: translateY(2em);
+    transform: translateY(2em);
+    opacity: 0; }
+
+  to {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+    opacity: 1; } }
+
+@keyframes Block--enter {
+  from {
+    -webkit-transform: translateY(2em);
+    -ms-transform: translateY(2em);
+    transform: translateY(2em);
+    opacity: 0; }
+
+  to {
+    -webkit-transform: translateY(0);
+    -ms-transform: translateY(0);
+    transform: translateY(0);
+    opacity: 1; } }
+
 /* ====================================================================
    ====================================================================
 

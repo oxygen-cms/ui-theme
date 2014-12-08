@@ -52,6 +52,9 @@ base64Encode = (inputStr) ->
 
 MainNav.headroom()
 
+Oxygen.reset = () ->
+    window.editors = []
+
 Oxygen.init = () ->
 
     #
@@ -64,7 +67,6 @@ Oxygen.init = () ->
     #
 
     setTimeout(Notification.initializeExistingMessages, 250)
-
 
     Dialog.registerEvents()
 
@@ -113,7 +115,8 @@ Oxygen.init = () ->
     Upload.registerEvents()
     TabSwitcher.findAll()
     Slider.findAll()
-    return
+
+Oxygen.init()
 
 #
 # -------------------------
@@ -123,25 +126,43 @@ Oxygen.init = () ->
 # Calls the smoothState.js library.
 #
 
-Oxygen.init()
+initSmoothState = ->
+    window.Oxygen.smoothState = $("#page").smoothState({
+        anchors: ".Link--smoothState"
+        root: $(document)
+        pageCacheSize: 0
+        onStart:
+            duration: 150
+            render: (url, container) ->
+                $("html, body").animate({ scrollTop: 0 })
+                container.removeClass('Page--isEntering')
+                setTimeout( ->
+                    container.addClass('Page--isExiting')
+                0)
+        onProgress:
+            duration: 0,
+            render: (url, container) ->
+                $("html, body").css('cursor', 'wait')
+                     .find('a').css('cursor', 'wait')
+        onEnd:
+            duration: 0
+            render: (url, container, content) ->
+                $("html, body").css('cursor', 'auto')
+                     .find('a').css('cursor', 'auto');
+                Oxygen.reset()
+                container.hide()
+                container.removeClass('Page--isExiting')
+                setTimeout( ->
+                    container.addClass('Page--isEntering')
+                    container.html(content)
+                    container.show()
+                    elements = $(document).add("*")
+                    elements.off()
+                    Oxygen.smoothState.bindEventHandlers($(document))
+                    Oxygen.init()
+                0)
+    }).data('smoothState');
 
-###Oxygen.smoothState = $("#page").smoothState({
-    anchors: ".Link--smoothState"
-    onStart: {
-        duration: 250
-        render: (url, container) ->
-            Oxygen.smoothState.toggleAnimationClass('Page--isExiting')
-            $("html, body").animate({ scrollTop: 0 })
-            return
-    },
-    onEnd: {
-        duration: 0
-        render: (url, container, content) ->
-            $("html, body").css('cursor', 'auto');
-            $("html, body").find('a').css('cursor', 'auto');
-            container.html(content);
-            return
-            #Oxygen.init()
-    }
-}).data('smoothState');###
+if user.smoothState && user.smoothState.enabled
+    initSmoothState()
 

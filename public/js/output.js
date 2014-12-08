@@ -1,5 +1,5 @@
 (function() {
-  var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, PreviewInterface, ProgressBar, Slider, SplitViewInterface, TabSwitcher, Toggle, Upload, base64Encode,
+  var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, PreviewInterface, ProgressBar, Slider, SplitViewInterface, TabSwitcher, Toggle, Upload, base64Encode, initSmoothState,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -26,16 +26,19 @@
 
     Ajax.fireLink = function(event) {
       event.preventDefault();
-      this.sendAjax("GET", $(event.target).attr("href"), null);
+      return this.sendAjax("GET", $(event.target).attr("href"), null);
     };
 
     Ajax.handleSuccess = function(data) {
       if (data.redirect) {
-        window.location.replace(data.redirect);
-      } else {
-        new Notification(data);
+        if (user.smoothState && user.smoothState.enabled) {
+          Oxygen.smoothState.load(data.redirect, false, true);
+        } else {
+          window.location.replace(data.redirect);
+        }
       }
-      Ajax.handleSuccessCallback(data);
+      new Notification(data);
+      return Ajax.handleSuccessCallback(data);
     };
 
     Ajax.handleError = function(response, textStatus, errorThrown) {
@@ -435,10 +438,9 @@
         this.message = $("<div class=\"" + Notification.classes.item + " Notification--" + options.status + "\">" + options.content + "<span class=\"Notification-dismiss Icon Icon-times\"></span></div>");
         this.show();
       } else {
-        console.error("Invalid Arguments For New Notification");
-        console.error(options);
+        console.log("Invalid Arguments For New Notification");
+        console.log(options);
       }
-      return;
     }
 
     Notification.prototype.show = function() {
@@ -1580,6 +1582,10 @@
 
   MainNav.headroom();
 
+  Oxygen.reset = function() {
+    return window.editors = [];
+  };
+
   Oxygen.init = function() {
     setTimeout(Notification.initializeExistingMessages, 250);
     Dialog.registerEvents();
@@ -1594,31 +1600,58 @@
     Form.findAll();
     Upload.registerEvents();
     TabSwitcher.findAll();
-    Slider.findAll();
+    return Slider.findAll();
   };
 
   Oxygen.init();
 
-
-  /*Oxygen.smoothState = $("#page").smoothState({
-      anchors: ".Link--smoothState"
+  initSmoothState = function() {
+    return window.Oxygen.smoothState = $("#page").smoothState({
+      anchors: ".Link--smoothState",
+      root: $(document),
+      pageCacheSize: 0,
       onStart: {
-          duration: 250
-          render: (url, container) ->
-              Oxygen.smoothState.toggleAnimationClass('Page--isExiting')
-              $("html, body").animate({ scrollTop: 0 })
-              return
+        duration: 150,
+        render: function(url, container) {
+          $("html, body").animate({
+            scrollTop: 0
+          });
+          container.removeClass('Page--isEntering');
+          return setTimeout(function() {
+            return container.addClass('Page--isExiting');
+          }, 0);
+        }
+      },
+      onProgress: {
+        duration: 0,
+        render: function(url, container) {
+          return $("html, body").css('cursor', 'wait').find('a').css('cursor', 'wait');
+        }
       },
       onEnd: {
-          duration: 0
-          render: (url, container, content) ->
-              $("html, body").css('cursor', 'auto');
-              $("html, body").find('a').css('cursor', 'auto');
-              container.html(content);
-              return
-               *Oxygen.init()
+        duration: 0,
+        render: function(url, container, content) {
+          $("html, body").css('cursor', 'auto').find('a').css('cursor', 'auto');
+          Oxygen.reset();
+          container.hide();
+          container.removeClass('Page--isExiting');
+          return setTimeout(function() {
+            var elements;
+            container.addClass('Page--isEntering');
+            container.html(content);
+            container.show();
+            elements = $(document).add("*");
+            elements.off();
+            Oxygen.smoothState.bindEventHandlers($(document));
+            return Oxygen.init();
+          }, 0);
+        }
       }
-  }).data('smoothState');
-   */
+    }).data('smoothState');
+  };
+
+  if (user.smoothState && user.smoothState.enabled) {
+    initSmoothState();
+  }
 
 }).call(this);
