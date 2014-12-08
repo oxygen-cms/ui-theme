@@ -13,6 +13,7 @@
 #= require MainNav
 #= require Slider
 #= require Dialog
+#= require SmoothState
 
 #= require Editor
 #= require CodeViewInterface
@@ -54,6 +55,7 @@ MainNav.headroom()
 
 Oxygen.reset = () ->
     window.editors = []
+    Dropdown.handleGlobalClick({ target: document.body })
 
 Oxygen.init = () ->
 
@@ -126,43 +128,9 @@ Oxygen.init()
 # Calls the smoothState.js library.
 #
 
-initSmoothState = ->
-    window.Oxygen.smoothState = $("#page").smoothState({
-        anchors: ".Link--smoothState"
-        root: $(document)
-        pageCacheSize: 0
-        onStart:
-            duration: 150
-            render: (url, container) ->
-                $("html, body").animate({ scrollTop: 0 })
-                container.removeClass('Page--isEntering')
-                setTimeout( ->
-                    container.addClass('Page--isExiting')
-                0)
-        onProgress:
-            duration: 0,
-            render: (url, container) ->
-                $("html, body").css('cursor', 'wait')
-                     .find('a').css('cursor', 'wait')
-        onEnd:
-            duration: 0
-            render: (url, container, content) ->
-                $("html, body").css('cursor', 'auto')
-                     .find('a').css('cursor', 'auto');
-                Oxygen.reset()
-                container.hide()
-                container.removeClass('Page--isExiting')
-                setTimeout( ->
-                    container.addClass('Page--isEntering')
-                    container.html(content)
-                    container.show()
-                    elements = $(document).add("*")
-                    elements.off()
-                    Oxygen.smoothState.bindEventHandlers($(document))
-                    Oxygen.init()
-                0)
-    }).data('smoothState');
-
 if user.smoothState && user.smoothState.enabled
-    initSmoothState()
+    smoothState = new SmoothState()
+    smoothState.init()
+    if(user.smoothState.theme)
+        smoothState.setTheme(user.smoothState.theme)
 

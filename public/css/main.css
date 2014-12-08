@@ -259,7 +259,8 @@ img, canvas {
 .Block--link {
   text-decoration: none;
   text-align: center;
-  padding: 2em; }
+  padding: 2em;
+  display: block; }
   .Block--link:hover, .Block--link:active {
     text-decoration: none; }
 
@@ -590,6 +591,8 @@ button, input[type="submit"], input[type="button"] {
   margin: -0.5em; }
 
 @media screen and (min-width: 769px) {
+  .no-flexbox .Cell-oneThird, .no-flexbox .Cell-twoThirds, .no-flexbox .Cell-oneHalf {
+    float: left; }
   .Cell-oneThird, .Cell-twoThirds {
     margin-right: 2.5%;
     margin-bottom: 2.5%; }
@@ -857,10 +860,32 @@ button, input[type="submit"], input[type="button"] {
   border-top: 0; }
 
 .Editor-header, .Editor-footer {
+  -webkit-align-content: space-between;
+  -ms-flex-line-pack: justify;
+  align-content: space-between;
   background-color: #fbfbfb;
   border: 1px solid #ccc;
   min-height: 4em;
   padding: 0.5em; }
+  .flexbox .Editor-header, .flexbox .Editor-footer {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+    -moz-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap; }
   .Editor-header > *, .Editor-footer > * {
     margin: 0 0.25em; }
   .Editor--dark .Editor-header, .Editor--dark .Editor-footer {
@@ -1660,11 +1685,11 @@ select {
     .Header-back {
       margin-bottom: 0; } }
 
-.Header-toolbar, .Editor-header, .Editor-footer, .ImageEditor-toolbar {
+.Header-toolbar, .ImageEditor-toolbar {
   -webkit-align-content: space-between;
   -ms-flex-line-pack: justify;
   align-content: space-between; }
-  .flexbox .Header-toolbar, .flexbox .Editor-header, .flexbox .Editor-footer, .flexbox .ImageEditor-toolbar {
+  .flexbox .Header-toolbar, .flexbox .ImageEditor-toolbar {
     display: -webkit-box;
     display: -webkit-flex;
     display: -moz-box;
@@ -1683,19 +1708,19 @@ select {
     -webkit-flex-wrap: wrap;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap; }
-  .Header-toolbar > *, .Header-toolbar > .Editor-header, .Header-toolbar > .Editor-footer, .Header-toolbar > .ImageEditor-toolbar {
+  .Header-toolbar > *, .Header-toolbar > .ImageEditor-toolbar {
     margin: 0 0.25em; }
   @media screen and (max-width: 768px) {
     .Header-toolbar {
       margin-top: 1em; } }
   @media screen and (min-width: 769px) {
-    .Header-toolbar {
+    .Header-toolbar.Header-toolbar.Header-toolbar, .ImageEditor-toolbar {
       float: right;
       margin-left: auto; } }
-  .Header-toolbar.Header-toolbar--alignLeft, .Header-toolbar--alignLeft.Editor-header, .Header-toolbar--alignLeft.Editor-footer, .Header-toolbar--alignLeft.ImageEditor-toolbar {
+  .Header-toolbar.Header-toolbar--alignLeft.Header-toolbar--alignLeft.Header-toolbar--alignLeft, .Header-toolbar--alignLeft.Header-toolbar--alignLeft.Header-toolbar--alignLeft.ImageEditor-toolbar {
     float: left; }
 
-.Header--block .Header-toolbar, .Header--block .Editor-header, .Header--block .Editor-footer, .Header--block .ImageEditor-toolbar {
+.Header--block .Header-toolbar, .Header--block .ImageEditor-toolbar {
   margin-top: 1em;
   float: none; }
 
@@ -1884,55 +1909,22 @@ select {
   -webkit-box-shadow: 0 0 10px #83c8fc, 0 0 5px #83c8fc;
   box-shadow: 0 0 10px #83c8fc, 0 0 5px #83c8fc; }
 
-.Page--isEntering .Block, .Page--isExiting .Block {
-  -webkit-animation: Block--enter 0.15s ease-in both;
-  animation: Block--enter 0.15s ease-in both; }
+.Block--isHidden {
+  display: none; }
 
-.Page--isEntering .Block:nth-child(2) {
-  -webkit-animation-delay: 0.1s;
-  animation-delay: 0.1s; }
-.Page--isEntering .Block:nth-child(3) {
-  -webkit-animation-delay: 0.2s;
-  animation-delay: 0.2s; }
-.Page--isEntering .Block:nth-child(4) {
-  -webkit-animation-delay: 0.3s;
-  animation-delay: 0.3s; }
-.Page--isEntering .Block:nth-child(5) {
-  -webkit-animation-delay: 0.4s;
-  animation-delay: 0.4s; }
-.Page--isEntering .Block:nth-child(6) {
-  -webkit-animation-delay: 0.5s;
-  animation-delay: 0.5s; }
-.Page--isEntering .Block:nth-child(7) {
-  -webkit-animation-delay: 0.6s;
-  animation-delay: 0.6s; }
-
-.Page--isExiting .Block {
+.Page-transition--slideUp .Block--isEntering, .Page-transition--slideUp .Block--isExiting {
+  -webkit-animation: Block--slideUp 0.35s ease-out both;
+  animation: Block--slideUp 0.35s ease-out both; }
+.Page-transition--slideUp .Block--isExiting {
   -webkit-animation-direction: reverse;
-  animation-direction: reverse; }
-  .Page--isExiting .Block:nth-last-child(2) {
-    -webkit-animation-delay: 0.1s;
-    animation-delay: 0.1s; }
-  .Page--isExiting .Block:nth-last-child(3) {
-    -webkit-animation-delay: 0.2s;
-    animation-delay: 0.2s; }
-  .Page--isExiting .Block:nth-last-child(4) {
-    -webkit-animation-delay: 0.3s;
-    animation-delay: 0.3s; }
-  .Page--isExiting .Block:nth-last-child(5) {
-    -webkit-animation-delay: 0.4s;
-    animation-delay: 0.4s; }
-  .Page--isExiting .Block:nth-last-child(6) {
-    -webkit-animation-delay: 0.5s;
-    animation-delay: 0.5s; }
-  .Page--isExiting .Block:nth-last-child(7) {
-    -webkit-animation-delay: 0.6s;
-    animation-delay: 0.6s; }
+  animation-direction: reverse;
+  -webkit-animation-timing-function: ease-in;
+  animation-timing-function: ease-in; }
 
-@-webkit-keyframes Block--enter {
+@-webkit-keyframes Block--slideUp {
   from {
-    -webkit-transform: translateY(2em);
-    transform: translateY(2em);
+    -webkit-transform: translateY(4em);
+    transform: translateY(4em);
     opacity: 0; }
 
   to {
@@ -1940,11 +1932,11 @@ select {
     transform: translateY(0);
     opacity: 1; } }
 
-@keyframes Block--enter {
+@keyframes Block--slideUp {
   from {
-    -webkit-transform: translateY(2em);
-    -ms-transform: translateY(2em);
-    transform: translateY(2em);
+    -webkit-transform: translateY(4em);
+    -ms-transform: translateY(4em);
+    transform: translateY(4em);
     opacity: 0; }
 
   to {

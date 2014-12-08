@@ -1,5 +1,5 @@
 (function() {
-  var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, PreviewInterface, ProgressBar, Slider, SplitViewInterface, TabSwitcher, Toggle, Upload, base64Encode, initSmoothState,
+  var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, PreviewInterface, ProgressBar, Slider, SmoothState, SplitViewInterface, TabSwitcher, Toggle, Upload, base64Encode, smoothState,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -828,6 +828,91 @@
 
   window.Oxygen || (window.Oxygen = {});
 
+  window.Oxygen.SmoothState = SmoothState = (function() {
+    function SmoothState() {
+      this.onEnd = __bind(this.onEnd, this);
+      this.onProgress = __bind(this.onProgress, this);
+      this.onStart = __bind(this.onStart, this);
+    }
+
+    SmoothState.prototype.init = function() {
+      return this.smoothState = $("#page").smoothState({
+        anchors: ".Link--smoothState",
+        root: $(document),
+        pageCacheSize: 0,
+        onStart: {
+          duration: 350,
+          render: this.onStart
+        },
+        onProgress: {
+          duration: 0,
+          render: this.onProgress
+        },
+        onEnd: {
+          duration: 0,
+          render: this.onEnd
+        }
+      }).data('smoothState');
+    };
+
+    SmoothState.prototype.onStart = function(url, container) {
+      var elements;
+      $("html, body").animate({
+        scrollTop: 0
+      });
+      elements = $('.Block');
+      return $(elements.get().reverse()).each(function(index) {
+        var block, timeout;
+        block = $(this);
+        timeout = index * 100;
+        return setTimeout(function() {
+          block.addClass('Block--isExiting');
+          return timeout;
+        });
+      });
+    };
+
+    SmoothState.prototype.onProgress = function(url, container) {
+      return $("html, body").css('cursor', 'wait').find('a').css('cursor', 'wait');
+    };
+
+    SmoothState.prototype.onEnd = function(url, container, content) {
+      var elements;
+      $("html, body").css('cursor', 'auto').find('a').css('cursor', 'auto');
+      Oxygen.reset();
+      container.hide();
+      container.html(content);
+      console.log($('.Block'));
+      $('.Block').each(function(index) {
+        var block, timeout;
+        block = $(this);
+        timeout = index * 100;
+        block.addClass('Block--isHidden');
+        return setTimeout(function() {
+          block.removeClass('Block--isHidden');
+          block.addClass('Block--isEntering');
+          return setTimeout(function() {
+            return block.removeClass('Block--isEntering');
+          }, 350);
+        }, timeout);
+      });
+      container.show();
+      elements = $(document).add("*");
+      elements.off();
+      this.smoothState.bindEventHandlers($(document));
+      return Oxygen.init();
+    };
+
+    SmoothState.prototype.setTheme = function(theme) {
+      return $("#page").addClass('Page-transition--' + theme);
+    };
+
+    return SmoothState;
+
+  })();
+
+  window.Oxygen || (window.Oxygen = {});
+
   window.Oxygen.Editor = Editor = (function() {
     Editor.list = [];
 
@@ -1583,7 +1668,10 @@
   MainNav.headroom();
 
   Oxygen.reset = function() {
-    return window.editors = [];
+    window.editors = [];
+    return Dropdown.handleGlobalClick({
+      target: document.body
+    });
   };
 
   Oxygen.init = function() {
@@ -1605,53 +1693,12 @@
 
   Oxygen.init();
 
-  initSmoothState = function() {
-    return window.Oxygen.smoothState = $("#page").smoothState({
-      anchors: ".Link--smoothState",
-      root: $(document),
-      pageCacheSize: 0,
-      onStart: {
-        duration: 150,
-        render: function(url, container) {
-          $("html, body").animate({
-            scrollTop: 0
-          });
-          container.removeClass('Page--isEntering');
-          return setTimeout(function() {
-            return container.addClass('Page--isExiting');
-          }, 0);
-        }
-      },
-      onProgress: {
-        duration: 0,
-        render: function(url, container) {
-          return $("html, body").css('cursor', 'wait').find('a').css('cursor', 'wait');
-        }
-      },
-      onEnd: {
-        duration: 0,
-        render: function(url, container, content) {
-          $("html, body").css('cursor', 'auto').find('a').css('cursor', 'auto');
-          Oxygen.reset();
-          container.hide();
-          container.removeClass('Page--isExiting');
-          return setTimeout(function() {
-            var elements;
-            container.addClass('Page--isEntering');
-            container.html(content);
-            container.show();
-            elements = $(document).add("*");
-            elements.off();
-            Oxygen.smoothState.bindEventHandlers($(document));
-            return Oxygen.init();
-          }, 0);
-        }
-      }
-    }).data('smoothState');
-  };
-
   if (user.smoothState && user.smoothState.enabled) {
-    initSmoothState();
+    smoothState = new SmoothState();
+    smoothState.init();
+    if (user.smoothState.theme) {
+      smoothState.setTheme(user.smoothState.theme);
+    }
   }
 
 }).call(this);

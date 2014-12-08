@@ -48,6 +48,14 @@
 
 @include larger-than($tablet-large) {
     .Cell-oneThird,
+    .Cell-twoThirds,
+    .Cell-oneHalf {
+        .no-flexbox & {
+            float: left;
+        }
+    }
+
+    .Cell-oneThird,
     .Cell-twoThirds {
         margin-right: 2.5%;
         margin-bottom: 2.5%;
