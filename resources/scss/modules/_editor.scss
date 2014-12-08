@@ -52,7 +52,8 @@ $Editor-border--dark: $color-grey-dark-1;
 
 .Editor-header,
 .Editor-footer {
-    @extend .Header-toolbar;
+    @include flex-container(null, flex-start, center, '.flex-item', wrap);
+    align-content: space-between;
 
     background-color: $Editor-background;
     border: 1px solid $Editor-border;
@@ -60,7 +61,7 @@ $Editor-border--dark: $color-grey-dark-1;
     padding: 0.5em;
 
     & > * {
-        margin: 0 0.25em;
+      margin: 0 0.25em;
     }
 
     .Editor--dark & {

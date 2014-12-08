@@ -78,11 +78,13 @@
     }
 
     @include larger-than($tablet-large) {
-        float: right;
-        margin-left: auto;
+        &.Header-toolbar.Header-toolbar { // nasty specifity hack to override @flex-container's `float: left`
+            float: right;
+            margin-left: auto;
+        }
     }
 
-    &.Header-toolbar--alignLeft {
+    &.Header-toolbar--alignLeft.Header-toolbar--alignLeft.Header-toolbar--alignLeft {
         float: left;
     }
 
