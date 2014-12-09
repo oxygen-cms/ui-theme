@@ -1,5 +1,5 @@
 (function() {
-  var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, PreviewInterface, ProgressBar, Slider, SmoothState, SplitViewInterface, TabSwitcher, Toggle, Upload, base64Encode, smoothState,
+  var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, PreviewInterface, ProgressBar, Slider, SmoothState, SplitViewInterface, TabSwitcher, Toggle, Upload, base64Encode, progressThemes, smoothState, theme, _i, _len,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -32,7 +32,7 @@
     Ajax.handleSuccess = function(data) {
       if (data.redirect) {
         if (user.smoothState && user.smoothState.enabled) {
-          Oxygen.smoothState.load(data.redirect, false, true);
+          smoothState.load(data.redirect, false, true);
         } else {
           window.location.replace(data.redirect);
         }
@@ -830,6 +830,7 @@
 
   window.Oxygen.SmoothState = SmoothState = (function() {
     function SmoothState() {
+      this.callback = __bind(this.callback, this);
       this.onEnd = __bind(this.onEnd, this);
       this.onProgress = __bind(this.onProgress, this);
       this.onStart = __bind(this.onStart, this);
@@ -851,7 +852,8 @@
         onEnd: {
           duration: 0,
           render: this.onEnd
-        }
+        },
+        callback: this.callback
       }).data('smoothState');
     };
 
@@ -861,15 +863,17 @@
         scrollTop: 0
       });
       elements = $('.Block');
-      return $(elements.get().reverse()).each(function(index) {
+      $(elements.get().reverse()).each(function(index) {
         var block, timeout;
         block = $(this);
         timeout = index * 100;
         return setTimeout(function() {
-          block.addClass('Block--isExiting');
-          return timeout;
-        });
+          return block.addClass('Block--isExiting');
+        }, timeout);
       });
+      return setTimeout(function() {
+        return $(".pace-activity").addClass("pace-activity-active");
+      }, elements.length * 100);
     };
 
     SmoothState.prototype.onProgress = function(url, container) {
@@ -877,12 +881,11 @@
     };
 
     SmoothState.prototype.onEnd = function(url, container, content) {
-      var elements;
       $("html, body").css('cursor', 'auto').find('a').css('cursor', 'auto');
       Oxygen.reset();
       container.hide();
       container.html(content);
-      console.log($('.Block'));
+      $(".pace-activity").removeClass("pace-activity-active");
       $('.Block').each(function(index) {
         var block, timeout;
         block = $(this);
@@ -896,7 +899,12 @@
           }, 350);
         }, timeout);
       });
-      container.show();
+      return container.show();
+    };
+
+    SmoothState.prototype.callback = function(url, $container, $content) {
+      var elements;
+      $(".pace-activity").removeClass("pace-activity-active");
       elements = $(document).add("*");
       elements.off();
       this.smoothState.bindEventHandlers($(document));
@@ -905,6 +913,10 @@
 
     SmoothState.prototype.setTheme = function(theme) {
       return $("#page").addClass('Page-transition--' + theme);
+    };
+
+    SmoothState.prototype.load = function(url, isPopped, ignoreCache) {
+      return this.smoothState.load(url, isPopped, ignoreCache);
     };
 
     return SmoothState;
@@ -1675,6 +1687,7 @@
   };
 
   Oxygen.init = function() {
+    var callback, _i, _len, _ref, _results;
     setTimeout(Notification.initializeExistingMessages, 250);
     Dialog.registerEvents();
     if (typeof editors !== "undefined" && editors !== null) {
@@ -1688,17 +1701,34 @@
     Form.findAll();
     Upload.registerEvents();
     TabSwitcher.findAll();
-    return Slider.findAll();
+    Slider.findAll();
+    Oxygen.load = Oxygen.load || [];
+    _ref = Oxygen.load;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      callback = _ref[_i];
+      _results.push(callback());
+    }
+    return _results;
   };
 
   Oxygen.init();
 
-  if (user.smoothState && user.smoothState.enabled) {
+  if (!user.pageLoad || !user.pageLoad.smoothState || !user.pageLoad.smoothState.enabled || user.pageLoad.smoothState.enabled === true) {
     smoothState = new SmoothState();
     smoothState.init();
-    if (user.smoothState.theme) {
-      smoothState.setTheme(user.smoothState.theme);
+    if (user.pageLoad && user.pageLoad.smoothState && user.pageLoad.smoothState.theme) {
+      smoothState.setTheme(user.pageLoad.smoothState.theme);
     }
+  }
+
+  progressThemes = user.pageLoad && user.pageLoad.progress && user.pageLoad.progress.theme ? user.pageLoad.progress.theme || "minimal,spinner" : void 0;
+
+  progressThemes = progressThemes.split(",");
+
+  for (_i = 0, _len = progressThemes.length; _i < _len; _i++) {
+    theme = progressThemes[_i];
+    $(document.body).addClass("Page-progress--" + theme);
   }
 
 }).call(this);

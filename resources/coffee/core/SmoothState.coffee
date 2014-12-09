@@ -14,11 +14,12 @@ window.Oxygen.SmoothState = class SmoothState
                 duration: 350
                 render: @onStart
             onProgress:
-                duration: 0,
+                duration: 0
                 render: @onProgress
             onEnd:
                 duration: 0
                 render: @onEnd
+            callback: @callback
         }).data('smoothState');
 
     onStart: (url, container) =>
@@ -30,8 +31,12 @@ window.Oxygen.SmoothState = class SmoothState
             timeout = index * 100
             setTimeout( ->
                 block.addClass('Block--isExiting')
-                timeout)
+            timeout)
         );
+
+        setTimeout( ->
+            $(".pace-activity").addClass("pace-activity-active")
+        elements.length * 100)
 
     onProgress: (url, container) =>
         $("html, body").css('cursor', 'wait')
@@ -45,7 +50,7 @@ window.Oxygen.SmoothState = class SmoothState
         container.hide()
         container.html(content)
 
-        console.log($('.Block'))
+        $(".pace-activity").removeClass("pace-activity-active")
 
         $('.Block').each((index) ->
             block = $(this)
@@ -61,6 +66,10 @@ window.Oxygen.SmoothState = class SmoothState
         );
 
         container.show()
+
+    callback: (url, $container, $content) =>
+        $(".pace-activity").removeClass("pace-activity-active")
+
         elements = $(document).add("*")
         elements.off()
         @smoothState.bindEventHandlers($(document))
@@ -68,3 +77,6 @@ window.Oxygen.SmoothState = class SmoothState
 
     setTheme: (theme) ->
         $("#page").addClass('Page-transition--' + theme)
+
+    load: (url, isPopped, ignoreCache) ->
+        @smoothState.load(url, isPopped, ignoreCache)

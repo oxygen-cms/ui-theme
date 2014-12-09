@@ -28,7 +28,7 @@ window.Oxygen.Ajax = class Ajax
     @handleSuccess: (data) =>
         if(data.redirect)
             if user.smoothState && user.smoothState.enabled
-                Oxygen.smoothState.load(data.redirect, false, true) # ignores the cache
+                smoothState.load(data.redirect, false, true) # ignores the cache
             else
                 window.location.replace(data.redirect)
 

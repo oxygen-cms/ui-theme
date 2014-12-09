@@ -118,6 +118,10 @@ Oxygen.init = () ->
     TabSwitcher.findAll()
     Slider.findAll()
 
+    Oxygen.load = Oxygen.load || [];
+    for callback in Oxygen.load
+        callback()
+
 Oxygen.init()
 
 #
@@ -128,9 +132,13 @@ Oxygen.init()
 # Calls the smoothState.js library.
 #
 
-if user.smoothState && user.smoothState.enabled
+if !user.pageLoad || !user.pageLoad.smoothState || !user.pageLoad.smoothState.enabled || user.pageLoad.smoothState.enabled == true
     smoothState = new SmoothState()
     smoothState.init()
-    if(user.smoothState.theme)
-        smoothState.setTheme(user.smoothState.theme)
+    if(user.pageLoad && user.pageLoad.smoothState && user.pageLoad.smoothState.theme)
+        smoothState.setTheme(user.pageLoad.smoothState.theme)
 
+progressThemes = if (user.pageLoad && user.pageLoad.progress && user.pageLoad.progress.theme) then user.pageLoad.progress.theme or "minimal,spinner"
+progressThemes = progressThemes.split(",")
+for theme in progressThemes
+    $(document.body).addClass("Page-progress--" + theme)

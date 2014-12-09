@@ -28,7 +28,7 @@ window.Oxygen.Ajax = class Ajax
     @handleSuccess: (data) =>
         if(data.redirect)
             if user.smoothState && user.smoothState.enabled
-                Oxygen.smoothState.load(data.redirect, false, true) # ignores the cache
+                smoothState.load(data.redirect, false, true) # ignores the cache
             else
                 window.location.replace(data.redirect)
 
@@ -810,11 +810,12 @@ window.Oxygen.SmoothState = class SmoothState
                 duration: 350
                 render: @onStart
             onProgress:
-                duration: 0,
+                duration: 0
                 render: @onProgress
             onEnd:
                 duration: 0
                 render: @onEnd
+            callback: @callback
         }).data('smoothState');
 
     onStart: (url, container) =>
@@ -826,8 +827,12 @@ window.Oxygen.SmoothState = class SmoothState
             timeout = index * 100
             setTimeout( ->
                 block.addClass('Block--isExiting')
-                timeout)
+            timeout)
         );
+
+        setTimeout( ->
+            $(".pace-activity").addClass("pace-activity-active")
+        elements.length * 100)
 
     onProgress: (url, container) =>
         $("html, body").css('cursor', 'wait')
@@ -841,7 +846,7 @@ window.Oxygen.SmoothState = class SmoothState
         container.hide()
         container.html(content)
 
-        console.log($('.Block'))
+        $(".pace-activity").removeClass("pace-activity-active")
 
         $('.Block').each((index) ->
             block = $(this)
@@ -857,6 +862,10 @@ window.Oxygen.SmoothState = class SmoothState
         );
 
         container.show()
+
+    callback: (url, $container, $content) =>
+        $(".pace-activity").removeClass("pace-activity-active")
+
         elements = $(document).add("*")
         elements.off()
         @smoothState.bindEventHandlers($(document))
@@ -864,6 +873,9 @@ window.Oxygen.SmoothState = class SmoothState
 
     setTheme: (theme) ->
         $("#page").addClass('Page-transition--' + theme)
+
+    load: (url, isPopped, ignoreCache) ->
+        @smoothState.load(url, isPopped, ignoreCache)
 # ================================
 #                 Editor
 # ================================
@@ -1622,6 +1634,10 @@ Oxygen.init = () ->
     TabSwitcher.findAll()
     Slider.findAll()
 
+    Oxygen.load = Oxygen.load || [];
+    for callback in Oxygen.load
+        callback()
+
 Oxygen.init()
 
 #
@@ -1632,10 +1648,13 @@ Oxygen.init()
 # Calls the smoothState.js library.
 #
 
-if user.smoothState && user.smoothState.enabled
+if !user.pageLoad || !user.pageLoad.smoothState || !user.pageLoad.smoothState.enabled || user.pageLoad.smoothState.enabled == true
     smoothState = new SmoothState()
     smoothState.init()
-    if(user.smoothState.theme)
-        smoothState.setTheme(user.smoothState.theme)
+    if(user.pageLoad && user.pageLoad.smoothState && user.pageLoad.smoothState.theme)
+        smoothState.setTheme(user.pageLoad.smoothState.theme)
 
-
+progressThemes = if (user.pageLoad && user.pageLoad.progress && user.pageLoad.progress.theme) then user.pageLoad.progress.theme or "minimal,spinner"
+progressThemes = progressThemes.split(",")
+for theme in progressThemes
+    $(document.body).addClass("Page-progress--" + theme)
