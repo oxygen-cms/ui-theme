@@ -21,10 +21,37 @@ class UiServiceProvider extends ServiceProvider {
 	public function boot() {
 		$this->package('oxygen/ui', 'oxygen/ui', __DIR__ . '/../resources');
 
+        $this->app['oxygen.preferences']->loadDirectory(__DIR__ . '/../resources/preferences', [
+            'user.general', 'user.editor', 'user.pageLoad'
+        ]);
+
+        $this->addClassesToLayout();
         $this->addStylesheetsToLayout();
 		$this->addScriptsToLayout();
         $this->addNavigationTransitions();
 	}
+
+    /**
+     * Adds Stylesheets references.
+     *
+     * @return void
+     */
+
+    protected function addClassesToLayout() {
+        $this->app['events']->listen('oxygen.layout.classes', function(&$htmlClasses, &$bodyClasses, &$pageClasses) {
+            $htmlClasses[] = 'no-js';
+            $htmlClasses[] = 'no-flexbox';
+            $pageClasses[] = 'Page';
+        });
+
+        $this->app['events']->listen('oxygen.layout.attributes', function(&$htmlAttributes, &$bodyAttributes, &$pageAttributes) {
+            if($this->app['auth']->check() && $this->app['auth']->user()->getPreferences()->get('fontSize') !== '87.5%') {
+                $htmlAttributes['style'] = 'font-size: ' . $this->app['auth']->getPreferences()->get('fontSize') . ';';
+            }
+
+            $pageAttributes['id'] = 'page';
+        });
+    }
 
     /**
      * Adds Stylesheets references.
