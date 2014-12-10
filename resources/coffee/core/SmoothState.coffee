@@ -5,6 +5,8 @@
 window.Oxygen or= {}
 window.Oxygen.SmoothState = class SmoothState
 
+    loading: false
+
     init: ->
         @smoothState = $("#page").smoothState({
             anchors: ".Link--smoothState"
@@ -25,6 +27,8 @@ window.Oxygen.SmoothState = class SmoothState
     onStart: (url, container) =>
         $("html, body").animate({ scrollTop: 0 })
 
+        @loading = true
+
         elements = $('.Block')
         $(elements.get().reverse()).each((index) ->
             block = $(this)
@@ -34,8 +38,9 @@ window.Oxygen.SmoothState = class SmoothState
             timeout)
         );
 
-        setTimeout( ->
-            $(".pace-activity").addClass("pace-activity-active")
+        setTimeout( =>
+            if @loading
+                $(".pace-activity").addClass("pace-activity-active")
         elements.length * 100)
 
     onProgress: (url, container) =>
@@ -68,6 +73,8 @@ window.Oxygen.SmoothState = class SmoothState
         container.show()
 
     callback: (url, $container, $content) =>
+        @loading = false
+
         $(".pace-activity").removeClass("pace-activity-active")
 
         elements = $(document).add("*")

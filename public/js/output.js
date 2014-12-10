@@ -31,7 +31,7 @@
 
     Ajax.handleSuccess = function(data) {
       if (data.redirect) {
-        if (user.smoothState && user.smoothState.enabled) {
+        if (user.pageLoad && user.pageLoad.smoothState && user.pageLoad.smoothState.enabled) {
           smoothState.load(data.redirect, false, true);
         } else {
           window.location.replace(data.redirect);
@@ -836,6 +836,8 @@
       this.onStart = __bind(this.onStart, this);
     }
 
+    SmoothState.prototype.loading = false;
+
     SmoothState.prototype.init = function() {
       return this.smoothState = $("#page").smoothState({
         anchors: ".Link--smoothState",
@@ -862,6 +864,7 @@
       $("html, body").animate({
         scrollTop: 0
       });
+      this.loading = true;
       elements = $('.Block');
       $(elements.get().reverse()).each(function(index) {
         var block, timeout;
@@ -871,9 +874,13 @@
           return block.addClass('Block--isExiting');
         }, timeout);
       });
-      return setTimeout(function() {
-        return $(".pace-activity").addClass("pace-activity-active");
-      }, elements.length * 100);
+      return setTimeout((function(_this) {
+        return function() {
+          if (_this.loading) {
+            return $(".pace-activity").addClass("pace-activity-active");
+          }
+        };
+      })(this), elements.length * 100);
     };
 
     SmoothState.prototype.onProgress = function(url, container) {
@@ -904,6 +911,7 @@
 
     SmoothState.prototype.callback = function(url, $container, $content) {
       var elements;
+      this.loading = false;
       $(".pace-activity").removeClass("pace-activity-active");
       elements = $(document).add("*");
       elements.off();
@@ -1714,7 +1722,7 @@
 
   Oxygen.init();
 
-  if (!user.pageLoad || !user.pageLoad.smoothState || !user.pageLoad.smoothState.enabled || user.pageLoad.smoothState.enabled === true) {
+  if (!user.pageLoad || !user.pageLoad.smoothState || user.pageLoad.smoothState.enabled === true) {
     smoothState = new SmoothState();
     smoothState.init();
     if (user.pageLoad && user.pageLoad.smoothState && user.pageLoad.smoothState.theme) {
@@ -1722,9 +1730,7 @@
     }
   }
 
-  progressThemes = user.pageLoad && user.pageLoad.progress && user.pageLoad.progress.theme ? user.pageLoad.progress.theme || "minimal,spinner" : void 0;
-
-  progressThemes = progressThemes.split(",");
+  progressThemes = user.pageLoad && user.pageLoad.progress && user.pageLoad.progress.theme ? user.pageLoad.progress.theme : ["minimal", "spinner"];
 
   for (_i = 0, _len = progressThemes.length; _i < _len; _i++) {
     theme = progressThemes[_i];

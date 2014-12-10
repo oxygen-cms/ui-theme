@@ -27,7 +27,7 @@ window.Oxygen.Ajax = class Ajax
     # handles a successful response
     @handleSuccess: (data) =>
         if(data.redirect)
-            if user.smoothState && user.smoothState.enabled
+            if user.pageLoad && user.pageLoad.smoothState && user.pageLoad.smoothState.enabled
                 smoothState.load(data.redirect, false, true) # ignores the cache
             else
                 window.location.replace(data.redirect)
@@ -801,6 +801,8 @@ window.Oxygen.Dialog = class Dialog
 window.Oxygen or= {}
 window.Oxygen.SmoothState = class SmoothState
 
+    loading: false
+
     init: ->
         @smoothState = $("#page").smoothState({
             anchors: ".Link--smoothState"
@@ -821,6 +823,8 @@ window.Oxygen.SmoothState = class SmoothState
     onStart: (url, container) =>
         $("html, body").animate({ scrollTop: 0 })
 
+        @loading = true
+
         elements = $('.Block')
         $(elements.get().reverse()).each((index) ->
             block = $(this)
@@ -830,8 +834,9 @@ window.Oxygen.SmoothState = class SmoothState
             timeout)
         );
 
-        setTimeout( ->
-            $(".pace-activity").addClass("pace-activity-active")
+        setTimeout( =>
+            if @loading
+                $(".pace-activity").addClass("pace-activity-active")
         elements.length * 100)
 
     onProgress: (url, container) =>
@@ -864,6 +869,8 @@ window.Oxygen.SmoothState = class SmoothState
         container.show()
 
     callback: (url, $container, $content) =>
+        @loading = false
+
         $(".pace-activity").removeClass("pace-activity-active")
 
         elements = $(document).add("*")
@@ -1648,13 +1655,12 @@ Oxygen.init()
 # Calls the smoothState.js library.
 #
 
-if !user.pageLoad || !user.pageLoad.smoothState || !user.pageLoad.smoothState.enabled || user.pageLoad.smoothState.enabled == true
+if !user.pageLoad || !user.pageLoad.smoothState || user.pageLoad.smoothState.enabled == true
     smoothState = new SmoothState()
     smoothState.init()
     if(user.pageLoad && user.pageLoad.smoothState && user.pageLoad.smoothState.theme)
         smoothState.setTheme(user.pageLoad.smoothState.theme)
 
-progressThemes = if (user.pageLoad && user.pageLoad.progress && user.pageLoad.progress.theme) then user.pageLoad.progress.theme or "minimal,spinner"
-progressThemes = progressThemes.split(",")
+progressThemes = if (user.pageLoad && user.pageLoad.progress && user.pageLoad.progress.theme) then user.pageLoad.progress.theme else ["minimal", "spinner"]
 for theme in progressThemes
     $(document.body).addClass("Page-progress--" + theme)

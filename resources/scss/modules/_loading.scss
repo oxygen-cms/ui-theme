@@ -90,7 +90,19 @@
     display: none;
 }
 
-.Page-transition--slideUp {
+.Page-transition--fade {
+    .Block--isEntering,
+    .Block--isExiting {
+        animation: fadeIn 0.35s ease-out both;
+    }
+
+    .Block--isExiting {
+        animation-direction: reverse;
+        animation-timing-function: ease-in;
+    }
+}
+
+.Page-transition--slide {
     .Block--isEntering,
     .Block--isExiting {
       animation: slideUp 0.35s ease-out both;
@@ -110,4 +122,9 @@
 @keyframes slideUp {
     from { transform: translateY(4em); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }

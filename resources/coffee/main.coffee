@@ -132,13 +132,12 @@ Oxygen.init()
 # Calls the smoothState.js library.
 #
 
-if !user.pageLoad || !user.pageLoad.smoothState || !user.pageLoad.smoothState.enabled || user.pageLoad.smoothState.enabled == true
+if !user.pageLoad || !user.pageLoad.smoothState || user.pageLoad.smoothState.enabled == true
     smoothState = new SmoothState()
     smoothState.init()
     if(user.pageLoad && user.pageLoad.smoothState && user.pageLoad.smoothState.theme)
         smoothState.setTheme(user.pageLoad.smoothState.theme)
 
-progressThemes = if (user.pageLoad && user.pageLoad.progress && user.pageLoad.progress.theme) then user.pageLoad.progress.theme or "minimal,spinner"
-progressThemes = progressThemes.split(",")
+progressThemes = if (user.pageLoad && user.pageLoad.progress && user.pageLoad.progress.theme) then user.pageLoad.progress.theme else ["minimal", "spinner"]
 for theme in progressThemes
     $(document.body).addClass("Page-progress--" + theme)

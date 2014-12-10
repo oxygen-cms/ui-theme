@@ -1907,10 +1907,19 @@ select {
 .Block--isHidden {
   display: none; }
 
-.Page-transition--slideUp .Block--isEntering, .Page-transition--slideUp .Block--isExiting {
+.Page-transition--fade .Block--isEntering, .Page-transition--fade .Block--isExiting {
+  -webkit-animation: fadeIn 0.35s ease-out both;
+  animation: fadeIn 0.35s ease-out both; }
+.Page-transition--fade .Block--isExiting {
+  -webkit-animation-direction: reverse;
+  animation-direction: reverse;
+  -webkit-animation-timing-function: ease-in;
+  animation-timing-function: ease-in; }
+
+.Page-transition--slide .Block--isEntering, .Page-transition--slide .Block--isExiting {
   -webkit-animation: slideUp 0.35s ease-out both;
   animation: slideUp 0.35s ease-out both; }
-.Page-transition--slideUp .Block--isExiting {
+.Page-transition--slide .Block--isExiting {
   -webkit-animation-direction: reverse;
   animation-direction: reverse;
   -webkit-animation-timing-function: ease-in;
@@ -1958,6 +1967,20 @@ select {
     -webkit-transform: translateY(0);
     -ms-transform: translateY(0);
     transform: translateY(0);
+    opacity: 1; } }
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0; }
+
+  to {
+    opacity: 1; } }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0; }
+
+  to {
     opacity: 1; } }
 
 /* ====================================================================
