@@ -7,7 +7,7 @@
    ==================================================================== */
 
 .Slider {
-    background-color: $color-grey-dark-1;
+    background-color: lighten($color-grey-dark-1, 10%);
     position: relative;
     overflow: hidden;
 }

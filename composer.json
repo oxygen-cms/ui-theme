@@ -31,9 +31,9 @@
         "images": [
             "https://raw.githubusercontent.com/oxygen-cms/ui/master/docs/login-welcome.jpg",
             "https://raw.githubusercontent.com/oxygen-cms/ui/master/docs/login-form.jpg",
-            "https://raw.githubusercontent.com/oxygen-cms/ui/master/docs/pages.jpg",
-            "https://raw.githubusercontent.com/oxygen-cms/ui/master/docs/marketplace.jpg",
-            "https://raw.githubusercontent.com/oxygen-cms/ui/master/docs/pages-mobile.jpg"
+            "https://raw.githubusercontent.com/oxygen-cms/ui/master/docs/pages.png",
+            "https://raw.githubusercontent.com/oxygen-cms/ui/master/docs/marketplace.png",
+            "https://raw.githubusercontent.com/oxygen-cms/ui/master/docs/pages-mobile.png"
         ],
         "providers": [
             {
