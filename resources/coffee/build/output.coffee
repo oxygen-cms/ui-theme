@@ -26,8 +26,10 @@ window.Oxygen.Ajax = class Ajax
 
     # handles a successful response
     @handleSuccess: (data) =>
+        console.log(data)
+
         if(data.redirect)
-            if user.pageLoad && user.pageLoad.smoothState && user.pageLoad.smoothState.enabled
+            if smoothState && !(data.hardRedirect == true)
                 smoothState.load(data.redirect, false, true) # ignores the cache
             else
                 window.location.replace(data.redirect)
@@ -884,6 +886,52 @@ window.Oxygen.SmoothState = class SmoothState
     load: (url, isPopped, ignoreCache) ->
         @smoothState.load(url, isPopped, ignoreCache)
 # ================================
+#             Notification
+# ================================
+
+window.Oxygen or= {}
+window.Oxygen.Preferences = class Preferences
+
+    @setPreferences: (preferences) ->
+        Preferences.preferences = preferences
+
+    @get: (key, fallback = null) ->
+        o = Preferences.preferences
+
+        if(!o)
+            return fallback
+
+        key = key.replace(/\[(\w+)\]/g, '.$1'); # convert indexes to properties
+        key = key.replace(/^\./, '');           # strip a leading dot
+        parts = key.split('.');
+        while parts.length
+            n = a.shift()
+            if n in o
+                o = n
+            else
+                return fallback
+        return o
+
+    @has: (key) ->
+        o = Preferences.preferences
+
+        if(!o)
+            return false
+
+        key = key.replace(/\[(\w+)\]/g, '.$1'); # convert indexes to properties
+        key = key.replace(/^\./, '');           # strip a leading dot
+        parts = key.split('.');
+        while parts.length
+            n = a.shift()
+            if n in o
+                o = n
+            else
+                return false
+        return true
+
+
+
+# ================================
 #                 Editor
 # ================================
 
@@ -1049,13 +1097,13 @@ window.Oxygen.Editor.CodeViewInterface = class CodeViewInterface
 
         # set user preferences
         object.getSession().setMode "ace/mode/" + @editor.language
-        object.setTheme user.editor.ace.theme
-        object.getSession().setUseWrapMode user.editor.ace.wordWrap
-        object.setHighlightActiveLine user.editor.ace.highlightActiveLine
-        object.setShowPrintMargin user.editor.ace.showPrintMargin
-        object.setShowInvisibles user.editor.ace.showInvisibles
+        object.setTheme Preferences.get('editor.ace.theme')
+        object.getSession().setUseWrapMode Preferences.get('editor.ace.wordWrap')
+        object.setHighlightActiveLine Preferences.get('user.editor.ace.highlightActiveLine')
+        object.setShowPrintMargin Preferences.get('user.editor.ace.showPrintMargin')
+        object.setShowInvisibles Preferences.get('user.editor.ace.showInvisibles')
         object.setReadOnly @editor.readOnly
-        $("#" + @editor.name + "-ace-editor").css "font-size", user.editor.ace.fontSize
+        $("#" + @editor.name + "-ace-editor").css "font-size", Preferences.get('user.editor.ace.fontSize')
 
         # store object
         @view = object
@@ -1093,8 +1141,8 @@ window.Oxygen.Editor.DesignViewInterface = class DesignViewInterface
         @view = null
 
     create: ->
-        config = user.editor.ckeditor
-        config.customConfig = config.customConfig ? ''
+        config = Preferences.get('editor.ckeditor', {})
+        config.customConfig = config.customConfig || ''
         config.contentsCss = @editor.stylesheets
 
         console.log(config)
@@ -1548,6 +1596,7 @@ Oxygen.initLogin = () ->
 
 
 
+
 base64Encode = (inputStr) ->
   b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
   outputStr = ""
@@ -1655,12 +1704,11 @@ Oxygen.init()
 # Calls the smoothState.js library.
 #
 
-if !user.pageLoad || !user.pageLoad.smoothState || user.pageLoad.smoothState.enabled == true
+if Preferences.get('pageLoad.smoothState.enabled', true) == true
     smoothState = new SmoothState()
     smoothState.init()
-    if(user.pageLoad && user.pageLoad.smoothState && user.pageLoad.smoothState.theme)
-        smoothState.setTheme(user.pageLoad.smoothState.theme)
+    smoothState.setTheme(Preferences.get('pageLoad.smoothState.theme', 'slide'))
 
-progressThemes = if (user.pageLoad && user.pageLoad.progress && user.pageLoad.progress.theme) then user.pageLoad.progress.theme else ["minimal", "spinner"]
+progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner"])
 for theme in progressThemes
     $(document.body).addClass("Page-progress--" + theme)

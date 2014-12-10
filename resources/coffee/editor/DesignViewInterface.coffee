@@ -10,8 +10,8 @@ window.Oxygen.Editor.DesignViewInterface = class DesignViewInterface
         @view = null
 
     create: ->
-        config = user.editor.ckeditor
-        config.customConfig = config.customConfig ? ''
+        config = Preferences.get('editor.ckeditor', {})
+        config.customConfig = config.customConfig || ''
         config.contentsCss = @editor.stylesheets
 
         console.log(config)

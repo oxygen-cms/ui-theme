@@ -8,7 +8,7 @@
 <script src="/packages/oxygen/ui/vendor/vex/vex.min.js"></script>
 <script>vex.defaultOptions.className = 'Dialog';</script>
 <link rel="stylesheet" href="/packages/oxygen/ui/vendor/vex/vex.css" />
-<?php if(Auth::user()->getPreferences()->get('pageLoad.progress.enabled', true) === true): ?>
+<?php if(!Auth::check() || Auth::user()->getPreferences()->get('pageLoad.progress.enabled', true) === true): ?>
     <script>
         paceOptions = {
             restartOnRequestAfter: 0,
@@ -23,8 +23,8 @@
     </script>
     <script src="/packages/oxygen/ui/vendor/pace.min.js"></script>
 <?php endif; ?>
-<?php if(Auth::user()->getPreferences()->get('pageLoad.smoothState.enabled', true) === true): ?>
-<script src="/packages/oxygen/ui/vendor/smoothState.js"></script>
+<?php if(!Auth::check() || Auth::user()->getPreferences()->get('pageLoad.smoothState.enabled', true) === true): ?>
+    <script src="/packages/oxygen/ui/vendor/smoothState.js"></script>
 <?php endif; ?>
 <script src="/packages/oxygen/ui/vendor/tagging.js"></script>
 

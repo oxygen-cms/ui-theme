@@ -1,8 +1,9 @@
 (function() {
-  var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, PreviewInterface, ProgressBar, Slider, SmoothState, SplitViewInterface, TabSwitcher, Toggle, Upload, base64Encode, progressThemes, smoothState, theme, _i, _len,
+  var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, Preferences, PreviewInterface, ProgressBar, Slider, SmoothState, SplitViewInterface, TabSwitcher, Toggle, Upload, base64Encode, progressThemes, smoothState, theme, _i, _len,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   window.Oxygen || (window.Oxygen = {});
 
@@ -30,8 +31,9 @@
     };
 
     Ajax.handleSuccess = function(data) {
+      console.log(data);
       if (data.redirect) {
-        if (user.pageLoad && user.pageLoad.smoothState && user.pageLoad.smoothState.enabled) {
+        if (smoothState && !(data.hardRedirect === true)) {
           smoothState.load(data.redirect, false, true);
         } else {
           window.location.replace(data.redirect);
@@ -933,6 +935,62 @@
 
   window.Oxygen || (window.Oxygen = {});
 
+  window.Oxygen.Preferences = Preferences = (function() {
+    function Preferences() {}
+
+    Preferences.setPreferences = function(preferences) {
+      return Preferences.preferences = preferences;
+    };
+
+    Preferences.get = function(key, fallback) {
+      var n, o, parts;
+      if (fallback == null) {
+        fallback = null;
+      }
+      o = Preferences.preferences;
+      if (!o) {
+        return fallback;
+      }
+      key = key.replace(/\[(\w+)\]/g, '.$1');
+      key = key.replace(/^\./, '');
+      parts = key.split('.');
+      while (parts.length) {
+        n = a.shift();
+        if (__indexOf.call(o, n) >= 0) {
+          o = n;
+        } else {
+          return fallback;
+        }
+      }
+      return o;
+    };
+
+    Preferences.has = function(key) {
+      var n, o, parts;
+      o = Preferences.preferences;
+      if (!o) {
+        return false;
+      }
+      key = key.replace(/\[(\w+)\]/g, '.$1');
+      key = key.replace(/^\./, '');
+      parts = key.split('.');
+      while (parts.length) {
+        n = a.shift();
+        if (__indexOf.call(o, n) >= 0) {
+          o = n;
+        } else {
+          return false;
+        }
+      }
+      return true;
+    };
+
+    return Preferences;
+
+  })();
+
+  window.Oxygen || (window.Oxygen = {});
+
   window.Oxygen.Editor = Editor = (function() {
     Editor.list = [];
 
@@ -1111,13 +1169,13 @@
       console.log("CodeViewInterface.create");
       object = ace.edit(this.editor.name + "-ace-editor");
       object.getSession().setMode("ace/mode/" + this.editor.language);
-      object.setTheme(user.editor.ace.theme);
-      object.getSession().setUseWrapMode(user.editor.ace.wordWrap);
-      object.setHighlightActiveLine(user.editor.ace.highlightActiveLine);
-      object.setShowPrintMargin(user.editor.ace.showPrintMargin);
-      object.setShowInvisibles(user.editor.ace.showInvisibles);
+      object.setTheme(Preferences.get('editor.ace.theme'));
+      object.getSession().setUseWrapMode(Preferences.get('editor.ace.wordWrap'));
+      object.setHighlightActiveLine(Preferences.get('user.editor.ace.highlightActiveLine'));
+      object.setShowPrintMargin(Preferences.get('user.editor.ace.showPrintMargin'));
+      object.setShowInvisibles(Preferences.get('user.editor.ace.showInvisibles'));
       object.setReadOnly(this.editor.readOnly);
-      $("#" + this.editor.name + "-ace-editor").css("font-size", user.editor.ace.fontSize);
+      $("#" + this.editor.name + "-ace-editor").css("font-size", Preferences.get('user.editor.ace.fontSize'));
       return this.view = object;
     };
 
@@ -1162,9 +1220,9 @@
     }
 
     DesignViewInterface.prototype.create = function() {
-      var config, object, _ref;
-      config = user.editor.ckeditor;
-      config.customConfig = (_ref = config.customConfig) != null ? _ref : '';
+      var config, object;
+      config = Preferences.get('editor.ckeditor', {});
+      config.customConfig = config.customConfig || '';
       config.contentsCss = this.editor.stylesheets;
       console.log(config);
       object = CKEDITOR.replace(this.editor.name + "-editor", config);
@@ -1722,15 +1780,13 @@
 
   Oxygen.init();
 
-  if (!user.pageLoad || !user.pageLoad.smoothState || user.pageLoad.smoothState.enabled === true) {
+  if (Preferences.get('pageLoad.smoothState.enabled', true) === true) {
     smoothState = new SmoothState();
     smoothState.init();
-    if (user.pageLoad && user.pageLoad.smoothState && user.pageLoad.smoothState.theme) {
-      smoothState.setTheme(user.pageLoad.smoothState.theme);
-    }
+    smoothState.setTheme(Preferences.get('pageLoad.smoothState.theme', 'slide'));
   }
 
-  progressThemes = user.pageLoad && user.pageLoad.progress && user.pageLoad.progress.theme ? user.pageLoad.progress.theme : ["minimal", "spinner"];
+  progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner"]);
 
   for (_i = 0, _len = progressThemes.length; _i < _len; _i++) {
     theme = progressThemes[_i];

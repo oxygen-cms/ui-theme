@@ -14,6 +14,7 @@
 #= require Slider
 #= require Dialog
 #= require SmoothState
+#= require Preferences
 
 #= require Editor
 #= require CodeViewInterface
@@ -132,12 +133,11 @@ Oxygen.init()
 # Calls the smoothState.js library.
 #
 
-if !user.pageLoad || !user.pageLoad.smoothState || user.pageLoad.smoothState.enabled == true
+if Preferences.get('pageLoad.smoothState.enabled', true) == true
     smoothState = new SmoothState()
     smoothState.init()
-    if(user.pageLoad && user.pageLoad.smoothState && user.pageLoad.smoothState.theme)
-        smoothState.setTheme(user.pageLoad.smoothState.theme)
+    smoothState.setTheme(Preferences.get('pageLoad.smoothState.theme', 'slide'))
 
-progressThemes = if (user.pageLoad && user.pageLoad.progress && user.pageLoad.progress.theme) then user.pageLoad.progress.theme else ["minimal", "spinner"]
+progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner"])
 for theme in progressThemes
     $(document.body).addClass("Page-progress--" + theme)
