@@ -1748,7 +1748,9 @@
 
   MainNav.headroom();
 
-  Preferences.setPreferences(user);
+  if (typeof user !== "undefined" && user !== null) {
+    Preferences.setPreferences(user);
+  }
 
   Oxygen.reset = function() {
     window.editors = [];

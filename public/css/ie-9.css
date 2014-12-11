@@ -583,7 +583,7 @@ button, input[type="submit"], input[type="button"] {
     border-bottom: none; }
 
 .Row--highlight {
-  background-color: #fbfbfb;
+  background-color: #f6f6f6;
   margin: -0.5em; }
 
 @media screen and (min-width: 769px) {

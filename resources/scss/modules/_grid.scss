@@ -42,7 +42,7 @@
 }
 
 .Row--highlight {
-    background-color: $color-white-1;
+    background-color: darken($color-white-1, 2%);
     margin: -0.5em;
 }
 

@@ -296,8 +296,8 @@
                 var url     = window.location.href,
                     $page   = $("#" + e.state.id),
                     page    = $page.data("smoothState");
-
-                if(page.href !== url && !utility.isHash(url)) {
+                
+                if(typeof page !== 'undefined' && page.href !== url && !utility.isHash(url)) {
                     page.load(url, true);
                 }
             }

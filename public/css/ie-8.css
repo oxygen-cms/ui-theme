@@ -568,7 +568,7 @@ button, input[type="submit"], input[type="button"] {
     border-bottom: none; }
 
 .Row--highlight {
-  background-color: #fbfbfb;
+  background-color: #f6f6f6;
   margin: -0.5em; }
 
 .no-flexbox .Cell-oneThird, .no-flexbox .Cell-twoThirds, .no-flexbox .Cell-oneHalf {

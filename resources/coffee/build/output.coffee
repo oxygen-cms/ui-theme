@@ -1632,7 +1632,9 @@ base64Encode = (inputStr) ->
   outputStr
 
 MainNav.headroom()
-Preferences.setPreferences(user)
+
+if user?
+    Preferences.setPreferences(user)
 
 Oxygen.reset = () ->
     window.editors = []
