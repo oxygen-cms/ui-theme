@@ -66,7 +66,7 @@
     margin: 1em 0;
 }
 
-.List--bordered{
+.List--bordered {
     @extend .List--reset;
 
     li {
@@ -85,6 +85,10 @@
 
 .Text--indent {
     padding-left: 2.5em;
+}
+
+.Link-cursor {
+    @include link-cursor;
 }
 
 p {
@@ -120,6 +124,10 @@ pre {
     border: 1px solid $color-grey-light-2;
     margin: 1em 0;
     padding: 1em;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
 }
 
 img, canvas {

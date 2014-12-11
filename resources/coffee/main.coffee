@@ -53,6 +53,7 @@ base64Encode = (inputStr) ->
   outputStr
 
 MainNav.headroom()
+Preferences.setPreferences(user)
 
 Oxygen.reset = () ->
     window.editors = []

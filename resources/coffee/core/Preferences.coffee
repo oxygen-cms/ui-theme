@@ -11,19 +11,23 @@ window.Oxygen.Preferences = class Preferences
     @get: (key, fallback = null) ->
         o = Preferences.preferences
 
-        if(!o)
+        if(!o?)
             return fallback
 
-        key = key.replace(/\[(\w+)\]/g, '.$1'); # convert indexes to properties
-        key = key.replace(/^\./, '');           # strip a leading dot
-        parts = key.split('.');
-        while parts.length
-            n = a.shift()
-            if n in o
-                o = n
-            else
-                return fallback
-        return o
+        parts = key.split('.')
+        last = parts.pop()
+        l = parts.length
+        i = 1
+        current = parts[0]
+
+        while((o = o[current]) && i < l)
+            current = parts[i]
+            i++
+
+        if o
+            return o[last]
+        else
+            return fallback
 
     @has: (key) ->
         o = Preferences.preferences
@@ -31,15 +35,19 @@ window.Oxygen.Preferences = class Preferences
         if(!o)
             return false
 
-        key = key.replace(/\[(\w+)\]/g, '.$1'); # convert indexes to properties
-        key = key.replace(/^\./, '');           # strip a leading dot
-        parts = key.split('.');
-        while parts.length
-            n = a.shift()
-            if n in o
-                o = n
-            else
-                return false
-        return true
+        parts = key.split('.')
+        last = parts.pop()
+        l = parts.length
+        i = 1
+        current = parts[0]
+
+        while((o = o[current]) && i < l)
+            current = parts[i]
+            i++
+
+        if o
+            return true
+        else
+            return false
 
 

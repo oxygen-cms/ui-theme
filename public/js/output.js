@@ -2,8 +2,7 @@
   var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, Preferences, PreviewInterface, ProgressBar, Slider, SmoothState, SplitViewInterface, TabSwitcher, Toggle, Upload, base64Encode, progressThemes, smoothState, theme, _i, _len,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   window.Oxygen || (window.Oxygen = {});
 
@@ -943,46 +942,50 @@
     };
 
     Preferences.get = function(key, fallback) {
-      var n, o, parts;
+      var current, i, l, last, o, parts;
       if (fallback == null) {
         fallback = null;
       }
       o = Preferences.preferences;
-      if (!o) {
+      if (o == null) {
         return fallback;
       }
-      key = key.replace(/\[(\w+)\]/g, '.$1');
-      key = key.replace(/^\./, '');
       parts = key.split('.');
-      while (parts.length) {
-        n = a.shift();
-        if (__indexOf.call(o, n) >= 0) {
-          o = n;
-        } else {
-          return fallback;
-        }
+      last = parts.pop();
+      l = parts.length;
+      i = 1;
+      current = parts[0];
+      while ((o = o[current]) && i < l) {
+        current = parts[i];
+        i++;
       }
-      return o;
+      if (o) {
+        return o[last];
+      } else {
+        return fallback;
+      }
     };
 
     Preferences.has = function(key) {
-      var n, o, parts;
+      var current, i, l, last, o, parts;
       o = Preferences.preferences;
       if (!o) {
         return false;
       }
-      key = key.replace(/\[(\w+)\]/g, '.$1');
-      key = key.replace(/^\./, '');
       parts = key.split('.');
-      while (parts.length) {
-        n = a.shift();
-        if (__indexOf.call(o, n) >= 0) {
-          o = n;
-        } else {
-          return false;
-        }
+      last = parts.pop();
+      l = parts.length;
+      i = 1;
+      current = parts[0];
+      while ((o = o[current]) && i < l) {
+        current = parts[i];
+        i++;
       }
-      return true;
+      if (o) {
+        return true;
+      } else {
+        return false;
+      }
     };
 
     return Preferences;
@@ -1744,6 +1747,8 @@
   };
 
   MainNav.headroom();
+
+  Preferences.setPreferences(user);
 
   Oxygen.reset = function() {
     window.editors = [];

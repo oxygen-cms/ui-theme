@@ -48,6 +48,10 @@
     border-bottom: 0;
 }
 
+.Header--block:last-child {
+    border-bottom: 1px solid $color-grey-light-2;
+}
+
 .Header--noBorder {
     border-bottom: 0;
 }
@@ -102,8 +106,13 @@
 .Header-subtitle {
     color: $color-grey-dark-3;
 
-    &:before {
-        content: "\00a0";
+    @include larger-than($tablet-large) {
+        .Header--tiny &:before,
+        .Header--small &:before,
+        .Header--normal &:before,
+        .Header--main &:before {
+            content: "\00a0";
+        }
     }
 }
 

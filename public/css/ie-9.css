@@ -87,20 +87,8 @@ body {
 .Body--noScroll {
   overflow: hidden; }
 
-pre {
-  white-space: pre-wrap;
-  /* css-3 */
-  white-space: -moz-pre-wrap;
-  /* Mozilla, since 1999 */
-  white-space: -o-pre-wrap;
-  /* Opera 7 */
-  word-wrap: break-word;
-  /* Internet Explorer 5.5+ */ }
-
-.no-wrap {
-  white-space: nowrap;
-  word-wrap: normal;
-  display: block; }
+.js .js-hide {
+  display: none; }
 
 /* ====================================================================
    ====================================================================
@@ -161,6 +149,10 @@ pre {
 .Text--indent {
   padding-left: 2.5em; }
 
+.Link-cursor:hover {
+  cursor: hand;
+  cursor: pointer; }
+
 p {
   margin: 1em 0;
   line-height: 1.5; }
@@ -185,7 +177,11 @@ pre {
   background-color: #fbfbfb;
   border: 1px solid #eee;
   margin: 1em 0;
-  padding: 1em; }
+  padding: 1em;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word; }
 
 img, canvas {
   max-width: 100%; }
@@ -1672,6 +1668,9 @@ select {
 .Header:last-child {
   border-bottom: 0; }
 
+.Header--block:last-child {
+  border-bottom: 1px solid #eee; }
+
 .Header--noBorder {
   border-bottom: 0; }
 
@@ -1729,8 +1728,9 @@ select {
 
 .Header-subtitle {
   color: #888; }
-  .Header-subtitle:before {
-    content: "\00a0"; }
+  @media screen and (min-width: 769px) {
+    .Header--tiny .Header-subtitle:before, .Header--small .Header-subtitle:before, .Header--normal .Header-subtitle:before, .Header--main .Header-subtitle:before {
+      content: "\00a0"; } }
 
 .Header-icon {
   color: #888;
