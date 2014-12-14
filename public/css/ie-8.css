@@ -1327,6 +1327,7 @@ button, input[type="submit"], input[type="button"] {
   height: 2em;
   width: 0;
   position: relative;
+  border-radius: 0.5em;
   background-color: #83c8fc;
   -webkit-transition: width ease 0.5s, opacity ease 0.5s;
   transition: width ease 0.5s, opacity ease 0.5s; }
