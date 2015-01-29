@@ -1364,7 +1364,6 @@
       this.handleCropSelect = __bind(this.handleCropSelect, this);
       this.handleCropDisable = __bind(this.handleCropDisable, this);
       this.handleCropEnable = __bind(this.handleCropEnable, this);
-      this.onRequestProgress = __bind(this.onRequestProgress, this);
       this.onRequestEnd = __bind(this.onRequestEnd, this);
       this.handleSave = __bind(this.handleSave, this);
       this.handlePreview = __bind(this.handlePreview, this);
@@ -1412,7 +1411,6 @@
         that.fields.resize.height.val(that.imageDimensions.naturalHeight);
         return that.handleCropEnable();
       };
-      this.progressBar = new ProgressBar(this.container.find("." + ImageEditor.classes.form.progressBar));
       this.fullscreenToggle = new FullscreenToggle(this.container.find("." + ImageEditor.classes.button.toggleFullscreen), this.container, (function() {}), (function() {}));
       this.container.find("." + ImageEditor.classes.button.apply).on("click", this.handlePreview);
       this.container.find("." + ImageEditor.classes.button.save).on("click", this.handleSave);
@@ -1535,8 +1533,7 @@
     };
 
     ImageEditor.prototype.applyChanges = function(data) {
-      var i, that;
-      if (this.progressTimer != null) {
+      if (this.applyingChanges) {
         new Notification({
           content: "Already Processing",
           status: "failed"
@@ -1559,25 +1556,16 @@
           return function() {
             var object;
             object = window.ActiveXObject ? new ActiveXObject("XMLHttp") : new XMLHttpRequest();
-            object.addEventListener("progress", _this.onRequestProgress);
             object.overrideMimeType("text/plain; charset=x-user-defined");
             return object;
           };
         })(this)
       });
-      i = 0;
-      that = this;
-      return this.progressTimer = setInterval(function() {
-        if (i < 75) {
-          i++;
-        }
-        return that.progressBar.transitionTo(i, 100);
-      }, 50);
+      return this.applyingChanges = true;
     };
 
     ImageEditor.prototype.onRequestEnd = function(response, status, request) {
-      clearInterval(this.progressTimer);
-      this.progressTimer = null;
+      this.applyingChanges = false;
       this.progressNotification.hide();
       if (this.jCropApi != null) {
         this.jCropApi.destroy();
@@ -1585,16 +1573,7 @@
       this.jCropApi = null;
       this.forms.simple.attr("data-changed", false);
       this.forms.advanced.attr("data-changed", false);
-      this.image[0].src = "data:image/jpeg;base64," + base64Encode(response);
-      this.progressBar.transitionTo(1, 1);
-      return this.progressBar.resetAfter(1000);
-    };
-
-    ImageEditor.prototype.onRequestProgress = function(e) {
-      clearInterval(this.progressTimer);
-      if (e.lengthComputable) {
-        return this.progressBar.transitionTo(Math.round(e.loaded / e.total * 25) + 75, 100);
-      }
+      return this.image[0].src = "data:image/jpeg;base64," + base64Encode(response);
     };
 
     ImageEditor.prototype.handleCropEnable = function() {
@@ -1681,7 +1660,6 @@
       form: {
         simple: "ImageEditor-form--simple",
         advanced: "ImageEditor-form--advanced",
-        progressBar: "ImageEditor-progress",
         crop: "ImageEditor-crop-input",
         resize: "ImageEditor-resize-input"
       }

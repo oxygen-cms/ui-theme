@@ -336,8 +336,8 @@ button, input[type="submit"], input[type="button"] {
     font-size: 0px;
     line-height: 0%;
     width: 0px;
-    border-top: 20px solid transparent;
-    border-bottom: 20px solid transparent; }
+    border-top: 18px solid transparent;
+    border-bottom: 18px solid transparent; }
 
 .Button--back.Button--back, .Button--forward.Button--forward {
   border: 0; }
@@ -345,8 +345,8 @@ button, input[type="submit"], input[type="button"] {
 .Button--back {
   padding-left: 1em; }
   .Button--back:before {
-    left: -15px;
-    border-right: 20px solid #eee;
+    left: -13px;
+    border-right: 18px solid #eee;
     -webkit-transition: border-right-color 0.2s ease;
     transition: border-right-color 0.2s ease; }
   .Button--back:hover:before {
@@ -357,8 +357,8 @@ button, input[type="submit"], input[type="button"] {
 .Button--forward {
   padding-right: 1em; }
   .Button--forward:before {
-    right: -15px;
-    border-left: 20px solid #eee;
+    right: -13px;
+    border-left: 18px solid #eee;
     -webkit-transition: border-left-color 0.2s ease;
     transition: border-left-color 0.2s ease; }
   .Button--forward:hover:before {
@@ -723,9 +723,6 @@ button, input[type="submit"], input[type="button"] {
 
 .Dropdown-button {
   margin: 0; }
-
-.Dropdown-container .ButtonTabGroup .Button:last-child, .Dropdown-container .ButtonTabGroup .Dialog .vex-dialog-button:last-child, .Dialog .Dropdown-container .ButtonTabGroup .vex-dialog-button:last-child {
-  line-height: 1.5; }
 
 .Dropdown--round .Dropdown-itemContainer:first-child .Dropdown-item, .Dropdown--round .Dropdown-item.Dropdown-itemContainer:first-child {
   border-top-left-radius: 0.5em;
@@ -1642,11 +1639,11 @@ select {
   margin-right: 1em;
   margin-bottom: 0; }
 
-.Header-toolbar, .ImageEditor-toolbar {
+.Header-toolbar {
   -webkit-align-content: space-between;
   -ms-flex-line-pack: justify;
   align-content: space-between; }
-  .flexbox .Header-toolbar, .flexbox .ImageEditor-toolbar {
+  .flexbox .Header-toolbar {
     display: -webkit-box;
     display: -webkit-flex;
     display: -moz-box;
@@ -1665,15 +1662,15 @@ select {
     -webkit-flex-wrap: wrap;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap; }
-  .Header-toolbar > *, .Header-toolbar > .ImageEditor-toolbar {
+  .Header-toolbar > * {
     margin: 0 0.25em; }
-  .Header-toolbar.Header-toolbar.Header-toolbar, .ImageEditor-toolbar {
+  .Header-toolbar.Header-toolbar.Header-toolbar {
     float: right;
     margin-left: auto; }
-  .Header-toolbar.Header-toolbar--alignLeft.Header-toolbar--alignLeft.Header-toolbar--alignLeft, .Header-toolbar--alignLeft.Header-toolbar--alignLeft.Header-toolbar--alignLeft.ImageEditor-toolbar {
+  .Header-toolbar.Header-toolbar--alignLeft.Header-toolbar--alignLeft.Header-toolbar--alignLeft {
     float: left; }
 
-.Header--block .Header-toolbar, .Header--block .ImageEditor-toolbar {
+.Header--block .Header-toolbar {
   margin-top: 1em;
   float: none; }
 
@@ -1777,10 +1774,35 @@ select {
   .ImageEditor-content img {
     margin: 0 auto; }
 
-.ImageEditor-toolbar > *:first-child {
-  margin-left: 0; }
-.ImageEditor-toolbar > *:last-child {
-  margin-right: 0; }
+.ImageEditor-toolbar {
+  -webkit-align-content: space-between;
+  -ms-flex-line-pack: justify;
+  align-content: space-between; }
+  .flexbox .ImageEditor-toolbar {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+    -moz-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap; }
+  .ImageEditor-toolbar > * {
+    margin: 0 0.25em; }
+  .ImageEditor-toolbar > *:first-child {
+    margin-left: 0; }
+  .ImageEditor-toolbar > *:last-child {
+    margin-right: 0; }
 
 .ImageEditor-panel {
   width: 30%;
@@ -2170,17 +2192,17 @@ select {
     margin-left: auto;
     margin-right: auto; }
 
-.Pagination li {
+.Pagination-element {
   margin: 0 0.5em; }
 
-.Pagination li:first-child {
+.Pagination-element:first-child {
   margin-left: 0; }
 
-.Pagination li:last-child {
+.Pagination-element:last-child {
   margin-right: 0; }
 
 .Pagination-message {
-  line-height: 3em; }
+  padding: 0.75em 0.5em; }
 
 /* ====================================================================
    ====================================================================
@@ -2746,6 +2768,7 @@ table.Table--topAlignedCells td, table.Table--topAlignedCells th {
   font-family: FontAwesome;
   font-weight: normal;
   text-rendering: auto;
+  line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 

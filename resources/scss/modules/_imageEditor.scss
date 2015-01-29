@@ -32,7 +32,12 @@
 }
 
 .ImageEditor-toolbar {
-    @extend .Header-toolbar;
+    @include flex-container(null, flex-start, center, '.flex-item', wrap);
+    align-content: space-between;
+
+    & > * {
+        margin: 0 0.25em;
+    }
 
     & > *:first-child {
         margin-left: 0;

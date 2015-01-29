@@ -13,18 +13,18 @@
     @include flex-container(row, center);
 }
 
-.Pagination li {
+.Pagination-element {
     margin: 0 0.5em;
 }
 
-.Pagination li:first-child {
+.Pagination-element:first-child {
     margin-left: 0;
 }
 
-.Pagination li:last-child {
+.Pagination-element:last-child {
     margin-right: 0;
 }
 
 .Pagination-message {
-    line-height: 3em;
+    padding: 0.75em 0.5em;
 }

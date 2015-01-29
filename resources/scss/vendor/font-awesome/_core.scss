@@ -6,6 +6,7 @@
   font-family: FontAwesome;
   font-weight: normal; // shortening font declaration
   text-rendering: auto; // optimizelegibility throws things off #1094
+  line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

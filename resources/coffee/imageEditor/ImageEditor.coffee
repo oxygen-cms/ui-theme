@@ -49,9 +49,6 @@ window.Oxygen.ImageEditor = class ImageEditor
             that.fields.resize.height.val(that.imageDimensions.naturalHeight)
             that.handleCropEnable()
 
-        @progressBar = new ProgressBar(
-            @container.find("." + ImageEditor.classes.form.progressBar)
-        )
         @fullscreenToggle = new FullscreenToggle(
             @container.find("." + ImageEditor.classes.button.toggleFullscreen),
             @container,
@@ -141,7 +138,7 @@ window.Oxygen.ImageEditor = class ImageEditor
     # --------------------------------------------
 
     applyChanges: (data) ->
-        if @progressTimer?
+        if @applyingChanges
             new Notification({
                 content: "Already Processing"
                 status: "failed"
@@ -159,21 +156,13 @@ window.Oxygen.ImageEditor = class ImageEditor
                 Ajax.handleError()
             xhr:            =>
                 object = if window.ActiveXObject then new ActiveXObject("XMLHttp") else new XMLHttpRequest()
-                object.addEventListener("progress", @onRequestProgress)
                 object.overrideMimeType("text/plain; charset=x-user-defined");
                 return object
         })
-        i = 0
-        that = @
-        @progressTimer = setInterval( ->
-            if(i < 75)
-                i++
-            that.progressBar.transitionTo(i, 100)
-        , 50)
+        @applyingChanges = true
 
     onRequestEnd: (response, status, request) =>
-        clearInterval(@progressTimer)
-        @progressTimer = null
+        @applyingChanges = false
         @progressNotification.hide()
         @jCropApi.destroy() if @jCropApi?
         @jCropApi = null
@@ -181,14 +170,6 @@ window.Oxygen.ImageEditor = class ImageEditor
         @forms.advanced.attr("data-changed", false)
 
         @image[0].src = "data:image/jpeg;base64," + base64Encode(response);
-
-        @progressBar.transitionTo(1, 1)
-        @progressBar.resetAfter(1000)
-
-    onRequestProgress: (e) =>
-        clearInterval(@progressTimer)
-        if e.lengthComputable
-            @progressBar.transitionTo(Math.round(e.loaded / e.total * 25) + 75, 100)
 
     # --------------------------------------------
     #                     CROP
@@ -269,7 +250,6 @@ window.Oxygen.ImageEditor = class ImageEditor
         form:
           simple: "ImageEditor-form--simple"
           advanced: "ImageEditor-form--advanced"
-          progressBar: "ImageEditor-progress"
           crop: "ImageEditor-crop-input"
           resize: "ImageEditor-resize-input"
     }

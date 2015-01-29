@@ -59,8 +59,8 @@ input[type="button"] {
         top: 0;
         content: "";
         font-size: 0px; line-height: 0%; width: 0px;
-        border-top: 20px solid transparent;
-        border-bottom: 20px solid transparent;
+        border-top: 18px solid transparent;
+        border-bottom: 18px solid transparent;
     }
 }
 
@@ -73,8 +73,8 @@ input[type="button"] {
     padding-left: 1em;
 
     &:before {
-        left: -15px;
-        border-right: 20px solid $color-grey-light-2;
+        left: -13px;
+        border-right: 18px solid $color-grey-light-2;
         transition: border-right-color 0.2s ease;
     }
 
@@ -91,8 +91,8 @@ input[type="button"] {
     padding-right: 1em;
 
     &:before {
-        right: -15px;
-        border-left: 20px solid $color-grey-light-2;
+        right: -13px;
+        border-left: 18px solid $color-grey-light-2;
         transition: border-left-color 0.2s ease;
     }
 
