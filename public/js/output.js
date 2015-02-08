@@ -1732,6 +1732,7 @@
 
   Oxygen.reset = function() {
     window.editors = [];
+    Oxygen.load = [];
     return Dropdown.handleGlobalClick({
       target: document.body
     });

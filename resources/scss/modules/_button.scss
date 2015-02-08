@@ -58,9 +58,11 @@ input[type="button"] {
         position: absolute;
         top: 0;
         content: "";
-        font-size: 0px; line-height: 0%; width: 0px;
-        border-top: 18px solid transparent;
-        border-bottom: 18px solid transparent;
+        font-size: 0;
+        line-height: 0;
+        width: 0;
+        border-top: 1.3rem solid transparent;
+        border-bottom: 1.3rem solid transparent;
     }
 }
 
@@ -73,8 +75,8 @@ input[type="button"] {
     padding-left: 1em;
 
     &:before {
-        left: -13px;
-        border-right: 18px solid $color-grey-light-2;
+        left: -0.92rem;
+        border-right: 1.3rem solid $color-grey-light-2;
         transition: border-right-color 0.2s ease;
     }
 
@@ -91,8 +93,8 @@ input[type="button"] {
     padding-right: 1em;
 
     &:before {
-        right: -13px;
-        border-left: 18px solid $color-grey-light-2;
+        right: -0.92rem;
+        border-left: 1.3rem solid $color-grey-light-2;
         transition: border-left-color 0.2s ease;
     }
 

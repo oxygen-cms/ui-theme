@@ -333,11 +333,11 @@ button, input[type="submit"], input[type="button"] {
     position: absolute;
     top: 0;
     content: "";
-    font-size: 0px;
-    line-height: 0%;
-    width: 0px;
-    border-top: 18px solid transparent;
-    border-bottom: 18px solid transparent; }
+    font-size: 0;
+    line-height: 0;
+    width: 0;
+    border-top: 1.3rem solid transparent;
+    border-bottom: 1.3rem solid transparent; }
 
 .Button--back.Button--back, .Button--forward.Button--forward {
   border: 0; }
@@ -345,8 +345,8 @@ button, input[type="submit"], input[type="button"] {
 .Button--back {
   padding-left: 1em; }
   .Button--back:before {
-    left: -13px;
-    border-right: 18px solid #eee;
+    left: -0.92rem;
+    border-right: 1.3rem solid #eee;
     -webkit-transition: border-right-color 0.2s ease;
     transition: border-right-color 0.2s ease; }
   .Button--back:hover:before {
@@ -357,8 +357,8 @@ button, input[type="submit"], input[type="button"] {
 .Button--forward {
   padding-right: 1em; }
   .Button--forward:before {
-    right: -13px;
-    border-left: 18px solid #eee;
+    right: -0.92rem;
+    border-left: 1.3rem solid #eee;
     -webkit-transition: border-left-color 0.2s ease;
     transition: border-left-color 0.2s ease; }
   .Button--forward:hover:before {
@@ -2093,7 +2093,7 @@ select {
   color: inherit;
   outline: none;
   color: #ffffff;
-  padding: 0 0.5em;
+  padding: 0.5em;
   font-size: 2em;
   line-height: 2; }
 

@@ -1618,6 +1618,7 @@ if user?
 
 Oxygen.reset = () ->
     window.editors = []
+    Oxygen.load = []
     Dropdown.handleGlobalClick({ target: document.body })
 
 Oxygen.init = () ->

@@ -46,7 +46,7 @@ class UiServiceProvider extends ServiceProvider {
 
         $this->app['events']->listen('oxygen.layout.attributes', function(&$htmlAttributes, &$bodyAttributes, &$pageAttributes) {
             if($this->app['auth']->check() && $this->app['auth']->user()->getPreferences()->get('fontSize') !== '87.5%') {
-                $htmlAttributes['style'] = 'font-size: ' . $this->app['auth']->getPreferences()->get('fontSize') . ';';
+                $htmlAttributes['style'] = 'font-size: ' . $this->app['auth']->user()->getPreferences()->get('fontSize') . ';';
             }
 
             $pageAttributes['id'] = 'page';
