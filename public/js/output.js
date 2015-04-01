@@ -1264,10 +1264,9 @@
     }
 
     PreviewInterface.prototype.create = function() {
-      var element, preview;
+      var preview;
       console.log("PreviewInterface.create");
-      element = "<iframe id=\"" + this.editor.name + "-preview\" class=\"" + Editor.classes.editor.preview + "\"></iframe>";
-      preview = $(element);
+      preview = $("<iframe id=\"" + this.editor.name + "-preview\" class=\"" + Editor.classes.editor.preview + "\"></iframe>");
       preview.appendTo(this.editor.container.find(".Editor-content"));
       return this.view = preview;
     };
@@ -1323,7 +1322,8 @@
       this.editor.show("code", false);
       this.editor.show("preview", false);
       $("#" + this.editor.name + "-ace-editor, #" + this.editor.name + "-preview").css("width", "50%");
-      return this.editor.modes.code.view.on("change", this.synchronize.bind(this));
+      this.editor.modes.code.view.on("change", this.synchronize.bind(this));
+      return this.editor.resizeToContent();
     };
 
     SplitViewInterface.prototype.hide = function() {

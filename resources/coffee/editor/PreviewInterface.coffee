@@ -11,8 +11,7 @@ window.Oxygen.Editor.PreviewInterface = class PreviewInterface
 
     create: ->
         console.log "PreviewInterface.create"
-        element = "<iframe id=\"" + @editor.name + "-preview\" class=\"" + Editor.classes.editor.preview + "\"></iframe>"
-        preview = $(element)
+        preview = $("<iframe id=\"" + @editor.name + "-preview\" class=\"" + Editor.classes.editor.preview + "\"></iframe>")
         preview.appendTo @editor.container.find(".Editor-content")
         @view = preview
 
