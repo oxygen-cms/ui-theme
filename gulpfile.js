@@ -10,7 +10,6 @@ var libsass         = require("gulp-sass"),
     coffee          = require("gulp-coffee"),
     uglify          = require("gulp-uglify"),
     stripDebug      = require("gulp-strip-debug"),
-    changelog       = require("gulp-conventional-changelog"),
     shell           = require("gulp-shell"),
     notify          = require("gulp-notify");
 
@@ -105,16 +104,16 @@ gulp.task("vendor", shell.task([
         UTIL
    ============== */
 
-gulp.task("publish-assets", shell.task([
+/*gulp.task("publish-assets", shell.task([
     'php ../../../artisan asset:publish --bench="oxygen/ui"'
 ]));
 
 gulp.task("publish-assets-quick", shell.task([
     'rsync -rp --delete public/js ../../../public_html/packages/oxygen/ui',
     'rsync -rp --delete public/css ../../../public_html/packages/oxygen/ui'
-]));
+]));*/
 
-gulp.task("watch", ["scss", "coffee", "publish-assets-quick"], function() {
+gulp.task("watch", ["scss", "coffee"], function() {
     gulp.watch(
         "resources/scss/**/*.scss",
         ["scss", "publish-assets-quick"]
