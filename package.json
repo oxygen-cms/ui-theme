@@ -1,5 +1,5 @@
 {
-    "name": "oxygen-ui",
+    "name": "oxygen-ui-theme",
     "version": "0.0.0",
     "description": "A little framework for big ideas",
     "main": "gulpfile.js",

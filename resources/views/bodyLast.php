@@ -1,1 +1,1 @@
-<script src="/packages/oxygen/ui/js/output.js"></script>
+<script src="/vendor/oxygen/ui-theme/js/output.js"></script>

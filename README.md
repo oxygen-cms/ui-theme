@@ -1,4 +1,4 @@
-# Oxygen - User Interface
+# Oxygen - UI Theme
 
 This repository contains the front-end files of Oxygen.
 

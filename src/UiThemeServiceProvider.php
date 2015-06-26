@@ -1,10 +1,11 @@
 <?php
 
-namespace Oxygen\Ui;
+namespace Oxygen\UiTheme;
 
 use Illuminate\Support\ServiceProvider;
+use Oxygen\Preferences\PreferencesManager;
 
-class UiServiceProvider extends ServiceProvider {
+class UiThemeServiceProvider extends ServiceProvider {
 
 	/**
 	 * Indicates if loading of the provider is deferred.
@@ -19,9 +20,15 @@ class UiServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function boot() {
-		$this->package('oxygen/ui', 'oxygen/ui', __DIR__ . '/../resources');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'oxygen/ui-theme');
+        $this->publishes([
+            __DIR__.'/../resources/views' => base_path('resources/views/vendor/oxygen/ui-theme')
+        ]);
+        $this->publishes([
+            __DIR__.'/../public' => public_path('vendor/oxygen/ui-theme'),
+        ], 'public');
 
-        $this->app['oxygen.preferences']->loadDirectory(__DIR__ . '/../resources/preferences', [
+        $this->app[PreferencesManager::class]->loadDirectory(__DIR__ . '/../resources/preferences', [
             'user.general', 'user.editor', 'user.pageLoad'
         ]);
 
@@ -61,7 +68,7 @@ class UiServiceProvider extends ServiceProvider {
 
     protected function addStylesheetsToLayout() {
         $this->app['events']->listen('oxygen.layout.head', function() {
-            echo $this->app['view']->make('oxygen/ui::head')->render();
+            echo $this->app['view']->make('oxygen/ui-theme::head')->render();
         });
     }
 
@@ -73,11 +80,11 @@ class UiServiceProvider extends ServiceProvider {
 
     protected function addScriptsToLayout() {
         $this->app['events']->listen('oxygen.layout.body.after', function() {
-            echo $this->app['view']->make('oxygen/ui::body')->render();
+            echo $this->app['view']->make('oxygen/ui-theme::body')->render();
         });
 
         $this->app['events']->listen('oxygen.layout.body.after', function() {
-            echo $this->app['view']->make('oxygen/ui::bodyLast')->render();
+            echo $this->app['view']->make('oxygen/ui-theme::bodyLast')->render();
         }, -1);
     }
 
@@ -85,9 +92,6 @@ class UiServiceProvider extends ServiceProvider {
      * Adds navigation transitions to the view.
      */
     public function addNavigationTransitions() {
-        /*$this->app['events']->listen('oxygen.layout.headers', function() {
-            header('Link: </packages/oxygen/ui/css/entering.css>;rel=transition-entering-stylesheet;scope=*');
-        });*/
     }
 
 	/**
