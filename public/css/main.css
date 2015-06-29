@@ -1113,6 +1113,9 @@ button, input[type="submit"], input[type="button"] {
 
    ====================================================================
    ==================================================================== */
+.Form--hidden {
+  display: none; }
+
 .Form-taggable, input[type=text], input[type=password], input[type=email], input[type=number], input[type=search], select, textarea {
   display: inline-block;
   max-width: 100%;
