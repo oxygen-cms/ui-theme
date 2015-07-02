@@ -1520,6 +1520,32 @@ window.Oxygen.ImageEditor = class ImageEditor
           resize: "ImageEditor-resize-input"
     }
 
+
+base64Encode = (inputStr) ->
+    b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+    outputStr = ""
+    i = 0
+    while i < inputStr.length
+
+        #all three "& 0xff" added below are there to fix a known bug
+        #with bytes returned by xhr.responseText
+        byte1 = inputStr.charCodeAt(i++) & 0xff
+        byte2 = inputStr.charCodeAt(i++) & 0xff
+        byte3 = inputStr.charCodeAt(i++) & 0xff
+        enc1 = byte1 >> 2
+        enc2 = ((byte1 & 3) << 4) | (byte2 >> 4)
+        enc3 = undefined
+        enc4 = undefined
+        if isNaN(byte2)
+            enc3 = enc4 = 64
+        else
+            enc3 = ((byte2 & 15) << 2) | (byte3 >> 6)
+            if isNaN(byte3)
+                enc4 = 64
+            else
+                enc4 = byte3 & 63
+        outputStr += b64.charAt(enc1) + b64.charAt(enc2) + b64.charAt(enc3) + b64.charAt(enc4)
+    outputStr
 Oxygen.initLogin = () ->
 
     loginForm = $(".Login-form")
@@ -1584,32 +1610,6 @@ Oxygen.initLogin = () ->
 
 
 
-
-base64Encode = (inputStr) ->
-  b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
-  outputStr = ""
-  i = 0
-  while i < inputStr.length
-
-    #all three "& 0xff" added below are there to fix a known bug
-    #with bytes returned by xhr.responseText
-    byte1 = inputStr.charCodeAt(i++) & 0xff
-    byte2 = inputStr.charCodeAt(i++) & 0xff
-    byte3 = inputStr.charCodeAt(i++) & 0xff
-    enc1 = byte1 >> 2
-    enc2 = ((byte1 & 3) << 4) | (byte2 >> 4)
-    enc3 = undefined
-    enc4 = undefined
-    if isNaN(byte2)
-      enc3 = enc4 = 64
-    else
-      enc3 = ((byte2 & 15) << 2) | (byte3 >> 6)
-      if isNaN(byte3)
-        enc4 = 64
-      else
-        enc4 = byte3 & 63
-    outputStr += b64.charAt(enc1) + b64.charAt(enc2) + b64.charAt(enc3) + b64.charAt(enc4)
-  outputStr
 
 MainNav.headroom()
 
