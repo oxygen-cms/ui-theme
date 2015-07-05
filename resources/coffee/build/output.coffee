@@ -1098,8 +1098,6 @@ window.Oxygen.Editor.CodeViewInterface = class CodeViewInterface
         @view = null
 
     create: ->
-        console.log "CodeViewInterface.create"
-
         # edit the textarea
         object = ace.edit(@editor.name + "-ace-editor")
 
@@ -1117,7 +1115,6 @@ window.Oxygen.Editor.CodeViewInterface = class CodeViewInterface
         @view = object
 
     show: (full) ->
-        console.log "CodeViewInterface.show"
         $("#" + @editor.name + "-ace-editor").removeClass(Editor.classes.state.isHidden)
         if full
             $("#" + @editor.name + "-ace-editor").css("width", "100%")
@@ -1131,11 +1128,9 @@ window.Oxygen.Editor.CodeViewInterface = class CodeViewInterface
         $("#" + @editor.name + "-ace-editor").addClass(Editor.classes.state.isHidden)
 
     valueFromForm: ->
-        console.log "CodeViewInterface.valueFromForm"
         @view.setValue @editor.textarea.val(), -1
 
     valueToForm: ->
-        console.log "CodeViewInterface.valueToForm"
         @editor.textarea.val @view.getValue()
 
     resize: ->
@@ -1194,13 +1189,11 @@ window.Oxygen.Editor.PreviewInterface = class PreviewInterface
         @view = null
 
     create: ->
-        console.log "PreviewInterface.create"
         preview = $("<iframe id=\"" + @editor.name + "-preview\" class=\"" + Editor.classes.editor.preview + "\"></iframe>")
         preview.appendTo @editor.container.find(".Editor-content")
         @view = preview
 
     show: (full) ->
-        console.log "PreviewInterface.show"
         $("#" + @editor.name + "-preview").removeClass(Editor.classes.state.isHidden)
 
         if full
@@ -1214,11 +1207,9 @@ window.Oxygen.Editor.PreviewInterface = class PreviewInterface
         @view.contents().find("html").addClass "no-js " + $("html").attr("class").replace("js ", "")
 
     hide: ->
-        console.log "PreviewInterface.hide"
         $("#" + @editor.name + "-preview").addClass(Editor.classes.state.isHidden)
 
     valueFromForm: ->
-        console.log "PreviewInterface.valueFromForm"
         @view.contents().find("body").html @editor.textarea.val()
 
     # we can't and don't want to do this
@@ -1236,10 +1227,8 @@ window.Oxygen.Editor.SplitViewInterface = class SplitViewInterface
         @view = null
 
     create : ->
-        console.log "SplitViewInterface.create"
 
     show : ->
-        console.log "SplitViewInterface.show"
         @editor.container.find("." + Editor.classes.editor.content).addClass Editor.classes.state.contentIsSplit
         @editor.show "code", false
         @editor.show "preview", false
@@ -1247,7 +1236,6 @@ window.Oxygen.Editor.SplitViewInterface = class SplitViewInterface
         @editor.modes.code.view.on "change", @synchronize.bind(this)
 
     hide : ->
-        console.log "SplitViewInterface.hide"
         @editor.container.find("." + Editor.classes.editor.content).removeClass Editor.classes.state.contentIsSplit
         @editor.hide "code"
         @editor.hide "preview"

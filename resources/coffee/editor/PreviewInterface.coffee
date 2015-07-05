@@ -10,13 +10,11 @@ window.Oxygen.Editor.PreviewInterface = class PreviewInterface
         @view = null
 
     create: ->
-        console.log "PreviewInterface.create"
         preview = $("<iframe id=\"" + @editor.name + "-preview\" class=\"" + Editor.classes.editor.preview + "\"></iframe>")
         preview.appendTo @editor.container.find(".Editor-content")
         @view = preview
 
     show: (full) ->
-        console.log "PreviewInterface.show"
         $("#" + @editor.name + "-preview").removeClass(Editor.classes.state.isHidden)
 
         if full
@@ -30,11 +28,9 @@ window.Oxygen.Editor.PreviewInterface = class PreviewInterface
         @view.contents().find("html").addClass "no-js " + $("html").attr("class").replace("js ", "")
 
     hide: ->
-        console.log "PreviewInterface.hide"
         $("#" + @editor.name + "-preview").addClass(Editor.classes.state.isHidden)
 
     valueFromForm: ->
-        console.log "PreviewInterface.valueFromForm"
         @view.contents().find("body").html @editor.textarea.val()
 
     # we can't and don't want to do this

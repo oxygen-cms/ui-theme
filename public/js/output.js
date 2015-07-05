@@ -1169,7 +1169,6 @@
 
     CodeViewInterface.prototype.create = function() {
       var object;
-      console.log("CodeViewInterface.create");
       object = ace.edit(this.editor.name + "-ace-editor");
       object.getSession().setMode("ace/mode/" + this.editor.language);
       object.setTheme(Preferences.get('editor.ace.theme'));
@@ -1183,7 +1182,6 @@
     };
 
     CodeViewInterface.prototype.show = function(full) {
-      console.log("CodeViewInterface.show");
       $("#" + this.editor.name + "-ace-editor").removeClass(Editor.classes.state.isHidden);
       if (full) {
         $("#" + this.editor.name + "-ace-editor").css("width", "100%");
@@ -1201,12 +1199,10 @@
     };
 
     CodeViewInterface.prototype.valueFromForm = function() {
-      console.log("CodeViewInterface.valueFromForm");
       return this.view.setValue(this.editor.textarea.val(), -1);
     };
 
     CodeViewInterface.prototype.valueToForm = function() {
-      console.log("CodeViewInterface.valueToForm");
       return this.editor.textarea.val(this.view.getValue());
     };
 
@@ -1269,7 +1265,6 @@
 
     PreviewInterface.prototype.create = function() {
       var preview;
-      console.log("PreviewInterface.create");
       preview = $("<iframe id=\"" + this.editor.name + "-preview\" class=\"" + Editor.classes.editor.preview + "\"></iframe>");
       preview.appendTo(this.editor.container.find(".Editor-content"));
       return this.view = preview;
@@ -1277,7 +1272,6 @@
 
     PreviewInterface.prototype.show = function(full) {
       var head, stylesheet, _i, _len, _ref;
-      console.log("PreviewInterface.show");
       $("#" + this.editor.name + "-preview").removeClass(Editor.classes.state.isHidden);
       if (full) {
         $("#" + this.editor.name + "-preview").css("width", "100%");
@@ -1293,12 +1287,10 @@
     };
 
     PreviewInterface.prototype.hide = function() {
-      console.log("PreviewInterface.hide");
       return $("#" + this.editor.name + "-preview").addClass(Editor.classes.state.isHidden);
     };
 
     PreviewInterface.prototype.valueFromForm = function() {
-      console.log("PreviewInterface.valueFromForm");
       return this.view.contents().find("body").html(this.editor.textarea.val());
     };
 
@@ -1316,12 +1308,9 @@
       this.view = null;
     }
 
-    SplitViewInterface.prototype.create = function() {
-      return console.log("SplitViewInterface.create");
-    };
+    SplitViewInterface.prototype.create = function() {};
 
     SplitViewInterface.prototype.show = function() {
-      console.log("SplitViewInterface.show");
       this.editor.container.find("." + Editor.classes.editor.content).addClass(Editor.classes.state.contentIsSplit);
       this.editor.show("code", false);
       this.editor.show("preview", false);
@@ -1330,7 +1319,6 @@
     };
 
     SplitViewInterface.prototype.hide = function() {
-      console.log("SplitViewInterface.hide");
       this.editor.container.find("." + Editor.classes.editor.content).removeClass(Editor.classes.state.contentIsSplit);
       this.editor.hide("code");
       return this.editor.hide("preview");

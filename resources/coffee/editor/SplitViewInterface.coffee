@@ -10,10 +10,8 @@ window.Oxygen.Editor.SplitViewInterface = class SplitViewInterface
         @view = null
 
     create : ->
-        console.log "SplitViewInterface.create"
 
     show : ->
-        console.log "SplitViewInterface.show"
         @editor.container.find("." + Editor.classes.editor.content).addClass Editor.classes.state.contentIsSplit
         @editor.show "code", false
         @editor.show "preview", false
@@ -21,7 +19,6 @@ window.Oxygen.Editor.SplitViewInterface = class SplitViewInterface
         @editor.modes.code.view.on "change", @synchronize.bind(this)
 
     hide : ->
-        console.log "SplitViewInterface.hide"
         @editor.container.find("." + Editor.classes.editor.content).removeClass Editor.classes.state.contentIsSplit
         @editor.hide "code"
         @editor.hide "preview"

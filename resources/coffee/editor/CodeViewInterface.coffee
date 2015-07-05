@@ -10,8 +10,6 @@ window.Oxygen.Editor.CodeViewInterface = class CodeViewInterface
         @view = null
 
     create: ->
-        console.log "CodeViewInterface.create"
-
         # edit the textarea
         object = ace.edit(@editor.name + "-ace-editor")
 
@@ -29,7 +27,6 @@ window.Oxygen.Editor.CodeViewInterface = class CodeViewInterface
         @view = object
 
     show: (full) ->
-        console.log "CodeViewInterface.show"
         $("#" + @editor.name + "-ace-editor").removeClass(Editor.classes.state.isHidden)
         if full
             $("#" + @editor.name + "-ace-editor").css("width", "100%")
@@ -43,11 +40,9 @@ window.Oxygen.Editor.CodeViewInterface = class CodeViewInterface
         $("#" + @editor.name + "-ace-editor").addClass(Editor.classes.state.isHidden)
 
     valueFromForm: ->
-        console.log "CodeViewInterface.valueFromForm"
         @view.setValue @editor.textarea.val(), -1
 
     valueToForm: ->
-        console.log "CodeViewInterface.valueToForm"
         @editor.textarea.val @view.getValue()
 
     resize: ->
