@@ -1188,9 +1188,11 @@
       if (full) {
         $("#" + this.editor.name + "-ace-editor").css("width", "100%");
       }
-      return setTimeout(function() {
-        return this.resize();
-      }, 300);
+      return setTimeout((function(_this) {
+        return function() {
+          return _this.resize();
+        };
+      })(this), 300);
     };
 
     CodeViewInterface.prototype.hide = function() {

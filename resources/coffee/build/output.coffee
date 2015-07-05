@@ -1122,7 +1122,7 @@ window.Oxygen.Editor.CodeViewInterface = class CodeViewInterface
         if full
             $("#" + @editor.name + "-ace-editor").css("width", "100%")
 
-        setTimeout( ->
+        setTimeout( =>
             @resize()
         , 300) # after animation is completed
 
