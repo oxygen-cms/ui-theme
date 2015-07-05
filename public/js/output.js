@@ -1188,7 +1188,9 @@
       if (full) {
         $("#" + this.editor.name + "-ace-editor").css("width", "100%");
       }
-      return this.resize();
+      return setTimeout(function() {
+        return this.resize();
+      }, 300);
     };
 
     CodeViewInterface.prototype.hide = function() {
@@ -1322,8 +1324,7 @@
       this.editor.show("code", false);
       this.editor.show("preview", false);
       $("#" + this.editor.name + "-ace-editor, #" + this.editor.name + "-preview").css("width", "50%");
-      this.editor.modes.code.view.on("change", this.synchronize.bind(this));
-      return this.editor.resizeToContent();
+      return this.editor.modes.code.view.on("change", this.synchronize.bind(this));
     };
 
     SplitViewInterface.prototype.hide = function() {

@@ -19,7 +19,6 @@ window.Oxygen.Editor.SplitViewInterface = class SplitViewInterface
         @editor.show "preview", false
         $("#" + @editor.name + "-ace-editor, #" + @editor.name + "-preview").css "width", "50%"
         @editor.modes.code.view.on "change", @synchronize.bind(this)
-        @editor.resizeToContent()
 
     hide : ->
         console.log "SplitViewInterface.hide"

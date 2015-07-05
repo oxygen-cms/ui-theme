@@ -1121,7 +1121,10 @@ window.Oxygen.Editor.CodeViewInterface = class CodeViewInterface
         $("#" + @editor.name + "-ace-editor").removeClass(Editor.classes.state.isHidden)
         if full
             $("#" + @editor.name + "-ace-editor").css("width", "100%")
-        @resize()
+
+        setTimeout( ->
+            @resize()
+        , 300) # after animation is completed
 
     hide: ->
         console.log "CodeViewInterface.hide"
@@ -1242,7 +1245,6 @@ window.Oxygen.Editor.SplitViewInterface = class SplitViewInterface
         @editor.show "preview", false
         $("#" + @editor.name + "-ace-editor, #" + @editor.name + "-preview").css "width", "50%"
         @editor.modes.code.view.on "change", @synchronize.bind(this)
-        @editor.resizeToContent()
 
     hide : ->
         console.log "SplitViewInterface.hide"

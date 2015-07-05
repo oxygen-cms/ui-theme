@@ -33,7 +33,10 @@ window.Oxygen.Editor.CodeViewInterface = class CodeViewInterface
         $("#" + @editor.name + "-ace-editor").removeClass(Editor.classes.state.isHidden)
         if full
             $("#" + @editor.name + "-ace-editor").css("width", "100%")
-        @resize()
+
+        setTimeout( ->
+            @resize()
+        , 300) # after animation is completed
 
     hide: ->
         console.log "CodeViewInterface.hide"

@@ -116,13 +116,13 @@ gulp.task("publish-assets-quick", shell.task([
 gulp.task("watch", ["scss", "coffee"], function() {
     gulp.watch(
         "resources/scss/**/*.scss",
-        ["scss", "publish-assets-quick"]
+        ["scss"]
     );
     gulp.watch(
         [
             "resources/coffee/{core,editor,imageEditor,pages}/*",
             "resources/coffee/main.coffee"
         ],
-        ["coffee", "publish-assets-quick"]
+        ["coffee"]
     );
 });
