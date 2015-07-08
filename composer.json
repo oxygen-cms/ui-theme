@@ -24,16 +24,16 @@
         }
     },
     "extra": {
-        "title": "Oxygen User Interface",
+        "title": "Oxygen - UI Theme",
         "readme": "oxygen.md",
         "changes": "changes.md",
         "icon": "icon.png",
         "images": [
-            "https://raw.githubusercontent.com/oxygen-cms/ui/master/docs/login-welcome.jpg",
-            "https://raw.githubusercontent.com/oxygen-cms/ui/master/docs/login-form.jpg",
-            "https://raw.githubusercontent.com/oxygen-cms/ui/master/docs/pages.png",
-            "https://raw.githubusercontent.com/oxygen-cms/ui/master/docs/marketplace.png",
-            "https://raw.githubusercontent.com/oxygen-cms/ui/master/docs/pages-mobile.png"
+            "https://raw.githubusercontent.com/oxygen-cms/ui-theme/master/docs/login-welcome.jpg",
+            "https://raw.githubusercontent.com/oxygen-cms/ui-theme/master/docs/login-form.jpg",
+            "https://raw.githubusercontent.com/oxygen-cms/ui-theme/master/docs/pages.png",
+            "https://raw.githubusercontent.com/oxygen-cms/ui-theme/master/docs/marketplace.png",
+            "https://raw.githubusercontent.com/oxygen-cms/ui-theme/master/docs/pages-mobile.png"
         ],
         "providers": [
             {
