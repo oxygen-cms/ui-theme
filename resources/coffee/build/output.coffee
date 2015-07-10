@@ -91,11 +91,11 @@ window.Oxygen.Form = class Form
         autoSubmit: "Form--autoSubmit",
         taggableInput: ".Form-taggable"
 
-    @findAll: ->
-        $("form").each ->
+    @findAll: (container) ->
+        container.find("form").each ->
             Form.list.push new Form($(@))
 
-        $(Form.classes.taggableInput).tagging();
+        container.find(Form.classes.taggableInput).tagging();
 
     constructor: (element) ->
         @form = element
@@ -343,9 +343,11 @@ window.Oxygen.Dropdown = class Dropdown
         dropdownList: "Dropdown"
         isActive: "is-active"
 
-    @registerEvents: ->
-        $("." + @classes.dropdownToggle).on("click", @handleClick.bind(@))
+    @registerGlobalEvent ->
         $(document).on("click", @handleGlobalClick.bind(@))
+
+    @registerEvents: (container) ->
+        container.find("." + @classes.dropdownToggle).on("click", @handleClick.bind(@))
 
     @handleClick: (event) ->
         container = $(event.target)
@@ -445,8 +447,8 @@ window.Oxygen.TabSwitcher = class TabSwitcher
 
     @list = []
 
-    @findAll: ->
-        $("." + TabSwitcher.classes.tabs).each ->
+    @findAll: (container) ->
+        container.find("." + TabSwitcher.classes.tabs).each ->
             tabs = $(@)
             if tabs.hasClass(TabSwitcher.classes.content)
                 container = tabs
@@ -503,8 +505,8 @@ window.Oxygen.Upload = class Upload
     @states =
         onDragOver: "FileUpload--onDragOver"
 
-    @registerEvents: () ->
-        $(Upload.selectors.uploadElement)
+    @registerEvents: (container) ->
+        container.find(Upload.selectors.uploadElement)
             .on("dragover", Upload.handleDragOver)
             .on("dragleave", Upload.handleDragLeave)
             .on("drop", Upload.handleDrop)
@@ -633,8 +635,8 @@ window.Oxygen.Slider = class Slider
 
     @list = []
 
-    @findAll: () ->
-        $(Slider.selectors.slider).each ->
+    @findAll: (container) ->
+        container.find(Slider.selectors.slider).each ->
             Slider.list.push new Slider($(@))
 
     # -----------------
@@ -766,9 +768,9 @@ window.Oxygen.Slider = class Slider
 window.Oxygen or= {}
 window.Oxygen.Dialog = class Dialog
 
-    @registerEvents: ->
-        $("[data-dialog-type=\"confirm\"]").on("click", @handleConfirmClick)
-        $("[data-dialog-type=\"alert\"]").on("click", @handleAlertClick)
+    @registerEvents: (container) ->
+        container.find("[data-dialog-type=\"confirm\"]").on("click", @handleConfirmClick)
+        container.find("[data-dialog-type=\"alert\"]").on("click", @handleAlertClick)
 
     @handleAlertClick: (event) ->
         target = $(event.currentTarget)
@@ -809,7 +811,7 @@ window.Oxygen.SmoothState = class SmoothState
         @smoothState = $("#page").smoothState({
             anchors: ".Link--smoothState"
             root: $(document)
-            pageCacheSize: 0
+            cacheLength: 0
             onStart:
                 duration: 350
                 render: @onStart
@@ -845,7 +847,7 @@ window.Oxygen.SmoothState = class SmoothState
         $("html, body").css('cursor', 'wait')
              .find('a').css('cursor', 'wait')
 
-    onEnd: (url, container, content) =>
+    onEnd: (container, content) =>
         $("html, body").css('cursor', 'auto')
              .find('a').css('cursor', 'auto');
 
@@ -875,16 +877,14 @@ window.Oxygen.SmoothState = class SmoothState
 
         $(".pace-activity").removeClass("pace-activity-active")
 
-        elements = $(document).add("*")
-        elements.off()
-        @smoothState.bindEventHandlers($(document))
-        Oxygen.init()
+        Oxygen.init $("#page")
 
     setTheme: (theme) ->
         $("#page").addClass('Page-transition--' + theme)
 
     load: (url, isPopped, ignoreCache) ->
-        @smoothState.load(url, isPopped, ignoreCache)
+        #@smoothState.load(url, isPopped, ignoreCache)
+        @smoothState.load(url, isPopped)
 # ================================
 #             Notification
 # ================================
@@ -1490,8 +1490,8 @@ window.Oxygen.ImageEditor = class ImageEditor
 
     @list: []
 
-    @initialize: () ->
-        $("." + ImageEditor.classes.layout.container).each( ->
+    @initialize: (container) ->
+        container.find("." + ImageEditor.classes.layout.container).each( ->
             ImageEditor.list.push new ImageEditor($(this))
         )
 
@@ -1611,7 +1611,7 @@ Oxygen.reset = () ->
     Oxygen.load = []
     Dropdown.handleGlobalClick({ target: document.body })
 
-Oxygen.init = () ->
+Oxygen.init = (container) ->
 
     #
     # -------------------------
@@ -1624,7 +1624,7 @@ Oxygen.init = () ->
 
     setTimeout(Notification.initializeExistingMessages, 250)
 
-    Dialog.registerEvents()
+    Dialog.registerEvents(container)
 
     #
     # -------------------------
@@ -1645,7 +1645,7 @@ Oxygen.init = () ->
     # Initialises image editors for the page.
     #
 
-    ImageEditor.initialize()
+    ImageEditor.initialize(container)
 
     #
     # -------------------------
@@ -1666,17 +1666,17 @@ Oxygen.init = () ->
     # Other event handlers.
     #
 
-    Dropdown.registerEvents()
-    Form.findAll()
-    Upload.registerEvents()
-    TabSwitcher.findAll()
-    Slider.findAll()
+    Dropdown.registerEvents(container)
+    Form.findAll(container)
+    Upload.registerEvents(container)
+    TabSwitcher.findAll(container)
+    Slider.findAll(container)
 
     Oxygen.load = Oxygen.load || [];
     for callback in Oxygen.load
         callback()
 
-Oxygen.init()
+Oxygen.init $(document)
 
 #
 # -------------------------
@@ -1694,3 +1694,5 @@ if Preferences.get('pageLoad.smoothState.enabled', true) == true
 progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner"])
 for theme in progressThemes
     $(document.body).addClass("Page-progress--" + theme)
+
+Dropdown.registerGlobalClick()

@@ -85,7 +85,7 @@ gulp.task("vendor", shell.task([
     // Pace,
     'rsync -a bower_components/pace/pace.min.js public/vendor/pace.min.js',
     // Smooth State
-    'rsync -a bower_components/smoothstate/jquery.smoothState.js public/vendor/smoothState.js',
+    'rsync -a bower_components/smoothstate-with-root-option/jquery.smoothState.min.js public/vendor/smoothState.js',
     // Headroom
     'rsync -a bower_components/headroom.js/dist/headroom.min.js public/vendor/headroom.min.js',
     // Tagging

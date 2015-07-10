@@ -14,11 +14,11 @@
   "authors": "CKSource - Frederico Knabben (http://cksource.com)",
   "license": "http://ckeditor.com/about/license",
   "homepage": "http://ckeditor.com",
-  "_release": "2fb13d4e65",
+  "_release": "bf3b468a30",
   "_resolution": {
     "type": "branch",
     "branch": "full/latest",
-    "commit": "2fb13d4e65c4d5aece60caf88a95ddf20be4bf1e"
+    "commit": "bf3b468a3000727e0f2a248ff947525bd42388cb"
   },
   "_source": "git://github.com/ckeditor/ckeditor-releases.git",
   "_target": "full/latest",

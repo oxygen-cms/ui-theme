@@ -16,8 +16,8 @@ window.Oxygen.TabSwitcher = class TabSwitcher
 
     @list = []
 
-    @findAll: ->
-        $("." + TabSwitcher.classes.tabs).each ->
+    @findAll: (container) ->
+        container.find("." + TabSwitcher.classes.tabs).each ->
             tabs = $(@)
             if tabs.hasClass(TabSwitcher.classes.content)
                 container = tabs

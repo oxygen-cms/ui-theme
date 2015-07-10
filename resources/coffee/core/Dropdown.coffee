@@ -10,9 +10,11 @@ window.Oxygen.Dropdown = class Dropdown
         dropdownList: "Dropdown"
         isActive: "is-active"
 
-    @registerEvents: ->
-        $("." + @classes.dropdownToggle).on("click", @handleClick.bind(@))
+    @registerGlobalEvent ->
         $(document).on("click", @handleGlobalClick.bind(@))
+
+    @registerEvents: (container) ->
+        container.find("." + @classes.dropdownToggle).on("click", @handleClick.bind(@))
 
     @handleClick: (event) ->
         container = $(event.target)

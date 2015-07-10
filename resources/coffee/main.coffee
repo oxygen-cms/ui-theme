@@ -36,7 +36,7 @@ Oxygen.reset = () ->
     Oxygen.load = []
     Dropdown.handleGlobalClick({ target: document.body })
 
-Oxygen.init = () ->
+Oxygen.init = (container) ->
 
     #
     # -------------------------
@@ -49,7 +49,7 @@ Oxygen.init = () ->
 
     setTimeout(Notification.initializeExistingMessages, 250)
 
-    Dialog.registerEvents()
+    Dialog.registerEvents(container)
 
     #
     # -------------------------
@@ -70,7 +70,7 @@ Oxygen.init = () ->
     # Initialises image editors for the page.
     #
 
-    ImageEditor.initialize()
+    ImageEditor.initialize(container)
 
     #
     # -------------------------
@@ -91,17 +91,17 @@ Oxygen.init = () ->
     # Other event handlers.
     #
 
-    Dropdown.registerEvents()
-    Form.findAll()
-    Upload.registerEvents()
-    TabSwitcher.findAll()
-    Slider.findAll()
+    Dropdown.registerEvents(container)
+    Form.findAll(container)
+    Upload.registerEvents(container)
+    TabSwitcher.findAll(container)
+    Slider.findAll(container)
 
     Oxygen.load = Oxygen.load || [];
     for callback in Oxygen.load
         callback()
 
-Oxygen.init()
+Oxygen.init $(document)
 
 #
 # -------------------------
@@ -119,3 +119,5 @@ if Preferences.get('pageLoad.smoothState.enabled', true) == true
 progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner"])
 for theme in progressThemes
     $(document.body).addClass("Page-progress--" + theme)
+
+Dropdown.registerGlobalClick()

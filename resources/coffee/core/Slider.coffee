@@ -29,8 +29,8 @@ window.Oxygen.Slider = class Slider
 
     @list = []
 
-    @findAll: () ->
-        $(Slider.selectors.slider).each ->
+    @findAll: (container) ->
+        container.find(Slider.selectors.slider).each ->
             Slider.list.push new Slider($(@))
 
     # -----------------

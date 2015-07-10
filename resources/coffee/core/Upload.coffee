@@ -17,8 +17,8 @@ window.Oxygen.Upload = class Upload
     @states =
         onDragOver: "FileUpload--onDragOver"
 
-    @registerEvents: () ->
-        $(Upload.selectors.uploadElement)
+    @registerEvents: (container) ->
+        container.find(Upload.selectors.uploadElement)
             .on("dragover", Upload.handleDragOver)
             .on("dragleave", Upload.handleDragLeave)
             .on("drop", Upload.handleDrop)

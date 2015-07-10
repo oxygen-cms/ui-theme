@@ -5,9 +5,9 @@
 window.Oxygen or= {}
 window.Oxygen.Dialog = class Dialog
 
-    @registerEvents: ->
-        $("[data-dialog-type=\"confirm\"]").on("click", @handleConfirmClick)
-        $("[data-dialog-type=\"alert\"]").on("click", @handleAlertClick)
+    @registerEvents: (container) ->
+        container.find("[data-dialog-type=\"confirm\"]").on("click", @handleConfirmClick)
+        container.find("[data-dialog-type=\"alert\"]").on("click", @handleAlertClick)
 
     @handleAlertClick: (event) ->
         target = $(event.currentTarget)

@@ -84,11 +84,11 @@
       taggableInput: ".Form-taggable"
     };
 
-    Form.findAll = function() {
-      $("form").each(function() {
+    Form.findAll = function(container) {
+      container.find("form").each(function() {
         return Form.list.push(new Form($(this)));
       });
-      return $(Form.classes.taggableInput).tagging();
+      return container.find(Form.classes.taggableInput).tagging();
     };
 
     function Form(element) {
@@ -373,9 +373,12 @@
       isActive: "is-active"
     };
 
-    Dropdown.registerEvents = function() {
-      $("." + this.classes.dropdownToggle).on("click", this.handleClick.bind(this));
+    Dropdown.registerGlobalEvent(function() {
       return $(document).on("click", this.handleGlobalClick.bind(this));
+    });
+
+    Dropdown.registerEvents = function(container) {
+      return container.find("." + this.classes.dropdownToggle).on("click", this.handleClick.bind(this));
     };
 
     Dropdown.handleClick = function(event) {
@@ -478,9 +481,9 @@
 
     TabSwitcher.list = [];
 
-    TabSwitcher.findAll = function() {
-      return $("." + TabSwitcher.classes.tabs).each(function() {
-        var container, tabs;
+    TabSwitcher.findAll = function(container) {
+      return container.find("." + TabSwitcher.classes.tabs).each(function() {
+        var tabs;
         tabs = $(this);
         if (tabs.hasClass(TabSwitcher.classes.content)) {
           container = tabs;
@@ -543,8 +546,8 @@
       onDragOver: "FileUpload--onDragOver"
     };
 
-    Upload.registerEvents = function() {
-      return $(Upload.selectors.uploadElement).on("dragover", Upload.handleDragOver).on("dragleave", Upload.handleDragLeave).on("drop", Upload.handleDrop).find("input[type=file]").on("change", Upload.handleChange);
+    Upload.registerEvents = function(container) {
+      return container.find(Upload.selectors.uploadElement).on("dragover", Upload.handleDragOver).on("dragleave", Upload.handleDragLeave).on("drop", Upload.handleDrop).find("input[type=file]").on("change", Upload.handleChange);
     };
 
     Upload.handleDragOver = function(event) {
@@ -672,8 +675,8 @@
 
     Slider.list = [];
 
-    Slider.findAll = function() {
-      return $(Slider.selectors.slider).each(function() {
+    Slider.findAll = function(container) {
+      return container.find(Slider.selectors.slider).each(function() {
         return Slider.list.push(new Slider($(this)));
       });
     };
@@ -789,9 +792,9 @@
   window.Oxygen.Dialog = Dialog = (function() {
     function Dialog() {}
 
-    Dialog.registerEvents = function() {
-      $("[data-dialog-type=\"confirm\"]").on("click", this.handleConfirmClick);
-      return $("[data-dialog-type=\"alert\"]").on("click", this.handleAlertClick);
+    Dialog.registerEvents = function(container) {
+      container.find("[data-dialog-type=\"confirm\"]").on("click", this.handleConfirmClick);
+      return container.find("[data-dialog-type=\"alert\"]").on("click", this.handleAlertClick);
     };
 
     Dialog.handleAlertClick = function(event) {
@@ -843,7 +846,7 @@
       return this.smoothState = $("#page").smoothState({
         anchors: ".Link--smoothState",
         root: $(document),
-        pageCacheSize: 0,
+        cacheLength: 0,
         onStart: {
           duration: 350,
           render: this.onStart
@@ -888,7 +891,7 @@
       return $("html, body").css('cursor', 'wait').find('a').css('cursor', 'wait');
     };
 
-    SmoothState.prototype.onEnd = function(url, container, content) {
+    SmoothState.prototype.onEnd = function(container, content) {
       $("html, body").css('cursor', 'auto').find('a').css('cursor', 'auto');
       Oxygen.reset();
       container.hide();
@@ -911,13 +914,9 @@
     };
 
     SmoothState.prototype.callback = function(url, $container, $content) {
-      var elements;
       this.loading = false;
       $(".pace-activity").removeClass("pace-activity-active");
-      elements = $(document).add("*");
-      elements.off();
-      this.smoothState.bindEventHandlers($(document));
-      return Oxygen.init();
+      return Oxygen.init($("#page"));
     };
 
     SmoothState.prototype.setTheme = function(theme) {
@@ -925,7 +924,7 @@
     };
 
     SmoothState.prototype.load = function(url, isPopped, ignoreCache) {
-      return this.smoothState.load(url, isPopped, ignoreCache);
+      return this.smoothState.load(url, isPopped);
     };
 
     return SmoothState;
@@ -1632,8 +1631,8 @@
 
     ImageEditor.list = [];
 
-    ImageEditor.initialize = function() {
-      return $("." + ImageEditor.classes.layout.container).each(function() {
+    ImageEditor.initialize = function(container) {
+      return container.find("." + ImageEditor.classes.layout.container).each(function() {
         return ImageEditor.list.push(new ImageEditor($(this)));
       });
     };
@@ -1729,22 +1728,22 @@
     });
   };
 
-  Oxygen.init = function() {
+  Oxygen.init = function(container) {
     var callback, _i, _len, _ref, _results;
     setTimeout(Notification.initializeExistingMessages, 250);
-    Dialog.registerEvents();
+    Dialog.registerEvents(container);
     if (typeof editors !== "undefined" && editors !== null) {
       Editor.createEditors(editors);
     }
-    ImageEditor.initialize();
+    ImageEditor.initialize(container);
     if ($(".Login-form").length > 0) {
       Oxygen.initLogin();
     }
-    Dropdown.registerEvents();
-    Form.findAll();
-    Upload.registerEvents();
-    TabSwitcher.findAll();
-    Slider.findAll();
+    Dropdown.registerEvents(container);
+    Form.findAll(container);
+    Upload.registerEvents(container);
+    TabSwitcher.findAll(container);
+    Slider.findAll(container);
     Oxygen.load = Oxygen.load || [];
     _ref = Oxygen.load;
     _results = [];
@@ -1755,7 +1754,7 @@
     return _results;
   };
 
-  Oxygen.init();
+  Oxygen.init($(document));
 
   if (Preferences.get('pageLoad.smoothState.enabled', true) === true) {
     smoothState = new SmoothState();
@@ -1769,5 +1768,7 @@
     theme = progressThemes[_i];
     $(document.body).addClass("Page-progress--" + theme);
   }
+
+  Dropdown.registerGlobalClick();
 
 }).call(this);

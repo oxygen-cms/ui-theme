@@ -24,11 +24,11 @@ window.Oxygen.Form = class Form
         autoSubmit: "Form--autoSubmit",
         taggableInput: ".Form-taggable"
 
-    @findAll: ->
-        $("form").each ->
+    @findAll: (container) ->
+        container.find("form").each ->
             Form.list.push new Form($(@))
 
-        $(Form.classes.taggableInput).tagging();
+        container.find(Form.classes.taggableInput).tagging();
 
     constructor: (element) ->
         @form = element

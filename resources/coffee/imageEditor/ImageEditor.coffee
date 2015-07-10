@@ -234,8 +234,8 @@ window.Oxygen.ImageEditor = class ImageEditor
 
     @list: []
 
-    @initialize: () ->
-        $("." + ImageEditor.classes.layout.container).each( ->
+    @initialize: (container) ->
+        container.find("." + ImageEditor.classes.layout.container).each( ->
             ImageEditor.list.push new ImageEditor($(this))
         )
 

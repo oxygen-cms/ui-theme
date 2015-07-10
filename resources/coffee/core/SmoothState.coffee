@@ -11,7 +11,7 @@ window.Oxygen.SmoothState = class SmoothState
         @smoothState = $("#page").smoothState({
             anchors: ".Link--smoothState"
             root: $(document)
-            pageCacheSize: 0
+            cacheLength: 0
             onStart:
                 duration: 350
                 render: @onStart
@@ -47,7 +47,7 @@ window.Oxygen.SmoothState = class SmoothState
         $("html, body").css('cursor', 'wait')
              .find('a').css('cursor', 'wait')
 
-    onEnd: (url, container, content) =>
+    onEnd: (container, content) =>
         $("html, body").css('cursor', 'auto')
              .find('a').css('cursor', 'auto');
 
@@ -77,13 +77,11 @@ window.Oxygen.SmoothState = class SmoothState
 
         $(".pace-activity").removeClass("pace-activity-active")
 
-        elements = $(document).add("*")
-        elements.off()
-        @smoothState.bindEventHandlers($(document))
-        Oxygen.init()
+        Oxygen.init $("#page")
 
     setTheme: (theme) ->
         $("#page").addClass('Page-transition--' + theme)
 
     load: (url, isPopped, ignoreCache) ->
-        @smoothState.load(url, isPopped, ignoreCache)
+        #@smoothState.load(url, isPopped, ignoreCache)
+        @smoothState.load(url, isPopped)
