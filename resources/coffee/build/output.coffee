@@ -95,7 +95,9 @@ window.Oxygen.Form = class Form
         container.find("form").each ->
             Form.list.push new Form($(@))
 
-        container.find(Form.classes.taggableInput).tagging();
+        container.find(Form.classes.taggableInput).tagging({
+            "edit-on-delete": false
+        });
 
     constructor: (element) ->
         @form = element

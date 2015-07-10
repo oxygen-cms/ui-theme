@@ -88,7 +88,9 @@
       container.find("form").each(function() {
         return Form.list.push(new Form($(this)));
       });
-      return container.find(Form.classes.taggableInput).tagging();
+      return container.find(Form.classes.taggableInput).tagging({
+        "edit-on-delete": false
+      });
     };
 
     function Form(element) {
