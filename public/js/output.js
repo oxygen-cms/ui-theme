@@ -836,7 +836,7 @@
 
   window.Oxygen.SmoothState = SmoothState = (function() {
     function SmoothState() {
-      this.callback = __bind(this.callback, this);
+      this.onAfter = __bind(this.onAfter, this);
       this.onEnd = __bind(this.onEnd, this);
       this.onProgress = __bind(this.onProgress, this);
       this.onStart = __bind(this.onStart, this);
@@ -857,7 +857,7 @@
           duration: 0,
           render: this.onProgress
         },
-        onEnd: {
+        onReady: {
           duration: 0,
           render: this.onEnd
         },
@@ -865,7 +865,7 @@
       }).data('smoothState');
     };
 
-    SmoothState.prototype.onStart = function(url, container) {
+    SmoothState.prototype.onStart = function(container) {
       var elements;
       $("html, body").animate({
         scrollTop: 0
@@ -889,7 +889,7 @@
       })(this), elements.length * 100);
     };
 
-    SmoothState.prototype.onProgress = function(url, container) {
+    SmoothState.prototype.onProgress = function(container) {
       return $("html, body").css('cursor', 'wait').find('a').css('cursor', 'wait');
     };
 
@@ -915,7 +915,7 @@
       return container.show();
     };
 
-    SmoothState.prototype.callback = function(url, $container, $content) {
+    SmoothState.prototype.onAfter = function($container, $content) {
       this.loading = false;
       $(".pace-activity").removeClass("pace-activity-active");
       return Oxygen.init($("#page"));

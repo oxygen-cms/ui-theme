@@ -820,13 +820,13 @@ window.Oxygen.SmoothState = class SmoothState
             onProgress:
                 duration: 0
                 render: @onProgress
-            onEnd:
+            onReady:
                 duration: 0
                 render: @onEnd
             callback: @callback
         }).data('smoothState');
 
-    onStart: (url, container) =>
+    onStart: (container) =>
         $("html, body").animate({ scrollTop: 0 })
 
         @loading = true
@@ -845,7 +845,7 @@ window.Oxygen.SmoothState = class SmoothState
                 $(".pace-activity").addClass("pace-activity-active")
         elements.length * 100)
 
-    onProgress: (url, container) =>
+    onProgress: (container) =>
         $("html, body").css('cursor', 'wait')
              .find('a').css('cursor', 'wait')
 
@@ -874,7 +874,7 @@ window.Oxygen.SmoothState = class SmoothState
 
         container.show()
 
-    callback: (url, $container, $content) =>
+    onAfter: ($container, $content) =>
         @loading = false
 
         $(".pace-activity").removeClass("pace-activity-active")
