@@ -375,9 +375,9 @@
       isActive: "is-active"
     };
 
-    Dropdown.registerGlobalEvent(function() {
+    Dropdown.registerGlobalEvent = function() {
       return $(document).on("click", this.handleGlobalClick.bind(this));
-    });
+    };
 
     Dropdown.registerEvents = function(container) {
       return container.find("." + this.classes.dropdownToggle).on("click", this.handleClick.bind(this));
@@ -1771,6 +1771,6 @@
     $(document.body).addClass("Page-progress--" + theme);
   }
 
-  Dropdown.registerGlobalClick();
+  Dropdown.registerGlobalEvent();
 
 }).call(this);

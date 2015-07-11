@@ -120,4 +120,5 @@ progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner
 for theme in progressThemes
     $(document.body).addClass("Page-progress--" + theme)
 
-Dropdown.registerGlobalClick()
+
+Dropdown.registerGlobalEvent()

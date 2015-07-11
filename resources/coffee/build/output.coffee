@@ -345,7 +345,7 @@ window.Oxygen.Dropdown = class Dropdown
         dropdownList: "Dropdown"
         isActive: "is-active"
 
-    @registerGlobalEvent ->
+    @registerGlobalEvent: ->
         $(document).on("click", @handleGlobalClick.bind(@))
 
     @registerEvents: (container) ->
@@ -1697,4 +1697,5 @@ progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner
 for theme in progressThemes
     $(document.body).addClass("Page-progress--" + theme)
 
-Dropdown.registerGlobalClick()
+
+Dropdown.registerGlobalEvent()
