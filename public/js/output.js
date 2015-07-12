@@ -33,7 +33,7 @@
       console.log(data);
       if (data.redirect) {
         if (smoothState && !(data.hardRedirect === true)) {
-          smoothState.load(data.redirect, false, true);
+          smoothState.load(data.redirect, false, false);
         } else {
           window.location.replace(data.redirect);
         }
@@ -104,14 +104,14 @@
         _ref = Form.list;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           form = _ref[_i];
-          if (document.contains(form[0])) {
+          if (document.contains(form.form[0])) {
             newList.push(form);
-            if (form.hasClass(Form.classes.submitOnKeydown)) {
-              form.submit();
+            if (form.form.hasClass(Form.classes.submitOnKeydown)) {
+              form.form.submit();
+              event.preventDefault();
             }
           }
         }
-        event.preventDefault();
         return Form.list = newList;
       }
     };
@@ -861,6 +861,7 @@
         anchors: ".Link--smoothState",
         root: $(document),
         cacheLength: 0,
+        forms: "null",
         onStart: {
           duration: 350,
           render: this.onStart
@@ -937,8 +938,8 @@
       return $("#page").addClass('Page-transition--' + theme);
     };
 
-    SmoothState.prototype.load = function(url, isPopped, ignoreCache) {
-      return this.smoothState.load(url, isPopped);
+    SmoothState.prototype.load = function(url, push, useCache) {
+      return this.smoothState.load(url, push, ignoreCache);
     };
 
     return SmoothState;
