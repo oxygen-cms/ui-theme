@@ -99,6 +99,23 @@ window.Oxygen.Form = class Form
             "edit-on-delete": false
         });
 
+    @registerKeydownHandler: ->
+        $(document).on("keydown", Form.handleKeydown)
+
+    @handleKeydown: ->
+        # check for Command/Control S
+        if (event.ctrlKey or event.metaKey) and event.which is 83
+
+            newList = []
+            for form in Form.list
+                if document.contains(form[0])
+                    newList.push form
+                    if form.hasClass(Form.classes.submitOnKeydown)
+                        form.submit()
+
+            event.preventDefault()
+            Form.list = newList
+
     constructor: (element) ->
         @form = element
         @registerEvents()
@@ -113,10 +130,6 @@ window.Oxygen.Form = class Form
         # Submit via AJAX
         @form.on("submit", @sendAjax)  if @form.hasClass(Form.classes.sendAjax)
         @form.on("change", @sendAjax)  if @form.hasClass(Form.classes.sendAjaxOnChange)
-
-        # Control/Command S to save
-        if @form.hasClass(Form.classes.submitOnKeydown)
-            $(document.body).on("keydown", @handleKeydown)
 
         # Auto Submit
         if @form.hasClass(Form.classes.autoSubmit)
@@ -148,12 +161,6 @@ window.Oxygen.Form = class Form
     sendAjax: (event) =>
         event.preventDefault()
         Ajax.sendAjax(@form.attr("method"), @form.attr("action"), Form.getFormData(@form))
-        return
-
-    handleKeydown: (event) =>
-        if (event.ctrlKey or event.metaKey) and event.which is 83
-            @form.submit()
-            event.preventDefault()
         return
 
     @getFormData: (form) ->
@@ -822,8 +829,8 @@ window.Oxygen.SmoothState = class SmoothState
                 render: @onProgress
             onReady:
                 duration: 0
-                render: @onEnd
-            callback: @callback
+                render: @onReady
+            onAfter: @onAfter
         }).data('smoothState');
 
     onStart: (container) =>
@@ -849,7 +856,7 @@ window.Oxygen.SmoothState = class SmoothState
         $("html, body").css('cursor', 'wait')
              .find('a').css('cursor', 'wait')
 
-    onEnd: (container, content) =>
+    onReady: (container, content) =>
         $("html, body").css('cursor', 'auto')
              .find('a').css('cursor', 'auto');
 
@@ -1697,5 +1704,5 @@ progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner
 for theme in progressThemes
     $(document.body).addClass("Page-progress--" + theme)
 
-
+Form.registerKeydownHandler()
 Dropdown.registerGlobalEvent()

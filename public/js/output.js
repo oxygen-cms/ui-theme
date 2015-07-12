@@ -93,8 +93,30 @@
       });
     };
 
+    Form.registerKeydownHandler = function() {
+      return $(document).on("keydown", Form.handleKeydown);
+    };
+
+    Form.handleKeydown = function() {
+      var form, newList, _i, _len, _ref;
+      if ((event.ctrlKey || event.metaKey) && event.which === 83) {
+        newList = [];
+        _ref = Form.list;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          form = _ref[_i];
+          if (document.contains(form[0])) {
+            newList.push(form);
+            if (form.hasClass(Form.classes.submitOnKeydown)) {
+              form.submit();
+            }
+          }
+        }
+        event.preventDefault();
+        return Form.list = newList;
+      }
+    };
+
     function Form(element) {
-      this.handleKeydown = __bind(this.handleKeydown, this);
       this.sendAjax = __bind(this.sendAjax, this);
       this.handleExit = __bind(this.handleExit, this);
       this.handleSave = __bind(this.handleSave, this);
@@ -114,9 +136,6 @@
       }
       if (this.form.hasClass(Form.classes.sendAjaxOnChange)) {
         this.form.on("change", this.sendAjax);
-      }
-      if (this.form.hasClass(Form.classes.submitOnKeydown)) {
-        $(document.body).on("keydown", this.handleKeydown);
       }
       if (this.form.hasClass(Form.classes.autoSubmit)) {
         this.form.find('button[type="submit"]')[0].click();
@@ -154,13 +173,6 @@
     Form.prototype.sendAjax = function(event) {
       event.preventDefault();
       Ajax.sendAjax(this.form.attr("method"), this.form.attr("action"), Form.getFormData(this.form));
-    };
-
-    Form.prototype.handleKeydown = function(event) {
-      if ((event.ctrlKey || event.metaKey) && event.which === 83) {
-        this.form.submit();
-        event.preventDefault();
-      }
     };
 
     Form.getFormData = function(form) {
@@ -837,7 +849,7 @@
   window.Oxygen.SmoothState = SmoothState = (function() {
     function SmoothState() {
       this.onAfter = __bind(this.onAfter, this);
-      this.onEnd = __bind(this.onEnd, this);
+      this.onReady = __bind(this.onReady, this);
       this.onProgress = __bind(this.onProgress, this);
       this.onStart = __bind(this.onStart, this);
     }
@@ -859,9 +871,9 @@
         },
         onReady: {
           duration: 0,
-          render: this.onEnd
+          render: this.onReady
         },
-        callback: this.callback
+        onAfter: this.onAfter
       }).data('smoothState');
     };
 
@@ -893,7 +905,7 @@
       return $("html, body").css('cursor', 'wait').find('a').css('cursor', 'wait');
     };
 
-    SmoothState.prototype.onEnd = function(container, content) {
+    SmoothState.prototype.onReady = function(container, content) {
       $("html, body").css('cursor', 'auto').find('a').css('cursor', 'auto');
       Oxygen.reset();
       container.hide();
@@ -1770,6 +1782,8 @@
     theme = progressThemes[_i];
     $(document.body).addClass("Page-progress--" + theme);
   }
+
+  Form.registerKeydownHandler();
 
   Dropdown.registerGlobalEvent();
 

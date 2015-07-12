@@ -20,8 +20,8 @@ window.Oxygen.SmoothState = class SmoothState
                 render: @onProgress
             onReady:
                 duration: 0
-                render: @onEnd
-            callback: @callback
+                render: @onReady
+            onAfter: @onAfter
         }).data('smoothState');
 
     onStart: (container) =>
@@ -47,7 +47,7 @@ window.Oxygen.SmoothState = class SmoothState
         $("html, body").css('cursor', 'wait')
              .find('a').css('cursor', 'wait')
 
-    onEnd: (container, content) =>
+    onReady: (container, content) =>
         $("html, body").css('cursor', 'auto')
              .find('a').css('cursor', 'auto');
 
