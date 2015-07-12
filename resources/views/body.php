@@ -1,13 +1,9 @@
-<?php
-    use Oxygen\Core\Html\Editor\Editor;
-?>
-
 <!-- Core -->
 <script src="/vendor/oxygen/ui-theme/vendor/jquery.min.js"></script>
 <script src="/vendor/oxygen/ui-theme/vendor/headroom.min.js"></script>
 <script src="/vendor/oxygen/ui-theme/vendor/vex/vex.min.js"></script>
 <script>vex.defaultOptions.className = 'Dialog';</script>
-<link rel="stylesheet" href="/vendor/oxygen/ui-theme/vendor/vex/vex.css" />
+<link rel="stylesheet" type="text/css" href="/vendor/oxygen/ui-theme/vendor/vex/vex.css" />
 <?php if(!Auth::check() || Auth::user()->getPreferences()->get('pageLoad.progress.enabled', true) === true): ?>
     <script>
         paceOptions = {
@@ -34,4 +30,4 @@
 
 <!-- Image Editor -->
 <script src="/vendor/oxygen/ui-theme/vendor/jcrop/jcrop.min.js"></script>
-<link rel="stylesheet" href="/vendor/oxygen/ui-theme/vendor/jcrop/jcrop.min.css" type="text/css">
+<link rel="stylesheet" type="text/css" href="/vendor/oxygen/ui-theme/vendor/jcrop/jcrop.min.css" type="text/css">
