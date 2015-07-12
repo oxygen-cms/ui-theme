@@ -41,12 +41,12 @@ window.Oxygen.Form = class Form
 
             newList = []
             for form in Form.list
-                if document.contains(form[0])
+                if document.contains(form.form[0])
                     newList.push form
-                    if form.hasClass(Form.classes.submitOnKeydown)
-                        form.submit()
+                    if form.form.hasClass(Form.classes.submitOnKeydown)
+                        form.form.submit()
+                        event.preventDefault()
 
-            event.preventDefault()
             Form.list = newList
 
     constructor: (element) ->

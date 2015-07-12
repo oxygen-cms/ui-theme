@@ -30,7 +30,7 @@ window.Oxygen.Ajax = class Ajax
 
         if(data.redirect)
             if smoothState && !(data.hardRedirect == true)
-                smoothState.load(data.redirect, false, true) # ignores the cache
+                smoothState.load(data.redirect, true, false) # don't doesn't use SmoothState's cache
             else
                 window.location.replace(data.redirect)
 

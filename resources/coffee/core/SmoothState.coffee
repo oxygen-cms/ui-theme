@@ -12,6 +12,7 @@ window.Oxygen.SmoothState = class SmoothState
             anchors: ".Link--smoothState"
             root: $(document)
             cacheLength: 0
+            forms: "null"
             onStart:
                 duration: 350
                 render: @onStart
@@ -82,6 +83,5 @@ window.Oxygen.SmoothState = class SmoothState
     setTheme: (theme) ->
         $("#page").addClass('Page-transition--' + theme)
 
-    load: (url, isPopped, ignoreCache) ->
-        #@smoothState.load(url, isPopped, ignoreCache)
-        @smoothState.load(url, isPopped)
+    load: (url, push, useCache) ->
+        @smoothState.load(url, push, ignoreCache)
