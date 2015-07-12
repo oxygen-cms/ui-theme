@@ -30,7 +30,7 @@ window.Oxygen.Ajax = class Ajax
 
         if(data.redirect)
             if smoothState && !(data.hardRedirect == true)
-                smoothState.load(data.redirect, false, false) # doesn't use SmoothState's cache
+                smoothState.load(data.redirect, false)
             else
                 window.location.replace(data.redirect)
 
@@ -892,8 +892,8 @@ window.Oxygen.SmoothState = class SmoothState
     setTheme: (theme) ->
         $("#page").addClass('Page-transition--' + theme)
 
-    load: (url, push, useCache) ->
-        @smoothState.load(url, push, ignoreCache)
+    load: (url, push) ->
+        @smoothState.load(url, push)
 # ================================
 #             Notification
 # ================================

@@ -33,7 +33,7 @@
       console.log(data);
       if (data.redirect) {
         if (smoothState && !(data.hardRedirect === true)) {
-          smoothState.load(data.redirect, false, false);
+          smoothState.load(data.redirect, false);
         } else {
           window.location.replace(data.redirect);
         }
@@ -938,8 +938,8 @@
       return $("#page").addClass('Page-transition--' + theme);
     };
 
-    SmoothState.prototype.load = function(url, push, useCache) {
-      return this.smoothState.load(url, push, ignoreCache);
+    SmoothState.prototype.load = function(url, push) {
+      return this.smoothState.load(url, push);
     };
 
     return SmoothState;

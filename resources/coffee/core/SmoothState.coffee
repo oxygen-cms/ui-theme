@@ -83,5 +83,5 @@ window.Oxygen.SmoothState = class SmoothState
     setTheme: (theme) ->
         $("#page").addClass('Page-transition--' + theme)
 
-    load: (url, push, useCache) ->
-        @smoothState.load(url, push, ignoreCache)
+    load: (url, push) ->
+        @smoothState.load(url, push)
