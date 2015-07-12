@@ -2068,7 +2068,8 @@ select {
 .MainNav-border {
   display: block;
   border-right: 1px solid #ccc;
-  margin: 0 1em; }
+  margin: 0 1em;
+  height: 100%; }
 
 .MainNav-mobileBar {
   background-color: #333;
