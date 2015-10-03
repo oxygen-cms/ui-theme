@@ -49,8 +49,8 @@ window.Oxygen.Ajax = class Ajax
             new Notification({
                 content:
                     "Exception of type <code class=\"no-wrap\">" + content.error.type +
-                    "</code>with message <code class=\"no-wrap\">" + content.error.message +
-                    "</code>thrown at <code class=\"no-wrap\">" + content.error.file + ":" + content.error.line +
+                    "</code> with message <code class=\"no-wrap\">" + content.error.message +
+                    "</code> thrown at <code class=\"no-wrap\">" + content.error.file + ":" + content.error.line +
                     "</code>"
                 status: "failed"
             })

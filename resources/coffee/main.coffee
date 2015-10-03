@@ -15,6 +15,7 @@
 #= require Dialog
 #= require SmoothState
 #= require Preferences
+#= require EditableList
 
 #= require Editor
 #= require CodeViewInterface
@@ -92,6 +93,7 @@ Oxygen.init = (container) ->
     #
 
     Dropdown.registerEvents(container)
+    EditableList.registerEvents(container)
     Form.findAll(container)
     Upload.registerEvents(container)
     TabSwitcher.findAll(container)

@@ -122,6 +122,17 @@ input[type="button"] {
     }
 }
 
+.Button--transparent {
+    @include link-reset;
+    @include link-cursor;
+    background-color: transparent;
+    margin: 0.5em;
+
+    .Icon {
+        vertical-align: middle;
+    }
+}
+
 .Button--border {
     @extend .heading-beta;
     margin: 1em 0;

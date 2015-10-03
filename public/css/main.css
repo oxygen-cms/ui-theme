@@ -388,6 +388,18 @@ button, input[type="submit"], input[type="button"] {
   .Button[disabled].Button--forward:before, .Dialog [disabled].Button--forward.vex-dialog-button:before {
     border: 0; }
 
+.Button--transparent {
+  text-decoration: none !important;
+  color: inherit;
+  outline: none;
+  background-color: transparent;
+  margin: 0.5em; }
+  .Button--transparent:hover {
+    cursor: hand;
+    cursor: pointer; }
+  .Button--transparent .Icon {
+    vertical-align: middle; }
+
 .Button--border {
   margin: 1em 0;
   background-color: transparent;
@@ -1533,6 +1545,12 @@ input[type=checkbox] {
   font-size: 1rem; }
   .Form-taggable .type-zone:focus {
     outline: 0; }
+
+/* =====================
+       EDITABLE LIST
+   ===================== */
+.EditableList-template {
+  display: none; }
 
 /* ============================
           SEARCH

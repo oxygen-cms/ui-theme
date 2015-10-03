@@ -1,5 +1,5 @@
 (function() {
-  var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, Preferences, PreviewInterface, ProgressBar, Slider, SmoothState, SplitViewInterface, TabSwitcher, Toggle, Upload, base64Encode, progressThemes, smoothState, theme, _i, _len,
+  var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, EditableList, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, Preferences, PreviewInterface, ProgressBar, Slider, SmoothState, SplitViewInterface, TabSwitcher, Toggle, Upload, base64Encode, progressThemes, smoothState, theme, _i, _len,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -48,7 +48,7 @@
         content = $.parseJSON(response.responseText);
         console.error(content);
         new Notification({
-          content: "Exception of type <code class=\"no-wrap\">" + content.error.type + "</code>with message <code class=\"no-wrap\">" + content.error.message + "</code>thrown at <code class=\"no-wrap\">" + content.error.file + ":" + content.error.line + "</code>",
+          content: "Exception of type <code class=\"no-wrap\">" + content.error.type + "</code> with message <code class=\"no-wrap\">" + content.error.message + "</code> thrown at <code class=\"no-wrap\">" + content.error.file + ":" + content.error.line + "</code>",
           status: "failed"
         });
       } catch (_error) {
@@ -182,10 +182,15 @@
         var name, value;
         name = $(this).attr("name");
         value = $(this).val();
-        if ($(this).is("[type=\"checkbox\"]")) {
-          if ($(this).is(":checked")) {
-            return data[name] = value;
+        if ($(this).is("[type=\"checkbox\"]") && !$(this).is(":checked")) {
+          return;
+        }
+        if (name.endsWith("[]")) {
+          name = name.slice(0, -2);
+          if (data[name] === void 0) {
+            data[name] = [];
           }
+          return data[name].push(value);
         } else {
           return data[name] = value;
         }
@@ -1008,6 +1013,45 @@
 
   window.Oxygen || (window.Oxygen = {});
 
+  window.Oxygen.EditableList = EditableList = (function() {
+    function EditableList() {}
+
+    EditableList.classes = {
+      container: "EditableList",
+      template: "EditableList-template",
+      row: "EditableList-row",
+      remove: "EditableList-remove",
+      add: "EditableList-add"
+    };
+
+    EditableList.registerEvents = function(container) {
+      container.find("." + EditableList.classes.add).on("click", EditableList.handleAdd);
+      return container.on("click", "." + EditableList.classes.remove, EditableList.handleRemove);
+    };
+
+    EditableList.handleAdd = function(event) {
+      var container, template;
+      container = $(event.currentTarget).siblings("." + EditableList.classes.container);
+      template = container.find("." + EditableList.classes.template);
+      template = template.clone().removeClass(EditableList.classes.template);
+      console.log(template);
+      container.append(template);
+      return console.log('add');
+    };
+
+    EditableList.handleRemove = function(event) {
+      var row;
+      row = $(event.currentTarget).closest("." + EditableList.classes.row);
+      row.remove();
+      return console.log('remove');
+    };
+
+    return EditableList;
+
+  })();
+
+  window.Oxygen || (window.Oxygen = {});
+
   window.Oxygen.Editor = Editor = (function() {
     Editor.list = [];
 
@@ -1755,6 +1799,7 @@
       Oxygen.initLogin();
     }
     Dropdown.registerEvents(container);
+    EditableList.registerEvents(container);
     Form.findAll(container);
     Upload.registerEvents(container);
     TabSwitcher.findAll(container);

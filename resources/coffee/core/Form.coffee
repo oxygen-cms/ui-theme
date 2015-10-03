@@ -102,8 +102,13 @@ window.Oxygen.Form = class Form
             name = $(this).attr("name")
             value = $(this).val()
 
-            if $(this).is("[type=\"checkbox\"]")
-                data[name] = value  if $(this).is(":checked")
+            if $(this).is("[type=\"checkbox\"]") and !$(this).is(":checked")
+                return
+
+            if name.endsWith("[]")
+                name = name.slice(0, -2);
+                data[name] = []  if data[name] == undefined
+                data[name].push(value)
             else
                 data[name] = value
 
