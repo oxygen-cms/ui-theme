@@ -554,7 +554,7 @@ window.Oxygen.Upload = class Upload
         return
 
     @handleChange = (event) ->
-        event.target.form.trigger('submit')
+        event.target.form.submit()
         return
 
     # -----------------

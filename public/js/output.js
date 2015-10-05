@@ -594,7 +594,7 @@
     };
 
     Upload.handleChange = function(event) {
-      event.target.form.trigger('submit');
+      event.target.form.submit();
     };
 
     function Upload(progressBar, form, data) {
