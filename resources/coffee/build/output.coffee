@@ -1158,10 +1158,10 @@ window.Oxygen.Editor.CodeViewInterface = class CodeViewInterface
         object.setTheme Preferences.get('editor.ace.theme')
         object.getSession().setUseWrapMode Preferences.get('editor.ace.wordWrap')
         object.setHighlightActiveLine Preferences.get('user.editor.ace.highlightActiveLine')
-        object.setShowPrintMargin Preferences.get('user.editor.ace.showPrintMargin')
-        object.setShowInvisibles Preferences.get('user.editor.ace.showInvisibles')
+        object.setShowPrintMargin Preferences.get('editor.ace.showPrintMargin')
+        object.setShowInvisibles Preferences.get('editor.ace.showInvisibles')
         object.setReadOnly @editor.readOnly
-        $("#" + @editor.name + "-ace-editor").css "font-size", Preferences.get('user.editor.ace.fontSize')
+        $("#" + @editor.name + "-ace-editor").css "font-size", Preferences.get('editor.ace.fontSize')
 
         # store object
         @view = object

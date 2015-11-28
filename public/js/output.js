@@ -1232,10 +1232,10 @@
       object.setTheme(Preferences.get('editor.ace.theme'));
       object.getSession().setUseWrapMode(Preferences.get('editor.ace.wordWrap'));
       object.setHighlightActiveLine(Preferences.get('user.editor.ace.highlightActiveLine'));
-      object.setShowPrintMargin(Preferences.get('user.editor.ace.showPrintMargin'));
-      object.setShowInvisibles(Preferences.get('user.editor.ace.showInvisibles'));
+      object.setShowPrintMargin(Preferences.get('editor.ace.showPrintMargin'));
+      object.setShowInvisibles(Preferences.get('editor.ace.showInvisibles'));
       object.setReadOnly(this.editor.readOnly);
-      $("#" + this.editor.name + "-ace-editor").css("font-size", Preferences.get('user.editor.ace.fontSize'));
+      $("#" + this.editor.name + "-ace-editor").css("font-size", Preferences.get('editor.ace.fontSize'));
       return this.view = object;
     };
 
