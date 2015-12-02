@@ -44,13 +44,25 @@
 
     Ajax.handleError = function(response, textStatus, errorThrown) {
       var content, e;
+      if (response.readyState === 0) {
+        console.error(response);
+        new Notification({
+          content: "Cannot connect to the server",
+          status: "info"
+        });
+        return;
+      }
       try {
         content = $.parseJSON(response.responseText);
-        console.error(content);
-        new Notification({
-          content: "Exception of type <code class=\"no-wrap\">" + content.error.type + "</code> with message <code class=\"no-wrap\">" + content.error.message + "</code> thrown at <code class=\"no-wrap\">" + content.error.file + ":" + content.error.line + "</code>",
-          status: "failed"
-        });
+        if (content.content) {
+          new Notification(content);
+        } else {
+          console.error(content);
+          new Notification({
+            content: "Exception of type <code class=\"no-wrap\">" + content.error.type + "</code> with message <code class=\"no-wrap\">" + content.error.message + "</code> thrown at <code class=\"no-wrap\">" + content.error.file + ":" + content.error.line + "</code>",
+            status: "failed"
+          });
+        }
       } catch (_error) {
         e = _error;
         console.error(response.responseText);

@@ -40,20 +40,32 @@ window.Oxygen.Ajax = class Ajax
 
     # handles an error during an ajax request
     @handleError: (response, textStatus, errorThrown) =>
+        # handle network errors
+        if(response.readyState == 0)
+            console.error(response)
+            new Notification({
+                content: "Cannot connect to the server",
+                status: "info"
+            })
+            return
+
         # try to build a flash message from the error response
         try
             content = $.parseJSON(response.responseText)
 
-            console.error(content)
+            if(content.content)
+                new Notification(content);
+            else
+                console.error(content)
 
-            new Notification({
-                content:
-                    "Exception of type <code class=\"no-wrap\">" + content.error.type +
-                    "</code> with message <code class=\"no-wrap\">" + content.error.message +
-                    "</code> thrown at <code class=\"no-wrap\">" + content.error.file + ":" + content.error.line +
-                    "</code>"
-                status: "failed"
-            })
+                new Notification({
+                    content:
+                        "Exception of type <code class=\"no-wrap\">" + content.error.type +
+                        "</code> with message <code class=\"no-wrap\">" + content.error.message +
+                        "</code> thrown at <code class=\"no-wrap\">" + content.error.file + ":" + content.error.line +
+                        "</code>"
+                    status: "failed"
+                })
         catch e
             console.error(response.responseText)
 
