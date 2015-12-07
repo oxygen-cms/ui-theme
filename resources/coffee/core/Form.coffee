@@ -51,13 +51,14 @@ window.Oxygen.Form = class Form
 
     constructor: (element) ->
         @form = element
+        @originalData = element.serializeArray()
         @registerEvents()
 
     registerEvents: ->
         # Exit Dialog
         if @form.hasClass(Form.classes.warnBeforeExit)
-            @form.find(":input").on("input change", @handleChange) # sets [data-changed="true"]
-            @form.on("submit", @handleSave) # sets [data-changed="false"]
+            #@form.find(":input").on("input", @handleChange) # sets [data-changed="true"]
+            @form.on("submit", @handleSave) # resets form data
             $("a, button[type=\"submit\"]").on("click", @handleExit) # displays exit dialog
 
         # Submit via AJAX
@@ -67,21 +68,11 @@ window.Oxygen.Form = class Form
         # Auto Submit
         if @form.hasClass(Form.classes.autoSubmit)
             @form.find('button[type="submit"]')[0].click();
-        return
 
-    handleChange: (event) =>
-        @form.attr("data-changed", true)
-        console.log("Form Changed")
-        return
-
-    handleSave: (event) =>
-        @form.attr("data-changed", false)
-        console.log("Form Saved")
-        return
 
     handleExit: (event) =>
-        if @form.attr("data-changed") == "true"
-            return if $(event.currentTarget).hasClass("Form-submit")
+        return if $(event.currentTarget).hasClass("Form-submit")
+        if JSON.stringify(@form.serializeArray()) != JSON.stringify(@originalData)
             Dialog.handleConfirmClick(event, {
                 message: Form.messages.confirmation
                 buttons: [
@@ -89,14 +80,17 @@ window.Oxygen.Form = class Form
                     $.extend({}, vex.dialog.buttons.NO, text: 'Cancel')
                 ]
             })
-        return
+
 
     sendAjax: (event) =>
         event.preventDefault()
-        Ajax.sendAjax(@form.attr("method"), @form.attr("action"), Form.getFormData(@form))
-        return
+        Ajax.sendAjax(@form.attr("method"), @form.attr("action"), Form.getFormDataObject(@form), (data) =>
+            if data.status == 'success'
+                @originalData = @form.serializeArray()
+                console.log('Form Saved Successfully')
+        )
 
-    @getFormData: (form) ->
+    ###@getFormData: (form) ->
         data = {}
         form.find("[name]").each ->
             name = $(this).attr("name")
@@ -112,7 +106,7 @@ window.Oxygen.Form = class Form
             else
                 data[name] = value
 
-        return data
+        return data###
 
     @getFormDataObject: (form) ->
         data = new FormData();
@@ -120,9 +114,15 @@ window.Oxygen.Form = class Form
             name = $(this).attr("name")
             value = $(this).val()
 
-            if $(this).is("[type=\"checkbox\"]")
-                data.append(name, value)  if $(this).is(":checked")
-            else
-                data.append(name, value)
+            if $(this).is("[type=\"checkbox\"]") and !$(this).is(":checked")
+                return
+
+            if $(this).is("[type=\"file\"]")
+                files = this.filesToUpload ? this.files
+                for file in files
+                    data.append(name, file)
+                return
+
+            data.append(name, value)
 
         return data

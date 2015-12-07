@@ -199,48 +199,79 @@
    ============================ */
 
 .FileUpload {
+    @include flex-container(row, flex-start, center, '.flex-item', wrap);
+}
+
+.FileUpload-preview, .FileUpload-dropzone {
     position: relative;
+    display: inline-block;
     width: 20em;
     height: 20em;
-    padding: 2em 0;
-    border: 2px dashed $color-grey-light-1;
-    background-color: $color-white-2;
-
-    @include flex-container(column, center);
+    margin: 0 2em 2em 0;
 }
 
 .FileUpload--onDragOver {
     border: 2px dashed $color-grey-dark-3;
 }
 
-.FileUpload input[type=file] {
+.FileUpload-preview {
+    @include flex-container(column, center);
+    //border: 1px solid $color-grey-dark-2;
+}
+
+.FileUpload-preview-info {
+    opacity: 0;
     position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 0.5em;
+    background-color: rgba(20, 20, 20, 0.7);
+    color: $color-white;
+    transition: opacity 0.3s ease;
+    transition-delay: 0.5s;
+}
+
+.FileUpload-preview:hover .FileUpload-preview-info {
+    opacity: 1;
+    transition-delay: 0s;
+}
+
+.FileUpload-preview-size {
+    float: right;
+}
+
+.FileUpload-preview-remove {
+    float: right;
+    margin: 0 0 0 1em;
+}
+
+.FileUpload-dropzone {
+    text-align: center;
+    font-weight: bold;
+    padding-top: 5em;
+    border-radius: 0.5em;
+    border: 2px dashed $color-grey-light-1;
+    background-color: $color-white-2;
+}
+
+.FileUpload-drop {
+    font-size: 1.5em;
+    color: $color-grey-dark-2;
+}
+
+.FileUpload-click {
+    position: relative;
+    margin-top: 1em;
+}
+
+.FileUpload-click input[type=file] {
+    position: absolute;
+    cursor: pointer;
     top: 0;
+    left: 0;
     opacity: 0;
     width: 100%;
     height: 100%;
-}
-
-.FileUpload input[type=file]:hover,
-.FileUpload input[type=file]:hover::-webkit-file-upload-button {
-    cursor: hand;
-    cursor: pointer;
-}
-
-.FileUpload-message {
-    display: block;
-    text-align: center;
-    font-size: 1.5em;
-    color: $color-grey-dark-2;
-    font-weight: bold;
-}
-
-.FileUpload-subMessage {
-    display: block;
-    text-align: center;
-    font-size: 1em;
-    padding: 1em;
-    color: $color-grey-dark-2;
 }
 
 .no-js .FileUpload--js {

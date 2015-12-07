@@ -8,16 +8,19 @@ window.Oxygen.Ajax = class Ajax
     @handleErrorCallback = (() -> )
     @handleSuccessCallback = (() -> )
 
-    @sendAjax: (type, url, data) ->
+    @sendAjax: (type, url, data, success=(->), error=(->)) ->
         $.ajax({
             dataType: "json"
             type: type
             url: url
             data: data
-            success: @handleSuccess
-            error: @handleError
+            processData: false
+            contentType: false
+            success: (data) =>
+                @handleSuccess(data, [success, @handleSuccessCallback])
+            error: (response, textStatus, errorThrown) =>
+                @handleError(response, textStatus, errorThrown, [success, @handleErrorCallback])
         })
-        return
 
     # fires a link via ajax
     @fireLink: (event) ->
@@ -25,7 +28,7 @@ window.Oxygen.Ajax = class Ajax
         @sendAjax("GET", $(event.target).attr("href"), null)
 
     # handles a successful response
-    @handleSuccess: (data) =>
+    @handleSuccess: (data, callbackChain) =>
         console.log(data)
 
         if(data.redirect)
@@ -36,10 +39,11 @@ window.Oxygen.Ajax = class Ajax
 
         new Notification(data);
 
-        @handleSuccessCallback(data)
+        for callback in callbackChain
+            callback(data)
 
     # handles an error during an ajax request
-    @handleError: (response, textStatus, errorThrown) =>
+    @handleError: (response, textStatus, errorThrown, callbackChain) =>
         # handle network errors
         if(response.readyState == 0)
             console.error(response)
@@ -74,5 +78,5 @@ window.Oxygen.Ajax = class Ajax
                 status: "failed"
             });
 
-        @handleErrorCallback(response, textStatus, errorThrown)
-        return
+        for callback in callbackChain
+            callback(response, textStatus, errorThrown)

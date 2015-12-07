@@ -1370,65 +1370,128 @@ select.Form-input--transparent, textarea.Form-input--transparent {
 /* ============================
           FILE UPLOAD
    ============================ */
-.FileUpload {
+.flexbox .FileUpload {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+     -moz-box-orient: horizontal;
+     -moz-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+     -moz-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap; }
+
+.no-flexbox .FileUpload:before, .no-flexbox .FileUpload:after {
+  content: " ";
+  display: table; }
+
+.no-flexbox .FileUpload:after {
+  clear: both; }
+
+.no-flexbox .FileUpload > .flex-item {
+  float: left; }
+
+.FileUpload-preview, .FileUpload-dropzone {
   position: relative;
+  display: inline-block;
   width: 20em;
   height: 20em;
-  padding: 2em 0;
-  border: 2px dashed #ccc;
-  background-color: #fdfdfd; }
-  .flexbox .FileUpload {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -webkit-flex-direction: column;
-       -moz-box-orient: vertical;
-       -moz-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-    -webkit-box-pack: center;
-    -webkit-justify-content: center;
-       -moz-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center; }
-  .no-flexbox .FileUpload > .flex-item:before, .no-flexbox .FileUpload > .flex-item:after {
-    content: " ";
-    display: table; }
-  .no-flexbox .FileUpload > .flex-item:after {
-    clear: both; }
+  margin: 0 2em 2em 0; }
 
 .FileUpload--onDragOver {
   border: 2px dashed #888; }
 
-.FileUpload input[type=file] {
+.flexbox .FileUpload-preview {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+     -moz-box-orient: vertical;
+     -moz-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+     -moz-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center; }
+
+.no-flexbox .FileUpload-preview > .flex-item:before, .no-flexbox .FileUpload-preview > .flex-item:after {
+  content: " ";
+  display: table; }
+
+.no-flexbox .FileUpload-preview > .flex-item:after {
+  clear: both; }
+
+.FileUpload-preview-info {
+  opacity: 0;
   position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 0.5em;
+  background-color: rgba(20, 20, 20, 0.7);
+  color: #ffffff;
+  -webkit-transition: opacity 0.3s ease;
+          transition: opacity 0.3s ease;
+  -webkit-transition-delay: 0.5s;
+          transition-delay: 0.5s; }
+
+.FileUpload-preview:hover .FileUpload-preview-info {
+  opacity: 1;
+  -webkit-transition-delay: 0s;
+          transition-delay: 0s; }
+
+.FileUpload-preview-size {
+  float: right; }
+
+.FileUpload-preview-remove {
+  float: right;
+  margin: 0 0 0 1em; }
+
+.FileUpload-dropzone {
+  text-align: center;
+  font-weight: bold;
+  padding-top: 5em;
+  border-radius: 0.5em;
+  border: 2px dashed #ccc;
+  background-color: #fdfdfd; }
+
+.FileUpload-drop {
+  font-size: 1.5em;
+  color: #666; }
+
+.FileUpload-click {
+  position: relative;
+  margin-top: 1em; }
+
+.FileUpload-click input[type=file] {
+  position: absolute;
+  cursor: pointer;
   top: 0;
+  left: 0;
   opacity: 0;
   width: 100%;
   height: 100%; }
-
-.FileUpload input[type=file]:hover,
-.FileUpload input[type=file]:hover::-webkit-file-upload-button {
-  cursor: hand;
-  cursor: pointer; }
-
-.FileUpload-message {
-  display: block;
-  text-align: center;
-  font-size: 1.5em;
-  color: #666;
-  font-weight: bold; }
-
-.FileUpload-subMessage {
-  display: block;
-  text-align: center;
-  font-size: 1em;
-  padding: 1em;
-  color: #666; }
 
 .no-js .FileUpload--js {
   display: none; }

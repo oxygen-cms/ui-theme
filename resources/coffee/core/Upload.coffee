@@ -11,20 +11,23 @@ window.Oxygen.Upload = class Upload
 
     @selectors =
         uploadElement: ".FileUpload"
-        progressBarElement: ".ProgressBar"
-        progressBarFill: ".ProgressBar-fill"
+        previewElement: ".FileUpload-preview"
+        dropzoneElement: ".FileUpload-dropzone"
+        removeFile: ".FileUpload-preview-remove"
 
     @states =
         onDragOver: "FileUpload--onDragOver"
 
     @registerEvents: (container) ->
-        container.find(Upload.selectors.uploadElement)
+        elements = container.find(Upload.selectors.uploadElement)
+        elements.find(Upload.selectors.dropzoneElement)
             .on("dragover", Upload.handleDragOver)
             .on("dragleave", Upload.handleDragLeave)
             .on("drop", Upload.handleDrop)
-            .find("input[type=file]").on("change", Upload.handleChange)
+        elements.find("input[type=file]").on("change", Upload.handleChange)
 
     @handleDragOver = (event) ->
+        event.preventDefault()
         $(event.currentTarget).addClass(Upload.states.onDragOver)
 
     @handleDragLeave = (event) ->
@@ -34,8 +37,12 @@ window.Oxygen.Upload = class Upload
         event.preventDefault()
         $(event.currentTarget).removeClass(Upload.states.onDragOver)
 
-        files = event.originalEvent.dataTransfer.files
-        form = $(event.currentTarget).parents("form")
+        #@files = event.originalEvent.dataTransfer.files
+        upload = $(event.currentTarget).closest(Upload.selectors.uploadElement)
+        #input = upload.find('input[type="file"]')[0]
+
+        Upload.addFiles(upload, event.originalEvent.dataTransfer.files)
+        ###/*form = $(event.currentTarget).parents("form")
         input = $(event.currentTarget).find("input")[0]
 
         formData = Form.getFormDataObject(form)
@@ -49,17 +56,58 @@ window.Oxygen.Upload = class Upload
         )
 
         upload.send()
-        return
+        return###
 
     @handleChange = (event) ->
-        event.target.form.submit()
-        return
+        Upload.addFiles($(event.currentTarget).closest(Upload.selectors.uploadElement), event.currentTarget.files)
+
+    @addFiles = (upload, files) =>
+        input = upload.find('input[type="file"]')[0]
+        for file in files
+            imageType = /^image\//;
+
+            console.log file.type
+
+            preview = $('
+                <div class="FileUpload-preview">
+                    <div class="FileUpload-preview-info"><span>' + file.name + '</span><button type="button" class="FileUpload-preview-remove Button--transparent Icon Icon-times"></button><span class="FileUpload-preview-size">' + fileSize(file.size) + '</span></div>
+                    <img alt="Loading Image">
+                </div>'
+            )
+
+            # handle remove
+            preview.find(Upload.selectors.removeFile).on("click", (event) ->
+                button = $(event.currentTarget)
+                preview = button.closest(Upload.selectors.previewElement)
+
+                # remove it from the list of files to upload
+                index = input.filesToUpload.indexOf(file)
+                if index > -1
+                    input.filesToUpload.splice(index, 1)
+
+                preview.remove()
+            )
+
+            upload.prepend(preview)
+            input.filesToUpload = [] unless input.filesToUpload?
+            input.filesToUpload.push(file)
+
+            continue unless imageType.test(file.type)
+
+            reader = new FileReader()
+            reader.onload = (e) =>
+                console.log e
+                preview.find("img")[0].src = e.target.result
+            reader.readAsDataURL(file)
+
+        console.log(files)
+
 
     # -----------------
     #       Object
     # -----------------
 
-    constructor: (progressBar, form, data) ->
+    ###constructor: (progressBar, form, data) ->
         @progressBar = new ProgressBar(progressBar)
         @form = form
         @data = data
@@ -90,4 +138,24 @@ window.Oxygen.Upload = class Upload
 
     handleSuccess: (data) ->
         Ajax.handleSuccess(data)
-        @progressBar.reset()
+        @progressBar.reset()###
+
+fileSize = (sizeInBytes) ->
+    output = sizeInBytes + " bytes"
+    multiples = [
+        'KB'
+        'MB'
+        'GB'
+        'TB'
+        'PB'
+        'EB'
+        'ZB'
+        'YB'
+    ]
+    multiple = 0
+    approx = sizeInBytes / 1024
+    while approx > 1
+        output = approx.toFixed(3) + ' ' + multiples[multiple]
+        approx /= 1024
+        multiple++
+    output

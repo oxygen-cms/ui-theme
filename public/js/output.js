@@ -1,5 +1,5 @@
 (function() {
-  var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, EditableList, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, Preferences, PreviewInterface, ProgressBar, Slider, SmoothState, SplitViewInterface, TabSwitcher, Toggle, Upload, base64Encode, progressThemes, smoothState, theme, _i, _len,
+  var Ajax, CodeViewInterface, DesignViewInterface, Dialog, Dropdown, EditableList, Editor, Form, FullscreenToggle, ImageEditor, MainNav, Notification, Preferences, PreviewInterface, ProgressBar, Slider, SmoothState, SplitViewInterface, TabSwitcher, Toggle, Upload, base64Encode, fileSize, progressThemes, smoothState, theme, _i, _len,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -13,14 +13,30 @@
 
     Ajax.handleSuccessCallback = (function() {});
 
-    Ajax.sendAjax = function(type, url, data) {
-      $.ajax({
+    Ajax.sendAjax = function(type, url, data, success, error) {
+      if (success == null) {
+        success = (function() {});
+      }
+      if (error == null) {
+        error = (function() {});
+      }
+      return $.ajax({
         dataType: "json",
         type: type,
         url: url,
         data: data,
-        success: this.handleSuccess,
-        error: this.handleError
+        processData: false,
+        contentType: false,
+        success: (function(_this) {
+          return function(data) {
+            return _this.handleSuccess(data, [success, _this.handleSuccessCallback]);
+          };
+        })(this),
+        error: (function(_this) {
+          return function(response, textStatus, errorThrown) {
+            return _this.handleError(response, textStatus, errorThrown, [success, _this.handleErrorCallback]);
+          };
+        })(this)
       });
     };
 
@@ -29,7 +45,8 @@
       return this.sendAjax("GET", $(event.target).attr("href"), null);
     };
 
-    Ajax.handleSuccess = function(data) {
+    Ajax.handleSuccess = function(data, callbackChain) {
+      var callback, _i, _len, _results;
       console.log(data);
       if (data.redirect) {
         if (smoothState && !(data.hardRedirect === true)) {
@@ -39,11 +56,16 @@
         }
       }
       new Notification(data);
-      return Ajax.handleSuccessCallback(data);
+      _results = [];
+      for (_i = 0, _len = callbackChain.length; _i < _len; _i++) {
+        callback = callbackChain[_i];
+        _results.push(callback(data));
+      }
+      return _results;
     };
 
-    Ajax.handleError = function(response, textStatus, errorThrown) {
-      var content, e;
+    Ajax.handleError = function(response, textStatus, errorThrown, callbackChain) {
+      var callback, content, e, _i, _len, _results;
       if (response.readyState === 0) {
         console.error(response);
         new Notification({
@@ -71,7 +93,12 @@
           status: "failed"
         });
       }
-      Ajax.handleErrorCallback(response, textStatus, errorThrown);
+      _results = [];
+      for (_i = 0, _len = callbackChain.length; _i < _len; _i++) {
+        callback = callbackChain[_i];
+        _results.push(callback(response, textStatus, errorThrown));
+      }
+      return _results;
     };
 
     return Ajax;
@@ -131,15 +158,13 @@
     function Form(element) {
       this.sendAjax = __bind(this.sendAjax, this);
       this.handleExit = __bind(this.handleExit, this);
-      this.handleSave = __bind(this.handleSave, this);
-      this.handleChange = __bind(this.handleChange, this);
       this.form = element;
+      this.originalData = element.serializeArray();
       this.registerEvents();
     }
 
     Form.prototype.registerEvents = function() {
       if (this.form.hasClass(Form.classes.warnBeforeExit)) {
-        this.form.find(":input").on("input change", this.handleChange);
         this.form.on("submit", this.handleSave);
         $("a, button[type=\"submit\"]").on("click", this.handleExit);
       }
@@ -150,26 +175,16 @@
         this.form.on("change", this.sendAjax);
       }
       if (this.form.hasClass(Form.classes.autoSubmit)) {
-        this.form.find('button[type="submit"]')[0].click();
+        return this.form.find('button[type="submit"]')[0].click();
       }
     };
 
-    Form.prototype.handleChange = function(event) {
-      this.form.attr("data-changed", true);
-      console.log("Form Changed");
-    };
-
-    Form.prototype.handleSave = function(event) {
-      this.form.attr("data-changed", false);
-      console.log("Form Saved");
-    };
-
     Form.prototype.handleExit = function(event) {
-      if (this.form.attr("data-changed") === "true") {
-        if ($(event.currentTarget).hasClass("Form-submit")) {
-          return;
-        }
-        Dialog.handleConfirmClick(event, {
+      if ($(event.currentTarget).hasClass("Form-submit")) {
+        return;
+      }
+      if (JSON.stringify(this.form.serializeArray()) !== JSON.stringify(this.originalData)) {
+        return Dialog.handleConfirmClick(event, {
           message: Form.messages.confirmation,
           buttons: [
             $.extend({}, vex.dialog.buttons.YES, {
@@ -184,46 +199,55 @@
 
     Form.prototype.sendAjax = function(event) {
       event.preventDefault();
-      Ajax.sendAjax(this.form.attr("method"), this.form.attr("action"), Form.getFormData(this.form));
+      return Ajax.sendAjax(this.form.attr("method"), this.form.attr("action"), Form.getFormDataObject(this.form), (function(_this) {
+        return function(data) {
+          if (data.status === 'success') {
+            _this.originalData = _this.form.serializeArray();
+            return console.log('Form Saved Successfully');
+          }
+        };
+      })(this));
     };
 
-    Form.getFormData = function(form) {
-      var data;
-      data = {};
-      form.find("[name]").each(function() {
-        var name, value;
-        name = $(this).attr("name");
-        value = $(this).val();
-        if ($(this).is("[type=\"checkbox\"]") && !$(this).is(":checked")) {
-          return;
-        }
-        if (name.endsWith("[]")) {
-          name = name.slice(0, -2);
-          if (data[name] === void 0) {
-            data[name] = [];
-          }
-          return data[name].push(value);
-        } else {
-          return data[name] = value;
-        }
-      });
-      return data;
-    };
+
+    /*@getFormData: (form) ->
+        data = {}
+        form.find("[name]").each ->
+            name = $(this).attr("name")
+            value = $(this).val()
+    
+            if $(this).is("[type=\"checkbox\"]") and !$(this).is(":checked")
+                return
+    
+            if name.endsWith("[]")
+                name = name.slice(0, -2);
+                data[name] = []  if data[name] == undefined
+                data[name].push(value)
+            else
+                data[name] = value
+    
+        return data
+     */
 
     Form.getFormDataObject = function(form) {
       var data;
       data = new FormData();
       form.find("[name]").each(function() {
-        var name, value;
+        var file, files, name, value, _i, _len, _ref;
         name = $(this).attr("name");
         value = $(this).val();
-        if ($(this).is("[type=\"checkbox\"]")) {
-          if ($(this).is(":checked")) {
-            return data.append(name, value);
-          }
-        } else {
-          return data.append(name, value);
+        if ($(this).is("[type=\"checkbox\"]") && !$(this).is(":checked")) {
+          return;
         }
+        if ($(this).is("[type=\"file\"]")) {
+          files = (_ref = this.filesToUpload) != null ? _ref : this.files;
+          for (_i = 0, _len = files.length; _i < _len; _i++) {
+            file = files[_i];
+            data.append(name, file);
+          }
+          return;
+        }
+        return data.append(name, value);
       });
       return data;
     };
@@ -567,10 +591,13 @@
   window.Oxygen || (window.Oxygen = {});
 
   window.Oxygen.Upload = Upload = (function() {
+    function Upload() {}
+
     Upload.selectors = {
       uploadElement: ".FileUpload",
-      progressBarElement: ".ProgressBar",
-      progressBarFill: ".ProgressBar-fill"
+      previewElement: ".FileUpload-preview",
+      dropzoneElement: ".FileUpload-dropzone",
+      removeFile: ".FileUpload-preview-remove"
     };
 
     Upload.states = {
@@ -578,10 +605,14 @@
     };
 
     Upload.registerEvents = function(container) {
-      return container.find(Upload.selectors.uploadElement).on("dragover", Upload.handleDragOver).on("dragleave", Upload.handleDragLeave).on("drop", Upload.handleDrop).find("input[type=file]").on("change", Upload.handleChange);
+      var elements;
+      elements = container.find(Upload.selectors.uploadElement);
+      elements.find(Upload.selectors.dropzoneElement).on("dragover", Upload.handleDragOver).on("dragleave", Upload.handleDragLeave).on("drop", Upload.handleDrop);
+      return elements.find("input[type=file]").on("change", Upload.handleChange);
     };
 
     Upload.handleDragOver = function(event) {
+      event.preventDefault();
       return $(event.currentTarget).addClass(Upload.states.onDragOver);
     };
 
@@ -590,66 +621,122 @@
     };
 
     Upload.handleDrop = function(event) {
-      var file, files, form, formData, input, upload, _i, _len;
+      var upload;
       event.preventDefault();
       $(event.currentTarget).removeClass(Upload.states.onDragOver);
-      files = event.originalEvent.dataTransfer.files;
-      form = $(event.currentTarget).parents("form");
-      input = $(event.currentTarget).find("input")[0];
-      formData = Form.getFormDataObject(form);
-      for (_i = 0, _len = files.length; _i < _len; _i++) {
-        file = files[_i];
-        formData.append(input.name, file);
-      }
-      upload = new Upload($(event.currentTarget).parent().find(Upload.selectors.progressBarElement), form, formData);
-      upload.send();
+      upload = $(event.currentTarget).closest(Upload.selectors.uploadElement);
+      return Upload.addFiles(upload, event.originalEvent.dataTransfer.files);
+
+      /*/*form = $(event.currentTarget).parents("form")
+      input = $(event.currentTarget).find("input")[0]
+      
+      formData = Form.getFormDataObject(form)
+      for file in files
+          formData.append(input.name, file)
+      
+      upload = new Upload(
+          $(event.currentTarget).parent().find(Upload.selectors.progressBarElement),
+          form,
+          formData
+      )
+      
+      upload.send()
+      return
+       */
     };
 
     Upload.handleChange = function(event) {
-      event.target.form.submit();
+      return Upload.addFiles($(event.currentTarget).closest(Upload.selectors.uploadElement), event.currentTarget.files);
     };
 
-    function Upload(progressBar, form, data) {
-      this.progressBar = new ProgressBar(progressBar);
-      this.form = form;
-      this.data = data;
-    }
-
-    Upload.prototype.send = function() {
-      return $.ajax({
-        dataType: "json",
-        type: this.form.attr("method"),
-        url: this.form.attr("action"),
-        data: this.data,
-        contentType: false,
-        processData: false,
-        success: this.handleSuccess.bind(this),
-        error: Ajax.handleError,
-        xhr: this.createCustomRequest.bind(this)
-      });
-    };
-
-    Upload.prototype.createCustomRequest = function() {
-      var object;
-      object = window.ActiveXObject ? new ActiveXObject("XMLHttp") : new XMLHttpRequest();
-      object.upload.addEventListener("progress", this.handleProgress.bind(this));
-      return object;
-    };
-
-    Upload.prototype.handleProgress = function(event) {
-      if (event.lengthComputable) {
-        return this.progressBar.transitionTo(event.loaded, event.total);
+    Upload.addFiles = function(upload, files) {
+      var file, imageType, input, preview, reader, _i, _len;
+      input = upload.find('input[type="file"]')[0];
+      for (_i = 0, _len = files.length; _i < _len; _i++) {
+        file = files[_i];
+        imageType = /^image\//;
+        console.log(file.type);
+        preview = $('<div class="FileUpload-preview"> <div class="FileUpload-preview-info"><span>' + file.name + '</span><button type="button" class="FileUpload-preview-remove Button--transparent Icon Icon-times"></button><span class="FileUpload-preview-size">' + fileSize(file.size) + '</span></div> <img alt="Loading Image"> </div>');
+        preview.find(Upload.selectors.removeFile).on("click", function(event) {
+          var button, index;
+          button = $(event.currentTarget);
+          preview = button.closest(Upload.selectors.previewElement);
+          index = input.filesToUpload.indexOf(file);
+          if (index > -1) {
+            input.filesToUpload.splice(index, 1);
+          }
+          return preview.remove();
+        });
+        upload.prepend(preview);
+        if (input.filesToUpload == null) {
+          input.filesToUpload = [];
+        }
+        input.filesToUpload.push(file);
+        if (!imageType.test(file.type)) {
+          continue;
+        }
+        reader = new FileReader();
+        reader.onload = function(e) {
+          console.log(e);
+          return preview.find("img")[0].src = e.target.result;
+        };
+        reader.readAsDataURL(file);
       }
+      return console.log(files);
     };
 
-    Upload.prototype.handleSuccess = function(data) {
-      Ajax.handleSuccess(data);
-      return this.progressBar.reset();
-    };
+
+    /*constructor: (progressBar, form, data) ->
+        @progressBar = new ProgressBar(progressBar)
+        @form = form
+        @data = data
+    
+    send: () ->
+        $.ajax({
+            dataType:       "json"
+            type:           @form.attr("method")
+            url:            @form.attr("action")
+            data:           @data
+            contentType:    false
+            processData:    false
+            success:        @handleSuccess.bind(this)
+            error:          Ajax.handleError
+            xhr:            @createCustomRequest.bind(this)
+        })
+    
+     * Creates a custom XMLHttpRequest
+     * object with a progress event.
+    createCustomRequest: () ->
+        object = if window.ActiveXObject then new ActiveXObject("XMLHttp") else new XMLHttpRequest()
+        object.upload.addEventListener("progress", @handleProgress.bind(this))
+        return object
+    
+    handleProgress: (event) ->
+        if event.lengthComputable
+            @progressBar.transitionTo(event.loaded, event.total)
+    
+    handleSuccess: (data) ->
+        Ajax.handleSuccess(data)
+        @progressBar.reset()
+     */
 
     return Upload;
 
   })();
+
+  fileSize = function(sizeInBytes) {
+    var approx, multiple, multiples, output;
+    output = sizeInBytes + " bytes";
+    multiples = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    multiple = 0;
+    approx = sizeInBytes / 1024;
+    while (approx > 1) {
+      output = approx.toFixed(3) + ' ' + multiples[multiple];
+      approx /= 1024;
+      multiple++;
+    }
+    return output;
+  };
 
   window.Oxygen || (window.Oxygen = {});
 
