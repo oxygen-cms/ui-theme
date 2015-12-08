@@ -1381,31 +1381,33 @@ select.Form-input--transparent, textarea.Form-input--transparent {
 .FileUpload--onDragOver {
   border: 2px dashed #888; }
 
-.flexbox .FileUpload-preview {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-     -moz-box-orient: vertical;
-     -moz-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-     -moz-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center; }
-
-.no-flexbox .FileUpload-preview > .flex-item:before, .no-flexbox .FileUpload-preview > .flex-item:after {
-  content: " ";
-  display: table; }
-
-.no-flexbox .FileUpload-preview > .flex-item:after {
-  clear: both; }
+.FileUpload-preview {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center; }
+  .flexbox .FileUpload-preview {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+       -moz-box-orient: vertical;
+       -moz-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+       -moz-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center; }
+  .no-flexbox .FileUpload-preview > .flex-item:before, .no-flexbox .FileUpload-preview > .flex-item:after {
+    content: " ";
+    display: table; }
+  .no-flexbox .FileUpload-preview > .flex-item:after {
+    clear: both; }
 
 .FileUpload-preview-info {
   opacity: 0;

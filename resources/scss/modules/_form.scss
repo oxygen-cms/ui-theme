@@ -216,6 +216,10 @@
 
 .FileUpload-preview {
     @include flex-container(column, center);
+    //background-color: $color-grey-dark-3;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
     //border: 1px solid $color-grey-dark-2;
 }
 

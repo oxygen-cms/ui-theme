@@ -656,7 +656,7 @@
         file = files[_i];
         imageType = /^image\//;
         console.log(file.type);
-        preview = $('<div class="FileUpload-preview"> <div class="FileUpload-preview-info"><span>' + file.name + '</span><button type="button" class="FileUpload-preview-remove Button--transparent Icon Icon-times"></button><span class="FileUpload-preview-size">' + fileSize(file.size) + '</span></div> <img alt="Loading Image"> </div>');
+        preview = $('<div class="FileUpload-preview"> <div class="FileUpload-preview-info"><span>' + file.name + '</span><button type="button" class="FileUpload-preview-remove Button--transparent Icon Icon-times"></button><span class="FileUpload-preview-size">' + fileSize(file.size) + '</span></div> </div>');
         preview.find(Upload.selectors.removeFile).on("click", function(event) {
           var button, index;
           button = $(event.currentTarget);
@@ -678,7 +678,8 @@
         reader = new FileReader();
         reader.onload = function(e) {
           console.log(e);
-          return preview.find("img")[0].src = e.target.result;
+          preview.css("background-image", 'url(' + e.target.result + ')');
+          return console.log(preview.css("background-image"));
         };
         reader.readAsDataURL(file);
       }
