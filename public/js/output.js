@@ -350,16 +350,14 @@
       noTransition: "ProgressBar-fill--jump",
       message: "ProgressBar-message",
       itemMessage: "ProgressBar-message-item",
-      sectionCount: "ProgressBar-message-section-count",
-      sectionMessage: "ProgressBar-message-section-message"
+      sectionMessage: "ProgressBar-message-section"
     };
 
     function ProgressBar(element) {
       this.container = element;
       this.fill = this.container.find("." + ProgressBar.classes.fill);
       this.message = this.container.parent().find("." + ProgressBar.classes.message);
-      this.itemMessage = this.message.find("." + ProgressBar.classes.itemMessage);
-      this.sectionCount = this.message.find("." + ProgressBar.classes.sectionCount);
+      this.itemMessage = this.container.parent().find("." + ProgressBar.classes.itemMessage);
       this.sectionMessage = this.message.find("." + ProgressBar.classes.sectionMessage);
       this.setup();
     }
@@ -374,22 +372,17 @@
       if (percentage > 100) {
         percentage = 100;
       }
-      this.fill.css("width", percentage + "%");
+      return this.fill.css("width", percentage + "%");
     };
 
     ProgressBar.prototype.setMessage = function(message) {
       this.message.show();
-      this.itemMessage.html(message);
-    };
-
-    ProgressBar.prototype.setSectionCount = function(count) {
-      this.message.show();
-      this.sectionCount.html(count);
+      return this.itemMessage.html(message);
     };
 
     ProgressBar.prototype.setSectionMessage = function(message) {
       this.message.show();
-      this.sectionMessage.html(message);
+      return this.sectionMessage.html(message);
     };
 
     ProgressBar.prototype.reset = function(callback) {

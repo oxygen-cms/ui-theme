@@ -1522,11 +1522,7 @@ select.Form-input--transparent, textarea.Form-input--transparent {
 .ProgressBar-message:after {
   clear: both; }
 
-.ProgressBar-message-item {
-  float: left; }
-
 .ProgressBar-message-section {
-  float: right;
   font-weight: bold; }
 
 /* ============================

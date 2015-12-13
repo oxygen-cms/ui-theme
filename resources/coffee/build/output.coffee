@@ -306,8 +306,7 @@ window.Oxygen.ProgressBar = class ProgressBar
         noTransition: "ProgressBar-fill--jump"
         message: "ProgressBar-message"
         itemMessage: "ProgressBar-message-item"
-        sectionCount: "ProgressBar-message-section-count"
-        sectionMessage: "ProgressBar-message-section-message"
+        sectionMessage: "ProgressBar-message-section"
 
     # -----------------
     #       Object
@@ -317,8 +316,7 @@ window.Oxygen.ProgressBar = class ProgressBar
         @container = element
         @fill = @container.find("." + ProgressBar.classes.fill)
         @message = @container.parent().find("." + ProgressBar.classes.message)
-        @itemMessage = @message.find("." + ProgressBar.classes.itemMessage)
-        @sectionCount = @message.find("." + ProgressBar.classes.sectionCount)
+        @itemMessage = @container.parent().find("." + ProgressBar.classes.itemMessage)
         @sectionMessage = @message.find("." + ProgressBar.classes.sectionMessage)
         @setup()
 
@@ -329,22 +327,14 @@ window.Oxygen.ProgressBar = class ProgressBar
         percentage = Math.round(value / total * 100)
         percentage = 100  if percentage > 100
         @fill.css("width", percentage + "%")
-        return
 
     setMessage: (message) ->
         @message.show()
-        @itemMessage.html(message);
-        return
-
-    setSectionCount: (count) ->
-        @message.show()
-        @sectionCount.html(count);
-        return
+        @itemMessage.html(message)
 
     setSectionMessage: (message) ->
         @message.show()
-        @sectionMessage.html(message);
-        return
+        @sectionMessage.html(message)
 
     reset: (callback = ( -> )) ->
         @message.hide()
