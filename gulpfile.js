@@ -6,9 +6,11 @@ var gulp            = require("gulp");
 
 var libsass         = require("gulp-sass"),
     prefix          = require("gulp-autoprefixer"),
-    concat          = require("gulp-concat"),
     coffee          = require("gulp-coffee"),
+    concat          = require("gulp-concat"),
+    babel           = require("gulp-babel"),
     uglify          = require("gulp-uglify"),
+    sourcemaps      = require("gulp-sourcemaps"),
     stripDebug      = require("gulp-strip-debug"),
     shell           = require("gulp-shell"),
     notify          = require("gulp-notify");
@@ -50,19 +52,18 @@ gulp.task("scss", function() {
 });
 
 /* ==============
-    CoffeeScript
+         JS
    ============== */
 
-gulp.task("coffee-concat", shell.task([
-    "coffeescript-concat -I resources/coffee/core -I resources/coffee/pages -I resources/coffee/editor -I resources/coffee/imageEditor resources/coffee/main.coffee -o resources/coffee/build/output.coffee"
-]));
-
-gulp.task("coffee", ["coffee-concat"], function() {
-    gulp.src("resources/coffee/build/output.coffee")
-        .pipe(coffee())
+gulp.task("js", function() {
+    return gulp.src("resources/js/**/*.js")
+        .pipe(sourcemaps.init())
+        .pipe(babel())
+        .pipe(concat("app.js"))
+        .pipe(sourcemaps.write("."))
         .pipe(gulp.dest("public/js"))
         .pipe(notify({
-            title: 'Compiled CoffeeScript',
+            title: 'Compiled JavaScript',
             subtitle: 'Success',
             message: "File: <%= file.relative %>",
             onLast: true
@@ -97,32 +98,19 @@ gulp.task("vendor", shell.task([
     // JCrop
     'mkdir -p public/vendor/jcrop',
     'rsync -a bower_components/Jcrop/js/jquery.Jcrop.min.js public/vendor/jcrop/jcrop.min.js',
-    'rsync -a bower_components/Jcrop/css/jquery.Jcrop.min.css public/vendor/jcrop/jcrop.min.css'
+    'rsync -a bower_components/Jcrop/css/jquery.Jcrop.min.css public/vendor/jcrop/jcrop.min.css',
+    // Babel Polyfill
+    'mkdir -p public/vendor/babel-polyfill',
+    'rsync -a node_modules/babel-polyfill/dist/polyfill.min.js public/vendor/babel-polyfill/polyfill.min.js'
 ]));
 
-/* ==============
-        UTIL
-   ============== */
-
-/*gulp.task("publish-assets", shell.task([
-    'php ../../../artisan asset:publish --bench="oxygen/ui"'
-]));
-
-gulp.task("publish-assets-quick", shell.task([
-    'rsync -rp --delete public/js ../../../public_html/packages/oxygen/ui',
-    'rsync -rp --delete public/css ../../../public_html/packages/oxygen/ui'
-]));*/
-
-gulp.task("watch", ["scss", "coffee"], function() {
+gulp.task("watch", ["scss", "js"], function() {
     gulp.watch(
         "resources/scss/**/*.scss",
         ["scss"]
     );
     gulp.watch(
-        [
-            "resources/coffee/{core,editor,imageEditor,pages}/*",
-            "resources/coffee/main.coffee"
-        ],
-        ["coffee"]
+        "resources/js/**/*.js",
+        ["js"]
     );
 });

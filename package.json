@@ -7,24 +7,28 @@
     "test": "tests"
   },
   "dependencies": {
-    "gulp-autoprefixer": "~0.0.6",
+    "babel-polyfill": "^6.5.0",
+    "bower-installer": "~1.0.0",
+    "grunt": "~0.4.5",
     "gulp": "~3.8.1",
+    "gulp-autoprefixer": "~0.0.6",
+    "gulp-bump": "~0.1.8",
     "gulp-coffee": "~2.1.1",
     "gulp-concat": "~2.1.7",
-    "gulp-bump": "~0.1.8",
+    "gulp-csscomb": "~0.1.0",
+    "gulp-notify": "^1.6.0",
     "gulp-ruby-sass": "~0.3.1",
     "gulp-sass": "~2.1.0",
     "gulp-shell": "~0.2.4",
     "gulp-strip-debug": "~0.3.0",
     "gulp-uglify": "~0.2.1",
-    "gulp-util": "~2.2.17",
-    "gulp-csscomb": "~0.1.0",
-    "grunt": "~0.4.5",
-    "gulp-notify": "^1.6.0",
-    "bower-installer": "~1.0.0"
+    "gulp-util": "~2.2.17"
   },
   "devDependencies": {
+    "babel-preset-es2015": "^6.5.0",
+    "gulp-babel": "^6.1.2",
     "gulp-sass": "^2.1.0",
+    "gulp-sourcemaps": "^1.6.0",
     "node-sass": "^3.4.2"
   },
   "scripts": {

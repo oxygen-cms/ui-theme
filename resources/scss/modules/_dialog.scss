@@ -61,6 +61,10 @@
     &.vex-dialog-button-secondary {
         @extend .Button-color--grey;
     }
+
+    &.vex-dialog-button-left {
+        float: left;
+    }
 }
 
 @keyframes Dialog--slideOut {

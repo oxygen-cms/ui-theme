@@ -683,6 +683,8 @@ input[type="button"] {
 
 .Dialog .vex-dialog-button {
   float: right; }
+  .Dialog .vex-dialog-button.vex-dialog-button-left {
+    float: left; }
 
 @-webkit-keyframes Dialog--slideOut {
   0% {
