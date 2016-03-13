@@ -63,9 +63,9 @@ var Ajax = function () {
 
             try {
                 for (var _iterator2 = Ajax.errorCallbacks[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    var handler = _step2.value;
+                    var _handler = _step2.value;
 
-                    promise = promise.catch(handler);
+                    promise = promise.catch(_handler);
                 }
             } catch (err) {
                 _didIteratorError2 = true;
@@ -1167,7 +1167,9 @@ var Toggle = function () {
             this.toggle.on("click", function (event) {
                 return _this.handleToggle(event);
             });
-            this.toggle.attr("data-enabled", "false");
+            if (this.toggle.attr("data-enabled") == undefined) {
+                this.toggle.attr("data-enabled", "false");
+            }
         }
     }, {
         key: "handleToggle",
@@ -1371,7 +1373,16 @@ Oxygen.reset = function () {
     Oxygen.load = [];
     Ajax.errorCallbacks = [];
     Ajax.successCallbacks = [];
+    Oxygen.setBodyScrollable(true);
     return Dropdown.handleGlobalClick({ target: document.body });
+};
+
+Oxygen.setBodyScrollable = function (scrollable) {
+    if (scrollable) {
+        document.body.classList.remove("Body--noScroll");
+    } else {
+        document.body.classList.add("Body--noScroll");
+    }
 };
 
 Oxygen.init = function (container) {

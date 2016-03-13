@@ -14,7 +14,9 @@ class Toggle {
 
     registerEvents() {
         this.toggle.on("click", event => this.handleToggle(event));
-        this.toggle.attr("data-enabled", "false");
+        if(this.toggle.attr("data-enabled") == undefined) {
+            this.toggle.attr("data-enabled", "false");
+        }
     }
 
     handleToggle(event) {

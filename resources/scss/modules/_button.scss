@@ -154,6 +154,10 @@ input[type="button"] {
     margin-right: auto !important;
 }
 
+.Button--smallPadding {
+    padding: 0.5em;
+}
+
 /* =================
         COLORS
    ================= */
@@ -164,6 +168,10 @@ input[type="button"] {
 
 .Button-color--white {
     @include Box--design-flat($color-grey-light-2, true, null, null, true);
+}
+
+.Button-color--black {
+    @include Box--design-flat($color-grey-dark-1, true, null, null, true);
 }
 
 .Button-color--green {

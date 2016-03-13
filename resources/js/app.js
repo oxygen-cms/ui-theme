@@ -4,7 +4,16 @@ Oxygen.reset = function() {
     Oxygen.load = [];
     Ajax.errorCallbacks = [];
     Ajax.successCallbacks = [];
+    Oxygen.setBodyScrollable(true);
     return Dropdown.handleGlobalClick({ target: document.body });
+};
+
+Oxygen.setBodyScrollable = function(scrollable) {
+    if (scrollable) {
+        document.body.classList.remove("Body--noScroll");
+    } else {
+        document.body.classList.add("Body--noScroll");
+    }
 };
 
 Oxygen.init = function(container) {
