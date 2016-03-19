@@ -24,7 +24,7 @@ class Form {
         return $(document).on("keydown", Form.handleKeydown);
     }
 
-    static handleKeydown() {
+    static handleKeydown(event) {
         // check for Command/Control S
         if ((event.ctrlKey || event.metaKey) && event.which === 83) {
 
@@ -50,11 +50,11 @@ class Form {
     registerEvents() {
         // Exit Dialog
         if (this.form.classList.contains(Form.classes.warnBeforeExit)) {
-            $("a, button[type=\"submit\"]").on("click", this.handleExit.bind(this)); // displays exit dialog
+            $("a, button[type=\"submit\"]").on("click", event => this.handleExit(event)); // displays exit dialog
         }
 
         // Submit via AJAX
-        this.form.addEventListener("submit", this.handleSubmit.bind(this));
+        this.form.addEventListener("submit", event => this.handleSubmit(event));
         if (this.form.classList.contains(Form.classes.sendAjaxOnChange)) {
             this.form.addEventListener("change", event => {
                 event.preventDefault();
@@ -117,8 +117,6 @@ class Form {
                                 //target.attr("data-dialog-disabled", "true");
                                 //target[0].click();
                             }
-
-
                         }
                     }
                 });
@@ -138,7 +136,7 @@ class Form {
 
     handleSubmit(event) {
         this.generateContent();
-        if (this.form.classList.contains(Form.classes.sendAjax)) {
+        if (this.form.classList.contains(Form.classes.sendAjax) && !Form.disableAjax) {
             event.preventDefault();
             this.submitViaAjax();
         }
@@ -176,6 +174,17 @@ class Form {
                 return;
             }
 
+            if ($(this).is("select[multiple]")) {
+                if(value) {
+                    for(var item of value) {
+                        data.append(name, item);
+                    }
+                } else {
+                    data.append(name, "");
+                }
+                return;
+            }
+
             if ($(this).is("[type=\"file\"]")) {
                 var ref;
                 var files = ((ref = this.filesToUpload) != null) ? ref : this.files;
@@ -186,12 +195,28 @@ class Form {
                 return;
             }
 
-            return data.append(name, value);
+            data.append(name, value);
         });
 
         return data;
     }
 }
+
+Form.disableAjax = false;
+
+/**
+ * Toggles whether form submission via AJAX is enabled globally, using Alt + Command/Control + J
+ */
+$(document).on("keydown", function(event) {
+    if(event.altKey && (event.controlKey || event.metaKey) && event.which == 74) {
+        Form.disableAjax = !Form.disableAjax;
+        event.preventDefault();
+        new Notification({
+            content: "Asynchronous form submission " + (Form.disableAjax ? "disabled" : "enabled"),
+            status: "info"
+        });
+    }
+});
 
 Form.messages = {
     confirmation: "Do you want to save changes?"

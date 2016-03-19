@@ -1,19 +1,21 @@
-var environment = "development";
-
-console.log("\nEnvironment: " + environment + "\n");
-
-var gulp            = require("gulp");
-
-var libsass         = require("gulp-sass"),
+var gulp            = require("gulp"),
+    libsass         = require("gulp-sass"),
     prefix          = require("gulp-autoprefixer"),
-    coffee          = require("gulp-coffee"),
     concat          = require("gulp-concat"),
     babel           = require("gulp-babel"),
     uglify          = require("gulp-uglify"),
     sourcemaps      = require("gulp-sourcemaps"),
-    stripDebug      = require("gulp-strip-debug"),
+    rename          = require('gulp-rename'),
     shell           = require("gulp-shell"),
-    notify          = require("gulp-notify");
+    notify          = require("gulp-notify"),
+    gulpUtil        = require('gulp-util');
+
+var production = gulpUtil.env.production;
+
+if(production) {
+    console.log("Compiling for production");
+}
+
 
 /* ==============
         SCSS
@@ -21,9 +23,7 @@ var libsass         = require("gulp-sass"),
 
 gulp.task("scss", function() {
     sassOptions = {
-        style: environment === "production" ? "compressed" : "compact",
-        cacheLocation: "src/storage/sass-cache",
-        cache: false,
+        outputStyle: production ? "compressed" : "expanded",
         onError: function(err) {
             return notify().write({
                 title: "SCSS Complilation Failed",
@@ -37,11 +37,10 @@ gulp.task("scss", function() {
         .pipe(libsass(sassOptions))
         .pipe(prefix(
             "last 2 versions",
-            "Explorer >= 7",
-            "Firefox >= 20",
-            "Chrome >= 27",
+            "Explorer >= 9",
             "Safari >= 5"
         ))
+        .pipe(production ? rename(function(path) { path.extname = ".min.css"; }) : gulpUtil.noop())
         .pipe(gulp.dest("public/css"))
         .pipe(notify({
             title: 'Compiled SCSS',
@@ -58,8 +57,10 @@ gulp.task("scss", function() {
 gulp.task("js", function() {
     return gulp.src("resources/js/**/*.js")
         .pipe(sourcemaps.init())
-        .pipe(babel())
-        .pipe(concat("app.js"))
+            .pipe(babel())
+            .pipe(concat("app.js"))
+            .pipe(production ? uglify() : gulpUtil.noop())
+            .pipe(production ? rename(function(path) { path.extname = ".min.js"; }) : gulpUtil.noop())
         .pipe(sourcemaps.write("."))
         .pipe(gulp.dest("public/js"))
         .pipe(notify({
@@ -103,6 +104,8 @@ gulp.task("vendor", shell.task([
     'mkdir -p public/vendor/babel-polyfill',
     'rsync -a node_modules/babel-polyfill/dist/polyfill.min.js public/vendor/babel-polyfill/polyfill.min.js'
 ]));
+
+gulp.task("build", ["js", "scss", "vendor"]);
 
 gulp.task("watch", ["scss", "js"], function() {
     gulp.watch(

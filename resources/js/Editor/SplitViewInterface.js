@@ -32,16 +32,15 @@ class SplitViewInterface {
     valueToForm() {
     }
 
-    onChange() {
-        return this.hasChanged = true;
-    }
-
     synchronize() {
-        if (this.editor.currentMode === "split") {
-            console.log("SplitViewInterface.synchronize");
-            this.editor.valueToForm("code");
-            this.editor.valueFromForm("preview");
-            return this.hasChanged = false;
+        if(this.currentTimer) {
+            clearTimeout(this.currentTimer);
         }
+        this.currentTimer = setTimeout(() => {
+            if (this.editor.currentMode === "split") {
+                this.editor.valueToForm("code");
+                this.editor.valueFromForm("preview");
+            }
+        }, 1000);
     }
 }

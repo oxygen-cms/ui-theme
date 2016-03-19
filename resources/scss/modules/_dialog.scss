@@ -11,11 +11,11 @@
 }
 
 .Dialog.vex.vex-closing .vex-content {
-    animation: Dialog--slideOut 0.5s both;
+    animation: slideUp50Percent 0.5s both;
 }
 
 .Dialog .vex-content {
-    animation: Dialog--slideIn 0.5s both;
+    animation: slideDown50Percent 0.5s both;
 }
 
 .Dialog .vex-content {
@@ -64,27 +64,5 @@
 
     &.vex-dialog-button-left {
         float: left;
-    }
-}
-
-@keyframes Dialog--slideOut {
-    0% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(-50%);
-        opacity: 0;
-    }
-}
-
-@keyframes Dialog--slideIn {
-    0% {
-        transform: translateY(-50%);
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(0);
-        opacity: 1;
     }
 }

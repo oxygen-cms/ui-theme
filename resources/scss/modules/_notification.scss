@@ -29,7 +29,7 @@
     line-height: 1.5;
     border-radius: 0.5em;
 
-    animation: Notification--slideIn 0.5s both;
+    animation: slideDown 0.5s both;
 
     max-height: 20em;
     word-wrap: break-word;
@@ -61,7 +61,7 @@
 }
 
 .Notification.is-sliding-up {
-    animation-name: Notification--slideOut;
+    animation-name: slideRight;
 }
 
 .js .Notification.is-hidden {
@@ -82,26 +82,4 @@
 
 .Notification--info {
     @include Box--design-flat($color-blue, false);
-}
-
-@keyframes Notification--slideOut {
-    0% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-}
-
-@keyframes Notification--slideIn {
-    0% {
-        transform: translateY(-100%);
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-    }
 }

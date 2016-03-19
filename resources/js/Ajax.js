@@ -4,10 +4,10 @@
 
 class Ajax {
 
-    static request(type, url, data) {
+    static request(type, url, data, dataType = "json") {
         var promise = new Promise(function(resolve, reject) {
             $.ajax({
-                dataType: "json",
+                dataType: dataType,
                 type: type,
                 url: url,
                 data: data,

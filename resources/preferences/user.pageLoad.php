@@ -42,7 +42,7 @@ Preferences::register('user.pageLoad', function($schema) {
                         'spinner' => 'Spinner'
                     ],
                     'attributes' => [
-                        'multiple' => 'multiple'
+                        'multiple' => true
                     ]
                 ]
             ]

@@ -51,9 +51,9 @@
 .MainNav-item {
     display: block;
 
-    @include smaller-than($tablet-large) {
+    /*@include smaller-than($tablet-large) {
         min-height: 4em;
-    }
+    }*/
 
     @include larger-than($tablet-large) {
         float: left;

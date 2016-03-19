@@ -97,34 +97,16 @@
     }
 
     .Block--isExiting {
-        animation-direction: reverse;
-        animation-timing-function: ease-in;
+        animation: fadeOut 0.35s ease-out both;
     }
 }
 
 .Page-transition--slide {
-    .Block--isEntering,
-    .Block--isExiting {
-      animation: slideUp 0.35s ease-out both;
+    .Block--isEntering {
+       animation: slideDown4Em 0.35s ease-out both;
     }
 
     .Block--isExiting {
-      animation-direction: reverse;
-      animation-timing-function: ease-in;
+        animation: slideUp4Em 0.35s ease-out both;
     }
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(359deg); }
-}
-
-@keyframes slideUp {
-    from { transform: translateY(4em); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
 }

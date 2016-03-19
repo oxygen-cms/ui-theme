@@ -16,9 +16,11 @@ var Ajax = function () {
     _createClass(Ajax, null, [{
         key: "request",
         value: function request(type, url, data) {
+            var dataType = arguments.length <= 3 || arguments[3] === undefined ? "json" : arguments[3];
+
             var promise = new Promise(function (resolve, reject) {
                 $.ajax({
-                    dataType: "json",
+                    dataType: dataType,
                     type: type,
                     url: url,
                     data: data,
@@ -356,7 +358,7 @@ var Form = function () {
         }
     }, {
         key: "handleKeydown",
-        value: function handleKeydown() {
+        value: function handleKeydown(event) {
             // check for Command/Control S
             if ((event.ctrlKey || event.metaKey) && event.which === 83) {
 
@@ -389,11 +391,15 @@ var Form = function () {
 
             // Exit Dialog
             if (this.form.classList.contains(Form.classes.warnBeforeExit)) {
-                $("a, button[type=\"submit\"]").on("click", this.handleExit.bind(this)); // displays exit dialog
+                $("a, button[type=\"submit\"]").on("click", function (event) {
+                    return _this.handleExit(event);
+                }); // displays exit dialog
             }
 
             // Submit via AJAX
-            this.form.addEventListener("submit", this.handleSubmit.bind(this));
+            this.form.addEventListener("submit", function (event) {
+                return _this.handleSubmit(event);
+            });
             if (this.form.classList.contains(Form.classes.sendAjaxOnChange)) {
                 this.form.addEventListener("change", function (event) {
                     event.preventDefault();
@@ -498,7 +504,7 @@ var Form = function () {
         key: "handleSubmit",
         value: function handleSubmit(event) {
             this.generateContent();
-            if (this.form.classList.contains(Form.classes.sendAjax)) {
+            if (this.form.classList.contains(Form.classes.sendAjax) && !Form.disableAjax) {
                 event.preventDefault();
                 this.submitViaAjax();
             }
@@ -536,6 +542,38 @@ var Form = function () {
                     return;
                 }
 
+                if ($(this).is("select[multiple]")) {
+                    if (value) {
+                        var _iteratorNormalCompletion2 = true;
+                        var _didIteratorError2 = false;
+                        var _iteratorError2 = undefined;
+
+                        try {
+                            for (var _iterator2 = value[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                                var item = _step2.value;
+
+                                data.append(name, item);
+                            }
+                        } catch (err) {
+                            _didIteratorError2 = true;
+                            _iteratorError2 = err;
+                        } finally {
+                            try {
+                                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                    _iterator2.return();
+                                }
+                            } finally {
+                                if (_didIteratorError2) {
+                                    throw _iteratorError2;
+                                }
+                            }
+                        }
+                    } else {
+                        data.append(name, "");
+                    }
+                    return;
+                }
+
                 if ($(this).is("[type=\"file\"]")) {
                     var ref;
                     var files = (ref = this.filesToUpload) != null ? ref : this.files;
@@ -546,7 +584,7 @@ var Form = function () {
                     return;
                 }
 
-                return data.append(name, value);
+                data.append(name, value);
             });
 
             return data;
@@ -555,6 +593,22 @@ var Form = function () {
 
     return Form;
 }();
+
+Form.disableAjax = false;
+
+/**
+ * Toggles whether form submission via AJAX is enabled globally, using Alt + Command/Control + J
+ */
+$(document).on("keydown", function (event) {
+    if (event.altKey && (event.controlKey || event.metaKey) && event.which == 74) {
+        Form.disableAjax = !Form.disableAjax;
+        event.preventDefault();
+        new Notification({
+            content: "Asynchronous form submission " + (Form.disableAjax ? "disabled" : "enabled"),
+            status: "info"
+        });
+    }
+});
 
 Form.messages = {
     confirmation: "Do you want to save changes?"
@@ -1471,6 +1525,8 @@ $().ready(function () {
     }
 
     var progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner"]);
+    console.log("Applying progress themes:");
+    console.log(progressThemes);
     for (var i = 0, theme; i < progressThemes.length; i++) {
         theme = progressThemes[i];
         $(document.body).addClass("Page-progress--" + theme);
@@ -1867,14 +1923,14 @@ var PreviewInterface = function () {
             }
 
             // create the stylesheets
-            var head = "";
+            /*var head = "";
             var iterable = this.editor.stylesheets;
             for (var i = 0, stylesheet; i < iterable.length; i++) {
                 stylesheet = iterable[i];
                 head += "<link rel=\"stylesheet\" href=\"" + stylesheet + "\">";
             }
             this.view.contents().find("head").html(head);
-            return this.view.contents().find("html").addClass("no-js " + $("html").attr("class").replace("js ", ""));
+            return this.view.contents().find("html").addClass("no-js " + $("html").attr("class").replace("js ", ""));*/
         }
     }, {
         key: "hide",
@@ -1884,7 +1940,12 @@ var PreviewInterface = function () {
     }, {
         key: "valueFromForm",
         value: function valueFromForm() {
-            return this.view.contents().find("body").html(this.editor.textarea.val());
+            var _this = this;
+
+            var promise = Ajax.request("GET", "content?content=" + encodeURIComponent(this.editor.textarea.val()), new FormData(), "html").then(function (data) {
+                _this.view[0].srcdoc = /*'data:text/html;charset=utf-8,' + encodeURIComponent(*/data;
+                console.log(data);
+            }).catch(Ajax.handleError);
         }
 
         // we can't and don't want to do this
@@ -1896,6 +1957,22 @@ var PreviewInterface = function () {
 
     return PreviewInterface;
 }();
+
+function debounce(func, wait, immediate) {
+    var timeout;
+    return function () {
+        var context = this,
+            args = arguments;
+        var later = function later() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+}
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1940,19 +2017,19 @@ var SplitViewInterface = function () {
         key: "valueToForm",
         value: function valueToForm() {}
     }, {
-        key: "onChange",
-        value: function onChange() {
-            return this.hasChanged = true;
-        }
-    }, {
         key: "synchronize",
         value: function synchronize() {
-            if (this.editor.currentMode === "split") {
-                console.log("SplitViewInterface.synchronize");
-                this.editor.valueToForm("code");
-                this.editor.valueFromForm("preview");
-                return this.hasChanged = false;
+            var _this = this;
+
+            if (this.currentTimer) {
+                clearTimeout(this.currentTimer);
             }
+            this.currentTimer = setTimeout(function () {
+                if (_this.editor.currentMode === "split") {
+                    _this.editor.valueToForm("code");
+                    _this.editor.valueFromForm("preview");
+                }
+            }, 1000);
         }
     }]);
 
@@ -2360,3 +2437,4 @@ Oxygen.initLogin = function () {
         return data;
     });
 };
+//# sourceMappingURL=app.js.map

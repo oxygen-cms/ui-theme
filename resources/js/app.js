@@ -102,6 +102,8 @@ $().ready(function() {
     }
 
     let progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner"]);
+    console.log("Applying progress themes:");
+    console.log(progressThemes)
     for (let i = 0, theme; i < progressThemes.length; i++) {
         theme = progressThemes[i];
         $(document.body).addClass("Page-progress--" + theme);
