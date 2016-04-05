@@ -168,10 +168,12 @@ class Form {
         var data = new FormData();
         $(form).find("[name]").each(function() {
             var name = $(this).attr("name");
-            var value = $(this).val();
+            var value = this.value;
 
-            if ($(this).is("[type=\"checkbox\"]") && !$(this).is(":checked")) {
-                return;
+            if(this.type == "checkbox" || this.type == "radio") {
+                if(!this.checked) {
+                    return;
+                }
             }
 
             if ($(this).is("select[multiple]")) {
@@ -185,7 +187,7 @@ class Form {
                 return;
             }
 
-            if ($(this).is("[type=\"file\"]")) {
+            if(this.type == "file") {
                 var ref;
                 var files = ((ref = this.filesToUpload) != null) ? ref : this.files;
                 for (var i = 0, file; i < files.length; i++) {

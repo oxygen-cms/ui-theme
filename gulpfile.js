@@ -10,10 +10,10 @@ var gulp            = require("gulp"),
     notify          = require("gulp-notify"),
     gulpUtil        = require('gulp-util');
 
-var production = gulpUtil.env.production;
+var production = !gulpUtil.env.noProduction;
 
-if(production) {
-    console.log("Compiling for production");
+if(!production) {
+    console.log("Not compiling for production");
 }
 
 

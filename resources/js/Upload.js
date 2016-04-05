@@ -29,13 +29,17 @@ class Upload {
     };
 
     static addFiles(upload, files) {
-        var file, i, imageType, input, len, preview, reader;
-        input = upload.find('input[type="file"]')[0];
-        for (i = 0, len = files.length; i < len; i++) {
-            file = files[i];
-            imageType = /^image\//;
+        var input = upload.find('input[type="file"]')[0];
+        for(var i = 0, len = files.length; i < len; i++) {
+            var file = files[i];
+            var imageType = /^image\//;
             console.log(file.type);
-            preview = $('<div class="FileUpload-preview"> <div class="FileUpload-preview-info"><span>' + file.name + '</span><button type="button" class="FileUpload-preview-remove Button--transparent Icon Icon-times"></button><span class="FileUpload-preview-size">' + fileSize(file.size) + '</span></div> </div>');
+            var preview = $(
+                '<div class="FileUpload-preview"><div class="FileUpload-preview-info">' +
+                    '<span>' + file.name + '</span>' +
+                    '<button type="button" class="FileUpload-preview-remove Button--transparent Icon Icon-times"></button>' +
+                    '<span class="FileUpload-preview-size">' + fileSize(file.size) + '</span>' +
+                '</div></div>');
             preview.find(Upload.selectors.removeFile).on("click", function (event) {
                 var button, index;
                 button = $(event.currentTarget);
@@ -45,26 +49,38 @@ class Upload {
                 if(index > -1) {
                     input.filesToUpload.splice(index, 1)
                 }
-                return preview.remove();
+                Upload.recalculateDropzoneVisibility(upload, files);
+                preview.remove();
             });
             upload.prepend(preview);
             if (input.filesToUpload == null) {
                 input.filesToUpload = [];
             }
             input.filesToUpload.push(file);
-            if (!imageType.test(file.type)) {
-                continue;
+            if (imageType.test(file.type)) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.css("background-image", 'url(' + e.target.result + ')');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.prepend($('<div class="Icon-container"><span class="Icon Icon--gigantic Icon--light Icon-file-text"></span></div>'));
             }
-            reader = new FileReader();
-            reader.onload = function (e) {
-                console.log(e);
-                preview.css("background-image", 'url(' + e.target.result + ')');
-                return console.log(preview.css("background-image"));
-            };
-            reader.readAsDataURL(file);
         }
-        return console.log(files);
+        Upload.recalculateDropzoneVisibility(upload);
+        console.log(files);
     };
+
+    static recalculateDropzoneVisibility(upload, files) {
+        var input = upload.find('input[type="file"]')[0];
+        console.log(input);
+        var dropzone = upload.find(Upload.selectors.dropzoneElement);
+        if(!input.multiple && input.filesToUpload.length > 0) {
+            dropzone.hide();
+        } else {
+            dropzone.show();
+        }
+    }
 
 };
 
