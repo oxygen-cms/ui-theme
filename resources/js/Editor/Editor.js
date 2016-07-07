@@ -8,8 +8,8 @@ class Editor {
     static createEditors(editors) {
         for (var i = 0, editor; i < editors.length; i++) {
             editor = editors[i];
-            var textarea = $("textarea[name=\"" + editor.name + "\"]");
-            if (textarea.length) {
+            var textarea = document.querySelector("textarea[name=\"" + editor.name + "\"]");
+            if (textarea) {
                 console.log("Editor found");
                 if (!(editor.mode != null)) { editor.mode = user.editor.defaultMode; }
                 console.log(editor);
@@ -33,10 +33,12 @@ class Editor {
         this.readOnly = readOnly;
         this.stylesheets = stylesheets;
         this.modes = {};
-        this.textarea = $("textarea[name=\"" + this.name + "\"]");
-        this.container = this.textarea.parents("." + Editor.classes.editor.container);
-        var toggle = this.container.find("." + Editor.classes.button.fullscreenToggle);
-        this.fullscreenToggle = new FullscreenToggle(toggle, this.container, this.enterFullscreen, this.exitFullscreen);
+        this.textarea = document.querySelector("textarea[name=\"" + this.name + "\"]");
+        this.container = parentMatchingSelector(this.textarea, "." + Editor.classes.editor.container);
+        var toggle = this.container.querySelector("." + Editor.classes.button.fullscreenToggle);
+        if(toggle) {
+            this.fullscreenToggle = new FullscreenToggle(toggle, this.container, this.enterFullscreen, this.exitFullscreen);
+        }
 
         this.show();
         this.resizeToContent();
@@ -53,12 +55,14 @@ class Editor {
 
     registerEvents() {
         // switch editor button
-        this.container.find("." + Editor.classes.button.switchEditor).on("click", this.handleSwitchEditor);
+        for(let button of this.container.querySelectorAll("." + Editor.classes.button.switchEditor)) {
+            button.addEventListener("click", this.handleSwitchEditor);
+        }
 
         // ask the form to tell us when its data is being read,
         // so we can flush changes to the underlying <input>/<textarea> element
-        var form = $(this.container).parents("form")[0];
-        if(form !== undefined && form.formObject) {
+        var form = parentMatchingSelector(this.container, "form");
+        if(form !== null && form.formObject) {
             form.formObject.contentGenerators.push(form =>
                 this.valueToForm()
             );
@@ -115,7 +119,7 @@ class Editor {
 
     resizeToContent() {
         // size to content
-        this.container.find("." + Editor.classes.editor.content).css("height", this.textarea.attr("rows") * 1.5 + "em");
+        this.container.querySelector("." + Editor.classes.editor.content).style.height = (this.textarea.rows * 1.5) + "em";
 
         // resize ace
         if (this.modes.code) { this.modes.code.resize(); }
@@ -136,7 +140,7 @@ class Editor {
 
     handleSwitchEditor(event) {
         console.log("Editor.handleSwitchEditor");
-        var editorToSwitch = $(event.target).attr("data-editor");
+        var editorToSwitch = event.currentTarget.getAttribute("data-editor");
         this.hide();
         return this.show(editorToSwitch);
     }

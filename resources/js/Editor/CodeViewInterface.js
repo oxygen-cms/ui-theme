@@ -6,7 +6,7 @@ class CodeViewInterface {
 
     constructor(editor) {
         this.editor = editor;
-        this.view = null;
+        this.ace = null;
     }
 
     create() {
@@ -21,39 +21,39 @@ class CodeViewInterface {
         object.setShowPrintMargin(Preferences.get('editor.ace.showPrintMargin'));
         object.setShowInvisibles(Preferences.get('editor.ace.showInvisibles'));
         object.setReadOnly(this.editor.readOnly);
-        $("#" + this.editor.name + "-ace-editor").css("font-size", Preferences.get('editor.ace.fontSize'));
 
         // store object
-        return this.view = object;
+        this.ace = object;
+        this.view = document.getElementById(this.editor.name + "-ace-editor");
+        this.view.style.fontSize = Preferences.get('editor.ace.fontSize');
     }
 
     show(full) {
-        let editor = $("#" + this.editor.name + "-ace-editor");
-        editor.removeClass(Editor.classes.state.isHidden);
+        this.view.classList.remove(Editor.classes.state.isHidden);
         if (full) {
-            return editor.css("width", "100%");
+            this.view.style.width = "100%";
         }
 
         // after animation is completed
         setTimeout(() => {
-            this.resize()
-        }, 300)
+            this.resize();
+        }, 300);
     }
 
     hide() {
         console.log("CodeViewInterface.hide");
-        return $("#" + this.editor.name + "-ace-editor").addClass(Editor.classes.state.isHidden);
+        this.view.classList.add(Editor.classes.state.isHidden);
     }
 
     valueFromForm() {
-        this.view.setValue(this.editor.textarea.val(), -1);
+        this.ace.setValue(this.editor.textarea.value, -1);
     }
 
     valueToForm() {
-        this.editor.textarea.val(this.view.getValue());
+        this.editor.textarea.value = this.ace.getValue();
     }
 
     resize() {
-        this.view.resize();
+        this.ace.resize();
     }
 }

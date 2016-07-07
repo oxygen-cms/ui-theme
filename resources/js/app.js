@@ -2,8 +2,6 @@ window.Oxygen || (window.Oxygen = {});
 Oxygen.reset = function() {
     window.editors = [];
     Oxygen.load = [];
-    Ajax.errorCallbacks = [];
-    Ajax.successCallbacks = [];
     Oxygen.setBodyScrollable(true);
     return Dropdown.handleGlobalClick({ target: document.body });
 };
@@ -27,7 +25,7 @@ Oxygen.init = function(container) {
     // reduce lag on page load.
     //
 
-    setTimeout(Notification.initializeExistingMessages, 250);
+    NotificationCenter.initializeExistingMessages();
 
     Dialog.registerEvents(container);
 
@@ -49,7 +47,7 @@ Oxygen.init = function(container) {
     // Login form animations.
     //
 
-    if ($(".Login-form").length > 0) {
+    if(document.querySelector(".Login-form")) {
         Oxygen.initLogin();
     }
 
@@ -87,14 +85,14 @@ Oxygen.init = function(container) {
     }
 };
 
-$().ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
     MainNav.headroom();
 
     if ((typeof user !== "undefined" && user !== null)) {
         Preferences.setPreferences(user);
     }
 
-    Oxygen.init($(document));
+    Oxygen.init(document);
 
     if (Preferences.get('pageLoad.smoothState.enabled', true) === true) {
         window.smoothState = new SmoothState();
@@ -102,11 +100,10 @@ $().ready(function() {
     }
 
     let progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner"]);
-    console.log("Applying progress themes:");
-    console.log(progressThemes)
+    console.log("Applying progress themes:", progressThemes);
     for (let i = 0, theme; i < progressThemes.length; i++) {
         theme = progressThemes[i];
-        $(document.body).addClass("Page-progress--" + theme);
+        document.body.classList.add("Page-progress--" + theme);
     }
 
     Form.registerKeydownHandler();

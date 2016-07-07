@@ -13,17 +13,28 @@ class SplitViewInterface {
     }
 
     show() {
-        this.editor.container.find("." + Editor.classes.editor.content).addClass(Editor.classes.state.contentIsSplit);
-        this.editor.show("code", false);
-        this.editor.show("preview", false);
-        $("#" + this.editor.name + "-ace-editor, #" + this.editor.name + "-preview").css("width", "50%");
-        return this.editor.modes.code.view.on("change", this.synchronize.bind(this));
+        var items = this.editor.container.querySelectorAll("." + Editor.classes.editor.content);
+        for(let item of items) {
+            item.classList.add(Editor.classes.state.contentIsSplit);
+        }
+
+        var e = this.editor;
+
+        e.show("code", false);
+        e.show("preview", false);
+        e.modes.code.view.style.width = "50%";
+        e.modes.preview.view.style.width = "50%";
+        e.modes.code.ace.addEventListener("change", this.synchronize.bind(this));
     }
 
     hide() {
-        this.editor.container.find("." + Editor.classes.editor.content).removeClass(Editor.classes.state.contentIsSplit);
+        var items = this.editor.container.querySelectorAll("." + Editor.classes.editor.content);
+        for(let item of items) {
+            item.classList.remove(Editor.classes.state.contentIsSplit);
+        }
+
         this.editor.hide("code");
-        return this.editor.hide("preview");
+        this.editor.hide("preview");
     }
 
     valueFromForm() {
@@ -37,7 +48,7 @@ class SplitViewInterface {
             clearTimeout(this.currentTimer);
         }
         this.currentTimer = setTimeout(() => {
-            if (this.editor.currentMode === "split") {
+            if(this.editor.currentMode === "split") {
                 this.editor.valueToForm("code");
                 this.editor.valueFromForm("preview");
             }

@@ -6,7 +6,7 @@ class DesignViewInterface {
 
     constructor(editor) {
         this.editor = editor;
-        this.view = null;
+        this.ck = null;
     }
 
     create() {
@@ -14,32 +14,32 @@ class DesignViewInterface {
         config.customConfig = config.customConfig || '';
         config.contentsCss = this.editor.stylesheets;
 
-        console.log(config);
-
         // create instance
-        var object = CKEDITOR.replace(this.editor.name + "-editor", config);
-
-        // store object
-        return this.view = object;
+        this.ck = CKEDITOR.replace(this.editor.name + "-editor", config);
+        this.ck.on("instanceReady", event => {
+            this.view = document.getElementById("cke_" + this.editor.name + "-editor");
+            //put your code here
+        });
     }
 
     show(full) {
-        $("#cke_" + this.editor.name + "-editor").show();
-        if (full) {
-            $("#" + this.editor.name + "-ace-editor").css("width", "100%");
-        }
-        return;
+        this.ck.on("instanceReady", event => {
+            this.view.style.display = "block";
+            if (full) {
+                this.view.style.width = "100%";
+            }
+        });
     }
 
     hide() {
-        $("#cke_" + this.editor.name + "-editor").hide();
+        this.view.style.display = "none";
     }
 
     valueFromForm() {
-        return this.view.setData(this.editor.textarea.val());
+        this.ck.setData(this.editor.textarea.value);
     }
 
     valueToForm() {
-        return $("textarea[name=\"" + this.editor.name + "\"]").val(this.view.getData());
+        this.editor.textarea.value = this.ck.getData();
     }
 }

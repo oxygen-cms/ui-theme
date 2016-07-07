@@ -1574,6 +1574,12 @@ input[type="button"] {
           transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
+.Notification--bug {
+  background-color: #ff0000;
+  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
+          transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
 .Notification--info {
   background-color: #83c8fc;
   -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
@@ -1917,23 +1923,12 @@ select.Form-input--transparent, textarea.Form-input--transparent {
 }
 
 .FileUpload-preview-info {
-  opacity: 0;
   position: absolute;
   bottom: 0;
   width: 100%;
   padding: 0.5em;
   background-color: rgba(20, 20, 20, 0.7);
   color: #ffffff;
-  -webkit-transition: opacity 0.3s ease;
-          transition: opacity 0.3s ease;
-  -webkit-transition-delay: 0.5s;
-          transition-delay: 0.5s;
-}
-
-.FileUpload-preview:hover .FileUpload-preview-info {
-  opacity: 1;
-  -webkit-transition-delay: 0s;
-          transition-delay: 0s;
 }
 
 .FileUpload-preview-size {
@@ -1972,6 +1967,10 @@ select.Form-input--transparent, textarea.Form-input--transparent {
   opacity: 0;
   width: 100%;
   height: 100%;
+}
+
+.FileUpload-click input[type=file]::-webkit-file-upload-button {
+  cursor: pointer;
 }
 
 .no-js .FileUpload--js {
@@ -3623,8 +3622,8 @@ table.Table--topAlignedCells th {
    ==================================================================== */
 .Login-message,
 .Login-form {
-  -webkit-transition: -webkit-transform 1.5s ease, opacity 1.5s ease, visibility 1.5s ease;
-          transition: transform 1.5s ease, opacity 1.5s ease, visibility 1.5s ease;
+  -webkit-transition: -webkit-transform 0.9s ease, opacity 0.9s ease, visibility 0.9s ease;
+          transition: transform 0.9s ease, opacity 0.9s ease, visibility 0.9s ease;
 }
 
 .Login-message {
@@ -3656,15 +3655,15 @@ table.Table--topAlignedCells th {
 }
 
 .Login--slideUp {
-  -webkit-transform: translateY(-150%);
-      -ms-transform: translateY(-150%);
-          transform: translateY(-150%);
+  -webkit-transform: translateY(-100%);
+      -ms-transform: translateY(-100%);
+          transform: translateY(-100%);
 }
 
 .Login--slideUp.Block--centered {
-  -webkit-transform: translate(-50%, -150%);
-      -ms-transform: translate(-50%, -150%);
-          transform: translate(-50%, -150%);
+  -webkit-transform: translate(-50%, -100%);
+      -ms-transform: translate(-50%, -100%);
+          transform: translate(-50%, -100%);
 }
 
 .Login--slideDown {

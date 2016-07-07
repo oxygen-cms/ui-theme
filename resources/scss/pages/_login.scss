@@ -8,7 +8,7 @@
 
 .Login-message,
 .Login-form {
-    transition: transform 1.5s ease, opacity 1.5s ease, visibility 1.5s ease;
+    transition: transform 0.9s ease, opacity 0.9s ease, visibility 0.9s ease;
 }
 
 .Login-message {
@@ -40,10 +40,10 @@
 }
 
 .Login--slideUp {
-    transform: translateY(-150%);
+    transform: translateY(-100%);
 
     &.Block--centered {
-        transform: translate(-50%, -150%);
+        transform: translate(-50%, -100%);
     }
 }
 

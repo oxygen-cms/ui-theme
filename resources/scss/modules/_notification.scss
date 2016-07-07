@@ -80,6 +80,18 @@
     @include Box--design-flat($color-red, false);
 }
 
+.Notification--bug {
+    background-image: repeating-linear-gradient(
+      45deg,
+      #600,
+      #600 30px,
+      #500 30px,
+      #500 60px
+    );
+    border: 2px solid #000;
+    color: white;
+}
+
 .Notification--info {
     @include Box--design-flat($color-blue, false);
 }

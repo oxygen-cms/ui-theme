@@ -5,9 +5,9 @@
 class Slider {
 
     static findAll(container) {
-        return container.find(Slider.selectors.slider).each(function() {
-            return Slider.list.push(new Slider($(this)));
-        });
+        for(let item of container.querySelectorAll(Slider.selectors.slider)) {
+            Slider.list.push(new Slider(item));
+        }
     }
 
     // -----------------
@@ -16,11 +16,11 @@ class Slider {
 
     constructor(container) {
         this.container = container;
-        this.list = this.container.find(Slider.selectors.list);
-        this.items = this.container.find(Slider.selectors.item);
+        this.list = this.container.querySelector(Slider.selectors.list);
+        this.items = this.container.querySelectorAll(Slider.selectors.item);
 
         this.total = this.items.length;
-        this.interval = this.container.attr("data-interval") || 5000;
+        this.interval = this.container.getAttribute("data-interval") || 5000;
 
         this.previousId = 0;
         this.currentId = 0;
@@ -32,18 +32,18 @@ class Slider {
         this.hideAll();
         this.next();
 
-        if (this.container.attr("data-autoplay") === "true") {
+        if (this.container.getAttribute("data-autoplay") === "true") {
             this.play();
         }
     }
 
     registerEvents() {
-        this.container.find(Slider.selectors.back).on("click", this.previous.bind(this));
-        this.container.find(Slider.selectors.forward).on("click", this.next.bind(this));
+        this.container.querySelector(Slider.selectors.back).addEventListener("click", this.previous.bind(this));
+        this.container.querySelector(Slider.selectors.forward).addEventListener("click", this.next.bind(this));
     }
 
     play() {
-        var callback = this.container.attr("data-direction") === "reverse" ? this.previous.bind(this) : this.next.bind(this);
+        var callback = this.container.getAttribute("data-direction") === "reverse" ? this.previous.bind(this) : this.next.bind(this);
         this.timer = setInterval(callback, this.interval);
     }
 
@@ -52,12 +52,13 @@ class Slider {
     }
 
     getItem(id) {
-        return this.list.children(":nth-child(" + id + ")");
+        return this.list.querySelector(":nth-child(" + id + ")");
     }
 
     hideAll() {
-        this.items.removeClass();
-        this.items.addClass(Slider.classes.item + " " + Slider.classes.isHidden);
+        this.items.className = "";
+        this.items.classList.add(Slider.classes.item);
+        this.items.classList.add(Slider.classes.isHidden);
     }
 
     static allClasses() {
@@ -86,13 +87,12 @@ class Slider {
 
         this.hideAll();
 
-        previous
-            .removeClass(Slider.allClasses())
-            .addClass(Slider.classes.slideOutLeft)
-
-        current
-            .removeClass(Slider.allClasses())
-            .addClass(Slider.classes.slideInRight)
+        for(item of Slider.allClasses()) {
+            previous.classList.remove(item);
+            current.classList.remove(item);
+        }
+        previous.classList.add(Slider.classes.slideOutLeft);
+        current.classList.add(Slider.classes.slideInRight);
     }
 
     previous() {
@@ -117,13 +117,12 @@ class Slider {
 
         this.hideAll();
 
-        next
-            .removeClass(Slider.allClasses())
-            .addClass(Slider.classes.slideOutRight)
-
-        current
-            .removeClass(Slider.allClasses())
-            .addClass(Slider.classes.slideInLeft)
+        for(item of Slider.allClasses()) {
+            next.classList.remove(item);
+            current.classList.remove(item);
+        }
+        next.classList.add(Slider.classes.slideOutRight);
+        current.classList.add(Slider.classes.slideInLeft);
     }
 
     shouldAnimate() {

@@ -93,20 +93,20 @@
 .Page-transition--fade {
     .Block--isEntering,
     .Block--isExiting {
-        animation: fadeIn 0.35s ease-out both;
+        animation: fadeIn 0.25s ease-out both;
     }
 
     .Block--isExiting {
-        animation: fadeOut 0.35s ease-out both;
+        animation: fadeOut 0.25s ease-out both;
     }
 }
 
 .Page-transition--slide {
     .Block--isEntering {
-       animation: slideDown4Em 0.35s ease-out both;
+       animation: slideDown4Em 0.25s ease-out both;
     }
 
     .Block--isExiting {
-        animation: slideUp4Em 0.35s ease-out both;
+        animation: slideUp4Em 0.25s ease-out both;
     }
 }

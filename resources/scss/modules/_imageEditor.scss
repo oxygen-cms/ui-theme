@@ -31,6 +31,10 @@
     }
 }
 
+.jcrop-holder {
+    margin: 0 auto;
+}
+
 .ImageEditor-toolbar {
     @include flex-container(null, flex-start, center, '.flex-item', wrap);
     align-content: space-between;

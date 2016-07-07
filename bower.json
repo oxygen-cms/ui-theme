@@ -24,18 +24,10 @@
     ],
     "dependencies": {
         "jquery": "~2.1.1",
-        "blueimp-canvas-to-blob": "~2.1.0",
         "headroom.js": "~0.7.0",
-        "ace-builds": "~1.1.6",
         "ckeditor": "#full/latest",
-        "caman": "~4.1.2",
         "Jcrop": "~0.9.12",
-        "vex": "~2.2.1",
-        "pace": "~1.0.2",
         "smoothstate-with-root-option": "~0.7.3",
         "taggingJS": "~1.3.1"
-    },
-    "resolutions": {
-        "jquery": "1.x"
     }
 }

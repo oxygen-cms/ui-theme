@@ -1,3 +1,52 @@
+'use strict';
+
+/**
+ * Get closest DOM element up the tree matches the selector
+ * @param  {Node} elem The base element
+ * @param  {String} selector The selector to look for
+ * @return {Node} Null if no match
+ */
+var parentMatchingSelector = function parentMatchingSelector(elem, selector) {
+
+    // Get closest match
+    for (; elem && elem !== document; elem = elem.parentNode) {
+
+        if (elem.matchesSelector(selector)) {
+            return elem;
+        }
+    }
+
+    return null;
+};
+
+NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
+HTMLCollection.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
+
+var matchesMethod = function () {
+    var ElemProto = Element.prototype;
+    // check for the standard method name first
+    if (ElemProto.matches) {
+        return 'matches';
+    }
+    // check un-prefixed
+    if (ElemProto.matchesSelector) {
+        return 'matchesSelector';
+    }
+    // check vendor prefixes
+    var prefixes = ['webkit', 'moz', 'ms', 'o'];
+
+    for (var i = 0; i < prefixes.length; i++) {
+        var prefix = prefixes[i];
+        var method = prefix + 'MatchesSelector';
+        if (ElemProto[method]) {
+            return method;
+        }
+    }
+}();
+
+Element.prototype.matchesSelector = function (selector) {
+    return this[matchesMethod](selector);
+};
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -8,41 +57,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 //            AjaxRequest
 // ================================
 
-var Ajax = function () {
-    function Ajax() {
-        _classCallCheck(this, Ajax);
+var Dialog = function () {
+    function Dialog() {
+        _classCallCheck(this, Dialog);
     }
 
-    _createClass(Ajax, null, [{
-        key: "request",
-        value: function request(type, url, data) {
-            var dataType = arguments.length <= 3 || arguments[3] === undefined ? "json" : arguments[3];
-
-            var promise = new Promise(function (resolve, reject) {
-                $.ajax({
-                    dataType: dataType,
-                    type: type,
-                    url: url,
-                    data: data,
-                    processData: false,
-                    contentType: false,
-                    success: function success(data) {
-                        return resolve(data);
-                    },
-                    error: function error(response, textStatus, errorThrown) {
-                        return reject({ response: response, textStatus: textStatus, errorThrown: errorThrown });
-                    }
-                });
-            });
+    _createClass(Dialog, null, [{
+        key: "registerEvents",
+        value: function registerEvents(container) {
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
             var _iteratorError = undefined;
 
             try {
-                for (var _iterator = Ajax.successCallbacks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var handler = _step.value;
+                for (var _iterator = container.querySelectorAll("[data-dialog-type=\"confirm\"]")[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var item = _step.value;
 
-                    promise = promise.then(handler);
+                    item.addEventListener("click", Dialog.handleConfirmClick);
                 }
             } catch (err) {
                 _didIteratorError = true;
@@ -64,10 +95,10 @@ var Ajax = function () {
             var _iteratorError2 = undefined;
 
             try {
-                for (var _iterator2 = Ajax.errorCallbacks[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    var _handler = _step2.value;
+                for (var _iterator2 = container.querySelectorAll("[data-dialog-type=\"alert\"]")[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var _item = _step2.value;
 
-                    promise = promise.catch(_handler);
+                    _item.addEventListener("click", Dialog.handleAlertClick);
                 }
             } catch (err) {
                 _didIteratorError2 = true;
@@ -83,111 +114,28 @@ var Ajax = function () {
                     }
                 }
             }
-
-            return promise;
-        }
-    }]);
-
-    return Ajax;
-}();
-
-Ajax.successCallbacks = [];
-Ajax.errorCallbacks = [];
-
-Ajax.displayNotification = function (data) {
-    console.log(data);
-    new Notification(data);
-    return data;
-};
-
-Ajax.handleRedirect = function (data) {
-    if (data.redirect) {
-        if (window.smoothState && !(data.hardRedirect === true)) {
-            window.smoothState.load(data.redirect, false);
-        } else {
-            window.location.replace(data.redirect);
-        }
-    }
-    return data;
-};
-
-Ajax.handleError = function (error) {
-    console.log(error);
-    // handle network errors
-    if (error.response.readyState === 0) {
-        console.error(response);
-        new Notification({
-            content: "Cannot connect to the server",
-            status: "info"
-        });
-    }
-
-    // try to build a flash message from the error response
-    try {
-        var content = $.parseJSON(error.response.responseText);
-
-        if (content.content) {
-            new Notification(content);
-        } else {
-            console.error(content);
-
-            new Notification({
-                content: "Exception of type <code class=\"no-wrap\">" + content.error.type + "</code> with message <code class=\"no-wrap\">" + content.error.message + "</code> thrown at <code class=\"no-wrap\">" + content.error.file + ":" + content.error.line + "</code>",
-                status: "failed"
-            });
-        }
-    } catch (e) {
-        console.error(error.response.responseText);
-
-        new Notification({
-            content: "Whoops, looks like something went wrong.",
-            status: "failed"
-        });
-    }
-    return error;
-};
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-// ================================
-//            AjaxRequest
-// ================================
-
-var Dialog = function () {
-    function Dialog() {
-        _classCallCheck(this, Dialog);
-    }
-
-    _createClass(Dialog, null, [{
-        key: "registerEvents",
-        value: function registerEvents(container) {
-            container.find("[data-dialog-type=\"confirm\"]").on("click", this.handleConfirmClick);
-            return container.find("[data-dialog-type=\"alert\"]").on("click", this.handleAlertClick);
         }
     }, {
         key: "handleAlertClick",
         value: function handleAlertClick(event) {
-            var target = $(event.currentTarget);
-            return vex.dialog.alert(target.attr("data-dialog-message"));
+            vex.dialog.alert(event.currentTarget.getAttribute("data-dialog-message"));
         }
     }, {
         key: "handleConfirmClick",
         value: function handleConfirmClick(event, customConfig) {
-            var target = $(event.currentTarget);
-
-            if (!(target.attr("data-dialog-disabled") === "true")) {
+            var target = event.currentTarget;
+            if (!(target.getAttribute("data-dialog-disabled") === "true")) {
                 var defaultConfig;
                 event.preventDefault();
                 event.stopPropagation();
-                event.stopImmediatePropagation(), defaultConfig = {
-                    message: target.attr("data-dialog-message"),
+                event.stopImmediatePropagation();
+
+                defaultConfig = {
+                    message: target.getAttribute("data-dialog-message"),
                     callback: function callback(value) {
                         if (value) {
-                            target.attr("data-dialog-disabled", "true");
-                            return target[0].click();
+                            target.setAttribute("data-dialog-disabled", "true");
+                            target.click();
                         }
                     }
                 };
@@ -223,40 +171,87 @@ var Dropdown = function () {
     _createClass(Dropdown, null, [{
         key: "registerGlobalEvent",
         value: function registerGlobalEvent() {
-            return $(document).on("click", this.handleGlobalClick.bind(this));
+            return document.addEventListener("click", Dropdown.handleGlobalClick);
         }
     }, {
         key: "registerEvents",
         value: function registerEvents(container) {
-            return container.find("." + Dropdown.classes.dropdownToggle).on("click", this.handleClick.bind(this));
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = container.querySelectorAll("." + Dropdown.classes.dropdownToggle)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var item = _step.value;
+
+                    item.addEventListener("click", Dropdown.handleClick);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
         }
     }, {
         key: "handleClick",
         value: function handleClick(event) {
-            var container = $(event.target);
-            while (!container.hasClass(Dropdown.classes.dropdownToggle)) {
-                if (container.is("a[href], form")) {
+            var c = event.target;
+            while (!c.classList.contains(Dropdown.classes.dropdownToggle)) {
+                if (c.matchesSelector("a[href], form")) {
                     return;
                 }
-                container = container.parent();
+                c = c.parentNode;
             }
-            var dropdown = container.find("." + Dropdown.classes.dropdownList);
-            if (dropdown.hasClass(Dropdown.classes.isActive)) {
-                return dropdown.removeClass(Dropdown.classes.isActive);
+            var dropdown = c.querySelector("." + Dropdown.classes.dropdownList);
+            if (dropdown.classList.contains(Dropdown.classes.isActive)) {
+                dropdown.classList.remove(Dropdown.classes.isActive);
             } else {
-                $("." + Dropdown.classes.dropdownList).removeClass(Dropdown.classes.isActive);
-                return dropdown.addClass(Dropdown.classes.isActive);
+                Dropdown.reset();
+                dropdown.classList.add(Dropdown.classes.isActive);
             }
         }
     }, {
         key: "handleGlobalClick",
         value: function handleGlobalClick(event) {
-            var target = $(event.target);
-            var targetHasClass = target.hasClass(Dropdown.classes.dropdownToggle);
-            var parentHasClass = target.parent().hasClass(Dropdown.classes.dropdownToggle);
-            var ancestorExists = target.parents("." + Dropdown.classes.dropdownToggle).length;
-            if (!targetHasClass && !parentHasClass && !ancestorExists) {
-                return $("." + Dropdown.classes.dropdownList).removeClass(Dropdown.classes.isActive);
+            if (parentMatchingSelector(event.target, "." + Dropdown.classes.dropdownToggle) == null) {
+                Dropdown.reset();
+            }
+        }
+    }, {
+        key: "reset",
+        value: function reset(event) {
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = document.querySelectorAll("." + Dropdown.classes.dropdownList)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var item = _step2.value;
+
+                    item.classList.remove(Dropdown.classes.isActive);
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
             }
         }
     }]);
@@ -289,32 +284,60 @@ var EditableList = function () {
     _createClass(EditableList, null, [{
         key: "registerEvents",
         value: function registerEvents(container) {
-            container.find("." + EditableList.classes.add).on("click", EditableList.handleAdd);
-            return container.on("click", "." + EditableList.classes.remove, EditableList.handleRemove);
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = container.getElementsByClassName(EditableList.classes.add)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var item = _step.value;
+
+                    item.addEventListener("click", EditableList.handleAdd);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            container.addEventListener("click", EditableList.handleRemove);
         }
     }, {
         key: "handleAdd",
         value: function handleAdd(event) {
-            var container = $(event.currentTarget).siblings("." + EditableList.classes.container);
-            var template = container.find("." + EditableList.classes.template);
-            template = template.clone().removeClass(EditableList.classes.template);
-            console.log(template);
-            container.append(template);
-            return console.log('add');
+            var container = event.currentTarget.parentNode.querySelector("." + EditableList.classes.container);
+            var template = container.querySelector("." + EditableList.classes.template);
+            var template2 = template.clone();
+            template2.classList.remove(EditableList.classes.template);
+            console.log(template2);
+            container.appendChild(template2);
+            console.log('add');
         }
     }, {
         key: "handleRemove",
         value: function handleRemove(event) {
-            var row = $(event.currentTarget).closest("." + EditableList.classes.row);
-            row.remove();
-            return console.log('remove');
+            if (event.target.classList.contains(EditableList.classes.remove)) {
+                var row = parentMatchingSelector(event.target, "." + EditableList.classes.row);
+                if (row) {
+                    row.parentNode.removeChild(row);
+                }
+
+                console.log('remove');
+            }
         }
     }]);
 
     return EditableList;
 }();
-
-;
 
 EditableList.classes = {
     container: "EditableList",
@@ -322,6 +345,165 @@ EditableList.classes = {
     row: "EditableList-row",
     remove: "EditableList-remove",
     add: "EditableList-add"
+};
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// ================================
+//            AjaxRequest
+// ================================
+
+window.Oxygen || (window.Oxygen = {});
+
+var FetchOptions = function () {
+    function FetchOptions() {
+        _classCallCheck(this, FetchOptions);
+
+        this.headers = new Headers();
+    }
+
+    _createClass(FetchOptions, [{
+        key: "wantJson",
+        value: function wantJson() {
+            this.headers.set("Accept", "application/json");
+            return this;
+        }
+    }, {
+        key: "contentType",
+        value: function contentType(type) {
+            this.headers.set("Content-Type", type);
+            return this;
+        }
+    }, {
+        key: "method",
+        value: function method(_method) {
+            this.method = _method;
+            return this;
+        }
+    }, {
+        key: "data",
+        value: function data(_data) {
+            this.data = _data;
+            return this;
+        }
+    }, {
+        key: "cookies",
+        value: function cookies() {
+            this.credentials = "same-origin";
+            return this;
+        }
+    }], [{
+        key: "default",
+        value: function _default() {
+            return new FetchOptions().cookies();
+        }
+    }]);
+
+    return FetchOptions;
+}();
+
+/*class Ajax {
+
+    static request(type, url, data, dataType = "json") {
+        var promise = new Promise(function(resolve, reject) {
+            $.ajax({
+                dataType: dataType,
+                type: type,
+                url: url,
+                data: data,
+                processData: false,
+                contentType: false,
+                success: data => resolve(data),
+                error: (response, textStatus, errorThrown) => reject({ response: response, textStatus: textStatus, errorThrown: errorThrown })
+            })
+        });
+
+        return promise;
+    }
+
+}*/
+
+Oxygen.respond = {};
+Oxygen.error = {};
+
+Oxygen.respond.successCallbacks = [];
+Oxygen.respond.errorCallbacks = [];
+
+Oxygen.respond.text = function (response) {
+    return response.text();
+};
+Oxygen.respond.json = function (response) {
+    return response.json(); /*.clone().json().catch(error => {
+                            response.text().then(text => {
+                            Oxygen.error.jsonParseError(error, text);
+                            });
+                            throw error;
+                            })*/
+};
+
+Oxygen.respond.checkStatus = function (response) {
+    if (response.ok) {
+        return response;
+    } else {
+        response.clone().json().then(Oxygen.respond.handleAPIError);
+        /*.catch(error => {
+            response.text().then(text => {
+                Oxygen.error.jsonParseError(error, text);
+            });
+            throw error;
+        })*/
+    }
+};
+
+Oxygen.respond.notification = function (data) {
+    new Notification(data);
+    return data;
+};
+
+Oxygen.respond.redirect = function (data) {
+    if (data.redirect) {
+        if (window.smoothState && !(data.hardRedirect === true)) {
+            window.smoothState.load(data.redirect, false);
+        } else {
+            window.location.replace(data.redirect);
+        }
+    }
+    return data;
+};
+
+// handle network errors
+// if(error.response.readyState === 0) {
+//     console.error(response);
+// }
+// Oxygen.error.jsonParseError = function(error, text) {
+//     console.error("Error while parsing JSON: ", error);
+//     console.log("Raw response: ", text);
+//
+//     new Notification({
+//         content: "Could not parse JSON response. This is a bug.",
+//         status: "failed"
+//     });
+// };
+
+Oxygen.error.handleAPIError = function (content) {
+    if (content.content) {
+        new Notification(content);
+    } else if (content.error) {
+        new Notification({
+            content: "Exception of type <code class=\"no-wrap\">" + content.error.type + "</code> with message <code class=\"no-wrap\">" + content.error.message + "</code> thrown at <code class=\"no-wrap\">" + content.error.file + ":" + content.error.line + "</code>",
+            status: "failed"
+        });
+    } else {
+        console.log("JSON error response unhandled: ", content);
+
+        new Notification({
+            content: "Whoops, looks like something went wrong.",
+            status: "failed"
+        });
+    }
 };
 "use strict";
 
@@ -343,18 +525,39 @@ var Form = function () {
     _createClass(Form, null, [{
         key: "findAll",
         value: function findAll(container) {
-            container.find("form").each(function () {
-                this.formObject = new Form(this);
-            });
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
 
-            return container.find(Form.classes.taggableInput).tagging({
+            try {
+                for (var _iterator = container.querySelectorAll("form")[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var item = _step.value;
+
+                    item.formObject = new Form(item);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            $(container).find(Form.classes.taggableInput).tagging({
                 "edit-on-delete": false
             });
         }
     }, {
         key: "registerKeydownHandler",
         value: function registerKeydownHandler() {
-            return $(document).on("keydown", Form.handleKeydown);
+            return document.addEventListener("keydown", Form.handleKeydown);
         }
     }, {
         key: "handleKeydown",
@@ -378,7 +581,7 @@ var Form = function () {
         _classCallCheck(this, Form);
 
         this.form = element;
-        this.originalData = $(element).serializeArray();
+        this.originalData = Form.getFormData(this.form);
         //# content generators are notified before the form content is read
         this.contentGenerators = [];
         this.registerEvents();
@@ -391,9 +594,32 @@ var Form = function () {
 
             // Exit Dialog
             if (this.form.classList.contains(Form.classes.warnBeforeExit)) {
-                $("a, button[type=\"submit\"]").on("click", function (event) {
-                    return _this.handleExit(event);
-                }); // displays exit dialog
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
+
+                try {
+                    for (var _iterator2 = document.querySelectorAll("a, button[type=\"submit\"]")[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                        var item = _step2.value;
+
+                        item.addEventListener("click", function (event) {
+                            return _this.handleExit(event);
+                        }); // displays exit dialog
+                    }
+                } catch (err) {
+                    _didIteratorError2 = true;
+                    _iteratorError2 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                            _iterator2.return();
+                        }
+                    } finally {
+                        if (_didIteratorError2) {
+                            throw _iteratorError2;
+                        }
+                    }
+                }
             }
 
             // Submit via AJAX
@@ -417,14 +643,14 @@ var Form = function () {
         value: function handleExit(event) {
             var _this2 = this;
 
-            if ($(event.currentTarget).hasClass("Form-submit")) {
+            if (event.currentTarget.classList.contains("Form-submit")) {
                 return;
             }
             this.generateContent();
-            if (JSON.stringify($(this.form).serializeArray()) !== JSON.stringify(this.originalData)) {
-                var target = $(event.currentTarget);
+            if (Form.getFormData(this.form) == this.originalData) {
+                var target = event.currentTarget;
 
-                if (!(target.attr("data-dialog-disabled") === "true")) {
+                if (!(target.getAttribute("data-dialog-disabled") === "true")) {
                     event.preventDefault();
                     event.stopPropagation();
                     event.stopImmediatePropagation(), vex.dialog.confirm({
@@ -448,12 +674,12 @@ var Form = function () {
                         }],
                         callback: function callback(value) {
                             if (value == "continue") {
-                                target.attr("data-dialog-disabled", "true");
+                                target.setAttribute("data-dialog-disabled", "true");
                                 return target[0].click();
                             } else if (value == "save") {
                                 if (_this2.form.classList.contains(Form.classes.sendAjax)) {
                                     _this2.submitViaAjax(true);
-                                    target.attr("data-dialog-disabled", "true");
+                                    target.setAttribute("data-dialog-disabled", "true");
                                     target[0].click();
                                 } else {
                                     // not sure if this works
@@ -475,27 +701,27 @@ var Form = function () {
     }, {
         key: "generateContent",
         value: function generateContent() {
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
 
             try {
-                for (var _iterator = this.contentGenerators[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var generator = _step.value;
+                for (var _iterator3 = this.contentGenerators[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var generator = _step3.value;
 
                     generator(this);
                 }
             } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
             } finally {
                 try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
                     }
                 } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
                     }
                 }
             }
@@ -522,72 +748,183 @@ var Form = function () {
                 return data;
             };
 
-            var promise = Ajax.request($(this.form).attr("method"), $(this.form).attr("action"), Form.getFormDataObject(this.form)).then(saveData).then(Ajax.displayNotification).catch(Ajax.handleError);
+            var promise = window.fetch(this.form.action, FetchOptions.default().method(this.form.method).data(Form.getFormDataObject(Form.getFormData(this.form))).wantJson()).then(Oxygen.respond.checkStatus).then(Oxygen.respond.json).then(saveData).then(Oxygen.respond.notification);
 
             if (!ignoreRedirectResponse) {
-                promise = promise.then(Ajax.handleRedirect);
+                promise = promise.then(Oxygen.respond.redirect);
+            }
+
+            console.log("Form Error Callbacks: ", this.form, this.form.errorCallbacks);
+            var _iteratorNormalCompletion4 = true;
+            var _didIteratorError4 = false;
+            var _iteratorError4 = undefined;
+
+            try {
+                for (var _iterator4 = (this.form.successCallbacks || [])[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                    var callback = _step4.value;
+
+                    promise = promise.then(callback);
+                }
+            } catch (err) {
+                _didIteratorError4 = true;
+                _iteratorError4 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                        _iterator4.return();
+                    }
+                } finally {
+                    if (_didIteratorError4) {
+                        throw _iteratorError4;
+                    }
+                }
+            }
+
+            var _iteratorNormalCompletion5 = true;
+            var _didIteratorError5 = false;
+            var _iteratorError5 = undefined;
+
+            try {
+                for (var _iterator5 = (this.form.errorCallbacks || [])[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                    var _callback = _step5.value;
+
+                    promise = promise.catch(_callback);
+                }
+
+                //promise = promise.catch(Oxygen.error.catchAll);
+            } catch (err) {
+                _didIteratorError5 = true;
+                _iteratorError5 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                        _iterator5.return();
+                    }
+                } finally {
+                    if (_didIteratorError5) {
+                        throw _iteratorError5;
+                    }
+                }
             }
 
             return promise;
         }
     }], [{
-        key: "getFormDataObject",
-        value: function getFormDataObject(form) {
-            var data = new FormData();
-            $(form).find("[name]").each(function () {
-                var name = $(this).attr("name");
-                var value = $(this).val();
+        key: "getFormData",
+        value: function getFormData(form) {
+            var data = {};
 
-                if ($(this).is("[type=\"checkbox\"]") && !$(this).is(":checked")) {
-                    return;
-                }
+            var _iteratorNormalCompletion6 = true;
+            var _didIteratorError6 = false;
+            var _iteratorError6 = undefined;
 
-                if ($(this).is("select[multiple]")) {
-                    if (value) {
-                        var _iteratorNormalCompletion2 = true;
-                        var _didIteratorError2 = false;
-                        var _iteratorError2 = undefined;
+            try {
+                for (var _iterator6 = form.querySelectorAll("[name]")[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                    var item = _step6.value;
 
-                        try {
-                            for (var _iterator2 = value[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                                var item = _step2.value;
-
-                                data.append(name, item);
-                            }
-                        } catch (err) {
-                            _didIteratorError2 = true;
-                            _iteratorError2 = err;
-                        } finally {
-                            try {
-                                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                                    _iterator2.return();
-                                }
-                            } finally {
-                                if (_didIteratorError2) {
-                                    throw _iteratorError2;
-                                }
-                            }
+                    if (item.type == "checkbox" || item.type == "radio") {
+                        if (!item.checked) {
+                            continue;
                         }
-                    } else {
-                        data.append(name, "");
                     }
-                    return;
-                }
 
-                if ($(this).is("[type=\"file\"]")) {
-                    var ref;
-                    var files = (ref = this.filesToUpload) != null ? ref : this.files;
-                    for (var i = 0, file; i < files.length; i++) {
-                        file = files[i];
-                        data.append(name, file);
+                    if (item.tagName == "select" && item.multiple) {
+                        if (item.value) {
+                            data[item.name] = [];
+                            var _iteratorNormalCompletion7 = true;
+                            var _didIteratorError7 = false;
+                            var _iteratorError7 = undefined;
+
+                            try {
+                                for (var _iterator7 = item.value[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                                    var element = _step7.value;
+
+                                    data[item.name].push(element);
+                                }
+                            } catch (err) {
+                                _didIteratorError7 = true;
+                                _iteratorError7 = err;
+                            } finally {
+                                try {
+                                    if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                                        _iterator7.return();
+                                    }
+                                } finally {
+                                    if (_didIteratorError7) {
+                                        throw _iteratorError7;
+                                    }
+                                }
+                            }
+                        } else {
+                            data[item.name] = [""];
+                        }
+                        continue;
                     }
-                    return;
+
+                    if (item.type == "file") {
+                        var ref;
+                        var files = (ref = item.filesToUpload) != null ? ref : item.files;
+                        data[item.name] = [];
+                        for (var i = 0, file; i < files.length; i++) {
+                            file = files[i];
+                            data[item.name].push(file);
+                        }
+                        continue;
+                    }
+
+                    data[item.name] = item.value;
                 }
+            } catch (err) {
+                _didIteratorError6 = true;
+                _iteratorError6 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                        _iterator6.return();
+                    }
+                } finally {
+                    if (_didIteratorError6) {
+                        throw _iteratorError6;
+                    }
+                }
+            }
 
-                data.append(name, value);
-            });
-
+            console.log("Form Data: ", data);
             return data;
+        }
+    }, {
+        key: "getFormDataObject",
+        value: function getFormDataObject(data) {
+            var formData = new FormData();
+
+            for (var key in data) {
+                var _iteratorNormalCompletion8 = true;
+                var _didIteratorError8 = false;
+                var _iteratorError8 = undefined;
+
+                try {
+                    for (var _iterator8 = data[key][Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+                        var value = _step8.value;
+
+                        formData.append(key, value);
+                    }
+                } catch (err) {
+                    _didIteratorError8 = true;
+                    _iteratorError8 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion8 && _iterator8.return) {
+                            _iterator8.return();
+                        }
+                    } finally {
+                        if (_didIteratorError8) {
+                            throw _iteratorError8;
+                        }
+                    }
+                }
+            }
+
+            return formData;
         }
     }]);
 
@@ -599,7 +936,7 @@ Form.disableAjax = false;
 /**
  * Toggles whether form submission via AJAX is enabled globally, using Alt + Command/Control + J
  */
-$(document).on("keydown", function (event) {
+document.addEventListener("keydown", function (event) {
     if (event.altKey && (event.controlKey || event.metaKey) && event.which == 74) {
         Form.disableAjax = !Form.disableAjax;
         event.preventDefault();
@@ -640,22 +977,20 @@ var MainNav = function () {
     _createClass(MainNav, null, [{
         key: "headroom",
         value: function headroom() {
-            var header = $(".MainNav");
+            var header = document.querySelector(".MainNav");
 
-            if (header.length > 0) {
-                if ($(window).width() > 768) {
-                    var headroom = new Headroom(header[0], {
-                        "tolerance": 20,
-                        "offset": 50,
-                        "classes": { "initial": "Headroom",
-                            "pinned": "Headroom--pinned",
-                            "unpinned": "Headroom--unpinned",
-                            "top": "Headroom--top",
-                            "notTop": "Headroom--not-top"
-                        }
-                    });
-                    headroom.init();
-                }
+            if (header && window.innerWidth > 768) {
+                var headroom = new Headroom(header, {
+                    "tolerance": 20,
+                    "offset": 50,
+                    "classes": { "initial": "Headroom",
+                        "pinned": "Headroom--pinned",
+                        "unpinned": "Headroom--unpinned",
+                        "top": "Headroom--top",
+                        "notTop": "Headroom--not-top"
+                    }
+                });
+                headroom.init();
             }
         }
     }]);
@@ -676,10 +1011,32 @@ var Notification = function () {
     _createClass(Notification, null, [{
         key: "initializeExistingMessages",
         value: function initializeExistingMessages() {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
 
-            $("." + Notification.classes.container).find("." + Notification.classes.item).each(function (index, value) {
-                new Notification({ message: $(this) });
-            });
+            try {
+                for (var _iterator = document.querySelector("." + Notification.classes.container).querySelectorAll("." + Notification.classes.item)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var item = _step.value;
+
+                    new Notification({
+                        message: item
+                    });
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
         }
     }]);
 
@@ -694,23 +1051,25 @@ var Notification = function () {
             // Constructs a Notification object
             // using a pre-existing message element.
             this.message = options.message;
-            this.message.removeClass("is-hidden");
+            this.message.classList.remove("is-hidden");
             this.registerHide();
         } else if (options.status && options.content) {
             // Constructs a Notification object,
             // creating a new message element.
-            this.message = $("<div class=\"" + Notification.classes.item + " Notification--" + options.status + "\">" + options.content + "<span class=\"Notification-dismiss Icon Icon-times\"></span></div>");
+            this.message = document.createElement("div");
+            this.message.classList.add(Notification.classes.item);
+            this.message.classList.add("Notification--" + options.status);
+            this.message.innerHTML = options.content + "<span class=\"Notification-dismiss Icon Icon-times\"></span>";
             this.show();
         } else {
-            console.log("Invalid Arguments For New Notification");
-            console.log(options);
+            console.error("Invalid Arguments For New Notification: ", options);
         }
     }
 
     _createClass(Notification, [{
         key: "show",
         value: function show() {
-            this.message.appendTo("." + Notification.classes.container);
+            document.querySelector("." + Notification.classes.container).appendChild(this.message);
             this.registerHide();
         }
     }, {
@@ -722,13 +1081,13 @@ var Notification = function () {
     }, {
         key: "hide",
         value: function hide() {
-            this.message.addClass("is-sliding-up");
+            this.message.classList.add("is-sliding-up");
             setTimeout(this.remove.bind(this), 500);
         }
     }, {
         key: "remove",
         value: function remove() {
-            this.message.remove();
+            this.message.parentNode.removeChild(this.message);
         }
     }]);
 
@@ -827,9 +1186,30 @@ var Slider = function () {
     _createClass(Slider, null, [{
         key: "findAll",
         value: function findAll(container) {
-            return container.find(Slider.selectors.slider).each(function () {
-                return Slider.list.push(new Slider($(this)));
-            });
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = container.querySelectorAll(Slider.selectors.slider)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var _item = _step.value;
+
+                    Slider.list.push(new Slider(_item));
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
         }
 
         // -----------------
@@ -842,11 +1222,11 @@ var Slider = function () {
         _classCallCheck(this, Slider);
 
         this.container = container;
-        this.list = this.container.find(Slider.selectors.list);
-        this.items = this.container.find(Slider.selectors.item);
+        this.list = this.container.querySelector(Slider.selectors.list);
+        this.items = this.container.querySelectorAll(Slider.selectors.item);
 
         this.total = this.items.length;
-        this.interval = this.container.attr("data-interval") || 5000;
+        this.interval = this.container.getAttribute("data-interval") || 5000;
 
         this.previousId = 0;
         this.currentId = 0;
@@ -858,7 +1238,7 @@ var Slider = function () {
         this.hideAll();
         this.next();
 
-        if (this.container.attr("data-autoplay") === "true") {
+        if (this.container.getAttribute("data-autoplay") === "true") {
             this.play();
         }
     }
@@ -866,13 +1246,13 @@ var Slider = function () {
     _createClass(Slider, [{
         key: "registerEvents",
         value: function registerEvents() {
-            this.container.find(Slider.selectors.back).on("click", this.previous.bind(this));
-            this.container.find(Slider.selectors.forward).on("click", this.next.bind(this));
+            this.container.querySelector(Slider.selectors.back).addEventListener("click", this.previous.bind(this));
+            this.container.querySelector(Slider.selectors.forward).addEventListener("click", this.next.bind(this));
         }
     }, {
         key: "play",
         value: function play() {
-            var callback = this.container.attr("data-direction") === "reverse" ? this.previous.bind(this) : this.next.bind(this);
+            var callback = this.container.getAttribute("data-direction") === "reverse" ? this.previous.bind(this) : this.next.bind(this);
             this.timer = setInterval(callback, this.interval);
         }
     }, {
@@ -883,13 +1263,14 @@ var Slider = function () {
     }, {
         key: "getItem",
         value: function getItem(id) {
-            return this.list.children(":nth-child(" + id + ")");
+            return this.list.querySelector(":nth-child(" + id + ")");
         }
     }, {
         key: "hideAll",
         value: function hideAll() {
-            this.items.removeClass();
-            this.items.addClass(Slider.classes.item + " " + Slider.classes.isHidden);
+            this.items.className = "";
+            this.items.classList.add(Slider.classes.item);
+            this.items.classList.add(Slider.classes.isHidden);
         }
     }, {
         key: "next",
@@ -915,9 +1296,34 @@ var Slider = function () {
 
             this.hideAll();
 
-            previous.removeClass(Slider.allClasses()).addClass(Slider.classes.slideOutLeft);
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
 
-            current.removeClass(Slider.allClasses()).addClass(Slider.classes.slideInRight);
+            try {
+                for (var _iterator2 = Slider.allClasses()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    item = _step2.value;
+
+                    previous.classList.remove(item);
+                    current.classList.remove(item);
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+
+            previous.classList.add(Slider.classes.slideOutLeft);
+            current.classList.add(Slider.classes.slideInRight);
         }
     }, {
         key: "previous",
@@ -943,9 +1349,34 @@ var Slider = function () {
 
             this.hideAll();
 
-            next.removeClass(Slider.allClasses()).addClass(Slider.classes.slideOutRight);
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
 
-            current.removeClass(Slider.allClasses()).addClass(Slider.classes.slideInLeft);
+            try {
+                for (var _iterator3 = Slider.allClasses()[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    item = _step3.value;
+
+                    next.classList.remove(item);
+                    current.classList.remove(item);
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+
+            next.classList.add(Slider.classes.slideOutRight);
+            current.classList.add(Slider.classes.slideInLeft);
         }
     }, {
         key: "shouldAnimate",
@@ -1031,60 +1462,87 @@ var SmoothState = function () {
     _createClass(SmoothState, [{
         key: "onStart",
         value: function onStart(container) {
-            var elements;
-            $("html, body").animate({
-                scrollTop: 0
-            });
-            this.loading = true;
-            elements = $('.Block');
-            $(elements.get().reverse()).each(function (index) {
-                var block, timeout;
-                block = $(this);
-                timeout = index * 100;
-                return setTimeout(function () {
-                    return block.addClass('Block--isExiting');
-                }, timeout);
-            });
-            return setTimeout(function () {
-                if (this.loading) {
-                    return $(".pace-activity").addClass("pace-activity-active");
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = document.querySelectorAll("html, body")[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var item = _step.value;
+                    item.scrollTop = 0;
                 }
-            }, elements.length * 100);
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            this.loading = true;
+
+            var elements = document.getElementsByClassName('Block');
+            var blocks = Array.prototype.slice.call(elements);
+            blocks.reverse();
+            for (var i = 0; i < blocks.length; i++) {
+                var block = blocks[i];
+                setTimeout(function () {
+                    return block.classList.add('Block--isExiting');
+                }, i * 100);
+            }
+
+            setTimeout(function () {
+                if (this.loading) {
+                    return document.querySelector(".pace-activity").classList.add("pace-activity-active");
+                }
+            }, blocks.length * 100);
         }
     }, {
         key: "onProgress",
         value: function onProgress(container) {
-            return $("html, body").css('cursor', 'wait').find('a').css('cursor', 'wait');
+            SmoothState.setCursor('wait');
         }
     }, {
         key: "onReady",
         value: function onReady(container, content) {
-            $("html, body").css('cursor', 'auto').find('a').css('cursor', 'auto');
+            SmoothState.setCursor('auto');
+
             Oxygen.reset();
-            container.hide();
+            container[0].style.display = 'none';
             container.html(content);
-            $(".pace-activity").removeClass("pace-activity-active");
-            $('.Block').each(function (index) {
-                var block, timeout;
-                block = $(this);
-                timeout = index * 100;
-                block.addClass('Block--isHidden');
-                return setTimeout(function () {
-                    block.removeClass('Block--isHidden');
-                    block.addClass('Block--isEntering');
-                    return setTimeout(function () {
-                        return block.removeClass('Block--isEntering');
+            document.querySelector(".pace-activity").classList.remove("pace-activity-active");
+            var blocks = document.getElementsByClassName('Block');
+
+            var _loop = function _loop() {
+                var block = blocks[i];
+                block.classList.add('Block--isHidden');
+                setTimeout(function () {
+                    block.classList.remove('Block--isHidden');
+                    block.classList.add('Block--isEntering');
+                    setTimeout(function () {
+                        block.classList.remove('Block--isEntering');
                     }, 350);
-                }, timeout);
-            });
-            return container.show();
+                }, i * 100);
+            };
+
+            for (var i = 0; i < blocks.length; i++) {
+                _loop();
+            }
+            container[0].style.display = 'block';
         }
     }, {
         key: "onAfter",
         value: function onAfter(container, content) {
             this.loading = false;
-            $(".pace-activity").removeClass("pace-activity-active");
-            return Oxygen.init($("#page"));
+            document.querySelector(".pace-activity").classList.remove("pace-activity-active");
+            return Oxygen.init(document.getElementById("page"));
         }
     }, {
         key: "load",
@@ -1092,9 +1550,67 @@ var SmoothState = function () {
             return this.smoothState.load(url, push);
         }
     }], [{
+        key: "setCursor",
+        value: function setCursor(mode) {
+            var items = document.querySelectorAll("html, body");
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var item = _step2.value;
+
+                    item.style.cursor = mode;
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+
+            var links = document.querySelectorAll("a");
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = links[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var _item = _step3.value;
+
+                    _item.style.cursor = mode;
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+        }
+    }, {
         key: "setTheme",
         value: function setTheme(theme) {
-            return $("#page").addClass('Page-transition--' + theme);
+            var page = document.getElementById("page");
+            if (page) {
+                page.classList.remove('Page-transition--' + theme);
+            }
         }
     }]);
 
@@ -1114,20 +1630,41 @@ var TabSwitcher = function () {
     _createClass(TabSwitcher, null, [{
         key: "findAll",
         value: function findAll(container) {
-            return container.find("." + TabSwitcher.classes.tabs).each(function () {
-                var tabs = $(this);
-                if (tabs.hasClass(TabSwitcher.classes.content)) {
-                    container = tabs;
-                } else {
-                    container = tabs.siblings("." + TabSwitcher.classes.content);
-                }
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
 
-                if (container.length === 0) {
-                    container = tabs.parent().siblings("." + TabSwitcher.classes.content);
-                }
+            try {
+                for (var _iterator = container.getElementsByClassName("." + TabSwitcher.classes.tabs)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var item = _step.value;
 
-                return TabSwitcher.list.push(new TabSwitcher(tabs, container));
-            });
+                    var tabs = $(item);
+                    if (tabs.classList.contains(TabSwitcher.classes.content)) {
+                        container = tabs;
+                    } else {
+                        container = tabs.parentNode.querySelector("." + TabSwitcher.classes.content);
+                    }
+
+                    if (container.length === 0) {
+                        container = tabs.parentNode.parentNode.querySelector("." + TabSwitcher.classes.content);
+                    }
+
+                    TabSwitcher.list.push(new TabSwitcher(tabs, container));
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
         }
 
         // -----------------
@@ -1149,28 +1686,78 @@ var TabSwitcher = function () {
     _createClass(TabSwitcher, [{
         key: "findDefault",
         value: function findDefault() {
-            var tab = this.tabs.children("[data-default-tab]").attr("data-switch-to-tab");
-            return this.setTo(tab);
+            var tab = this.tabs.querySelector("[data-default-tab]").attr("data-switch-to-tab");
+            this.setTo(tab);
         }
     }, {
         key: "registerEvents",
         value: function registerEvents() {
-            return this.tabs.children("[data-switch-to-tab]").on("click", this.handleClick);
+            this.tabs.querySelectorAll("[data-switch-to-tab]").forEach(function (item) {
+                item.addEventListener("click", this.handleClick);
+            });
         }
     }, {
         key: "handleClick",
         value: function handleClick(event) {
             var tab = $(event.currentTarget).attr("data-switch-to-tab");
-            return this.setTo(tab);
+            this.setTo(tab);
         }
     }, {
         key: "setTo",
         value: function setTo(tab) {
             this.current = tab;
-            this.container.children("[data-tab]").removeClass(TabSwitcher.classes.active);
-            this.container.children("[data-tab=\"" + tab + "\"]").addClass(TabSwitcher.classes.active);
-            this.tabs.children("[data-switch-to-tab]").removeClass(TabSwitcher.classes.active);
-            return this.tabs.children("[data-switch-to-tab=\"" + tab + "\"]").addClass(TabSwitcher.classes.active);
+
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = this.container.querySelectorAll("[data-tab]")[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var item = _step2.value;
+                    item.classList.remove(TabSwitcher.classes.active);
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+
+            this.container.querySelector("[data-tab=\"" + tab + "\"]").classList.add(TabSwitcher.classes.active);
+
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = this.tabs.querySelectorAll("[data-switch-to-tab]")[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var _item = _step3.value;
+                    _item.classList.remove(TabSwitcher.classes.active);
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+
+            this.tabs.querySelector("[data-switch-to-tab=\"" + tab + "\"]").classList.add(TabSwitcher.classes.active);
         }
     }]);
 
@@ -1218,21 +1805,21 @@ var Toggle = function () {
         value: function registerEvents() {
             var _this = this;
 
-            this.toggle.on("click", function (event) {
+            this.toggle.addEventListener("click", function (event) {
                 return _this.handleToggle(event);
             });
-            if (this.toggle.attr("data-enabled") == undefined) {
-                this.toggle.attr("data-enabled", "false");
+            if (this.toggle.getAttribute("data-enabled") == undefined) {
+                this.toggle.setAttribute("data-enabled", "false");
             }
         }
     }, {
         key: "handleToggle",
         value: function handleToggle(event) {
-            if (this.toggle.attr("data-enabled") === "true") {
-                this.toggle.attr("data-enabled", "false");
+            if (this.toggle.getAttribute("data-enabled") === "true") {
+                this.toggle.setAttribute("data-enabled", "false");
                 this.disableCallback(event);
             } else {
-                this.toggle.attr("data-enabled", "true");
+                this.toggle.setAttribute("data-enabled", "true");
                 this.enableCallback(event);
             }
         }
@@ -1253,7 +1840,10 @@ Toggle.classes = {
 var FullscreenToggle = function (_Toggle) {
     _inherits(FullscreenToggle, _Toggle);
 
-    function FullscreenToggle(toggle, fullscreenElement, enterFullscreenCallback, exitFullscreenCallback) {
+    function FullscreenToggle(toggle, fullscreenElement) {
+        var enterFullscreenCallback = arguments.length <= 2 || arguments[2] === undefined ? function () {} : arguments[2];
+        var exitFullscreenCallback = arguments.length <= 3 || arguments[3] === undefined ? function () {} : arguments[3];
+
         _classCallCheck(this, FullscreenToggle);
 
         var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(FullscreenToggle).call(this, toggle, null, null));
@@ -1269,8 +1859,8 @@ var FullscreenToggle = function (_Toggle) {
     _createClass(FullscreenToggle, [{
         key: "enterFullscreen",
         value: function enterFullscreen() {
-            this.fullscreenElement.addClass("FullscreenToggle--isFullscreen");
-            $(document.body).addClass("Body--noScroll");
+            this.fullscreenElement.classList.add("FullscreenToggle--isFullscreen");
+            document.body.classList.add("Body--noScroll");
 
             var elem = document.documentElement;
             if (elem.requestFullscreen) {
@@ -1288,8 +1878,8 @@ var FullscreenToggle = function (_Toggle) {
     }, {
         key: "exitFullscreen",
         value: function exitFullscreen() {
-            this.fullscreenElement.removeClass("FullscreenToggle--isFullscreen");
-            $(document.body).removeClass("Body--noScroll");
+            this.fullscreenElement.classList.remove("FullscreenToggle--isFullscreen");
+            document.body.classList.remove("Body--noScroll");
 
             if (document.exitFullscreen) {
                 document.exitFullscreen();
@@ -1319,74 +1909,115 @@ var Upload = function () {
     _createClass(Upload, null, [{
         key: "registerEvents",
         value: function registerEvents(container) {
-            var elements;
-            elements = container.find(Upload.selectors.uploadElement);
-            elements.find(Upload.selectors.dropzoneElement).on("dragover", Upload.handleDragOver).on("dragleave", Upload.handleDragLeave).on("drop", Upload.handleDrop);
-            return elements.find("input[type=file]").on("change", Upload.handleChange);
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = container.querySelectorAll(Upload.selectors.uploadElement)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var item = _step.value;
+
+                    var dropzone = item.querySelector(Upload.selectors.dropzoneElement);
+                    dropzone.addEventListener("dragover", Upload.handleDragOver);
+                    dropzone.addEventListener("dragleave", Upload.handleDragLeave);
+                    dropzone.addEventListener("drop", Upload.handleDrop);
+                    item.querySelector("input[type=file]").addEventListener("change", Upload.handleChange);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
         }
     }, {
         key: "handleDragOver",
         value: function handleDragOver(event) {
             event.preventDefault();
-            return $(event.currentTarget).addClass(Upload.states.onDragOver);
+            return event.currentTarget.classList.add(Upload.states.onDragOver);
         }
     }, {
         key: "handleDragLeave",
         value: function handleDragLeave(event) {
-            return $(event.currentTarget).removeClass(Upload.states.onDragOver);
+            return event.currentTarget.classList.remove(Upload.states.onDragOver);
         }
     }, {
         key: "handleDrop",
         value: function handleDrop(event) {
-            var upload;
             event.preventDefault();
-            $(event.currentTarget).removeClass(Upload.states.onDragOver);
-            upload = $(event.currentTarget).closest(Upload.selectors.uploadElement);
-            return Upload.addFiles(upload, event.originalEvent.dataTransfer.files);
+            event.currentTarget.classList.remove(Upload.states.onDragOver);
+            var upload = parentMatchingSelector(event.currentTarget, Upload.selectors.uploadElement);
+            Upload.addFiles(upload, event.originalEvent.dataTransfer.files);
         }
     }, {
         key: "handleChange",
         value: function handleChange(event) {
-            return Upload.addFiles($(event.currentTarget).closest(Upload.selectors.uploadElement), event.currentTarget.files);
+            return Upload.addFiles(parentMatchingSelector(event.currentTarget, Upload.selectors.uploadElement), event.currentTarget.files);
         }
     }, {
         key: "addFiles",
         value: function addFiles(upload, files) {
-            var file, i, imageType, input, len, preview, reader;
-            input = upload.find('input[type="file"]')[0];
-            for (i = 0, len = files.length; i < len; i++) {
-                file = files[i];
-                imageType = /^image\//;
+            var input = upload.find('input[type="file"]')[0];
+            for (var i = 0, len = files.length; i < len; i++) {
+                var file = files[i];
+                var imageType = /^image\//;
                 console.log(file.type);
-                preview = $('<div class="FileUpload-preview"> <div class="FileUpload-preview-info"><span>' + file.name + '</span><button type="button" class="FileUpload-preview-remove Button--transparent Icon Icon-times"></button><span class="FileUpload-preview-size">' + fileSize(file.size) + '</span></div> </div>');
-                preview.find(Upload.selectors.removeFile).on("click", function (event) {
+                var preview = document.createElement("div");
+                preview.classList.add("FileUpload-preview");
+                preview.innerHTML = '<div class="FileUpload-preview-info">' + '<span>' + file.name + '</span>' + '<button type="button" class="FileUpload-preview-remove Button--transparent Icon Icon-times"></button>' + '<span class="FileUpload-preview-size">' + fileSize(file.size) + '</span>' + '</div>';
+                preview.querySelector(Upload.selectors.removeFile).on("click", function (event) {
                     var button, index;
-                    button = $(event.currentTarget);
-                    preview = button.closest(Upload.selectors.previewElement);
+                    button = event.currentTarget;
+                    preview = parentMatchingSelector(button, Upload.selectors.previewElement);
                     index = input.filesToUpload.indexOf(file);
 
                     if (index > -1) {
                         input.filesToUpload.splice(index, 1);
                     }
-                    return preview.remove();
+                    Upload.recalculateDropzoneVisibility(upload, files);
+                    preview.parentNode.removeChild(preview);
                 });
-                upload.prepend(preview);
+                upload.insertBefore(preview, upload.firstChild);
                 if (input.filesToUpload == null) {
                     input.filesToUpload = [];
                 }
                 input.filesToUpload.push(file);
-                if (!imageType.test(file.type)) {
-                    continue;
+                if (imageType.test(file.type)) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.style.backgroundImage = 'url(' + e.target.result + ')';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    var container = document.createElement("div");
+                    container.classList.add("Icon-container");
+                    var icon = document.createElement("span");
+                    icon.classList.add("Icon", "Icon--gigantic", "Icon--light", "Icon-file-text");
+                    container.appendChild(icon);
+                    preview.insertBefore(container, preview.firstChild);
                 }
-                reader = new FileReader();
-                reader.onload = function (e) {
-                    console.log(e);
-                    preview.css("background-image", 'url(' + e.target.result + ')');
-                    return console.log(preview.css("background-image"));
-                };
-                reader.readAsDataURL(file);
             }
-            return console.log(files);
+            Upload.recalculateDropzoneVisibility(upload);
+            console.log(files);
+        }
+    }, {
+        key: "recalculateDropzoneVisibility",
+        value: function recalculateDropzoneVisibility(upload, files) {
+            var input = upload.querySelector('input[type="file"]');
+            var dropzone = upload.querySelector(Upload.selectors.dropzoneElement);
+            if (!input.multiple && input.filesToUpload.length > 0) {
+                dropzone.style.display = "none";
+            } else {
+                dropzone.style.display = "block";
+            }
         }
     }]);
 
@@ -1421,122 +2052,6 @@ function fileSize(sizeInBytes) {
 }
 "use strict";
 
-window.Oxygen || (window.Oxygen = {});
-Oxygen.reset = function () {
-    window.editors = [];
-    Oxygen.load = [];
-    Ajax.errorCallbacks = [];
-    Ajax.successCallbacks = [];
-    Oxygen.setBodyScrollable(true);
-    return Dropdown.handleGlobalClick({ target: document.body });
-};
-
-Oxygen.setBodyScrollable = function (scrollable) {
-    if (scrollable) {
-        document.body.classList.remove("Body--noScroll");
-    } else {
-        document.body.classList.add("Body--noScroll");
-    }
-};
-
-Oxygen.init = function (container) {
-
-    //
-    // -------------------------
-    //       FLASH MESSAGE
-    // -------------------------
-    //
-    // This small delay helps to
-    // reduce lag on page load.
-    //
-
-    setTimeout(Notification.initializeExistingMessages, 250);
-
-    Dialog.registerEvents(container);
-
-    //
-    // -------------------------
-    //       IMAGE EDITOR
-    // -------------------------
-    //
-    // Initialises image editors for the page.
-    //
-
-    ImageEditor.initialize(container);
-
-    //
-    // -------------------------
-    //           LOGIN
-    // -------------------------
-    //
-    // Login form animations.
-    //
-
-    if ($(".Login-form").length > 0) {
-        Oxygen.initLogin();
-    }
-
-    //
-    // -------------------------
-    //           OTHER
-    // -------------------------
-    //
-    // Other event handlers.
-    //
-
-    Dropdown.registerEvents(container);
-    EditableList.registerEvents(container);
-    Form.findAll(container);
-    Upload.registerEvents(container);
-    TabSwitcher.findAll(container);
-    Slider.findAll(container);
-
-    //
-    // -------------------------
-    //       CODE EDITOR
-    // -------------------------
-    //
-    // Initialises code editors for the page.
-    //
-
-    if (typeof editors !== "undefined" && editors !== null) {
-        Editor.createEditors(editors);
-    }
-
-    var load = Oxygen.load || [];
-    for (var i = 0, callback; i < load.length; i++) {
-        callback = load[i];
-        callback();
-    }
-};
-
-$().ready(function () {
-    MainNav.headroom();
-
-    if (typeof user !== "undefined" && user !== null) {
-        Preferences.setPreferences(user);
-    }
-
-    Oxygen.init($(document));
-
-    if (Preferences.get('pageLoad.smoothState.enabled', true) === true) {
-        window.smoothState = new SmoothState();
-        SmoothState.setTheme(Preferences.get('pageLoad.smoothState.theme', 'slide'));
-    }
-
-    var progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner"]);
-    console.log("Applying progress themes:");
-    console.log(progressThemes);
-    for (var i = 0, theme; i < progressThemes.length; i++) {
-        theme = progressThemes[i];
-        $(document.body).addClass("Page-progress--" + theme);
-    }
-
-    Form.registerKeydownHandler();
-    Dropdown.registerGlobalEvent();
-});
-"use strict";
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1550,7 +2065,7 @@ var CodeViewInterface = function () {
         _classCallCheck(this, CodeViewInterface);
 
         this.editor = editor;
-        this.view = null;
+        this.ace = null;
     }
 
     _createClass(CodeViewInterface, [{
@@ -1567,20 +2082,20 @@ var CodeViewInterface = function () {
             object.setShowPrintMargin(Preferences.get('editor.ace.showPrintMargin'));
             object.setShowInvisibles(Preferences.get('editor.ace.showInvisibles'));
             object.setReadOnly(this.editor.readOnly);
-            $("#" + this.editor.name + "-ace-editor").css("font-size", Preferences.get('editor.ace.fontSize'));
 
             // store object
-            return this.view = object;
+            this.ace = object;
+            this.view = document.getElementById(this.editor.name + "-ace-editor");
+            this.view.style.fontSize = Preferences.get('editor.ace.fontSize');
         }
     }, {
         key: "show",
         value: function show(full) {
             var _this = this;
 
-            var editor = $("#" + this.editor.name + "-ace-editor");
-            editor.removeClass(Editor.classes.state.isHidden);
+            this.view.classList.remove(Editor.classes.state.isHidden);
             if (full) {
-                return editor.css("width", "100%");
+                return this.view.style.width = "100%";
             }
 
             // after animation is completed
@@ -1592,22 +2107,22 @@ var CodeViewInterface = function () {
         key: "hide",
         value: function hide() {
             console.log("CodeViewInterface.hide");
-            return $("#" + this.editor.name + "-ace-editor").addClass(Editor.classes.state.isHidden);
+            this.view.classList.add(Editor.classes.state.isHidden);
         }
     }, {
         key: "valueFromForm",
         value: function valueFromForm() {
-            this.view.setValue(this.editor.textarea.val(), -1);
+            this.ace.setValue(this.editor.textarea.value, -1);
         }
     }, {
         key: "valueToForm",
         value: function valueToForm() {
-            this.editor.textarea.val(this.view.getValue());
+            this.editor.textarea.value = this.ace.getValue();
         }
     }, {
         key: "resize",
         value: function resize() {
-            this.view.resize();
+            this.ace.resize();
         }
     }]);
 
@@ -1628,47 +2143,51 @@ var DesignViewInterface = function () {
         _classCallCheck(this, DesignViewInterface);
 
         this.editor = editor;
-        this.view = null;
+        this.ck = null;
     }
 
     _createClass(DesignViewInterface, [{
         key: 'create',
         value: function create() {
+            var _this = this;
+
             var config = Preferences.get('editor.ckeditor', {});
             config.customConfig = config.customConfig || '';
             config.contentsCss = this.editor.stylesheets;
 
-            console.log(config);
-
             // create instance
-            var object = CKEDITOR.replace(this.editor.name + "-editor", config);
-
-            // store object
-            return this.view = object;
+            this.ck = CKEDITOR.replace(this.editor.name + "-editor", config);
+            this.ck.on("instanceReady", function (event) {
+                _this.view = document.getElementById("cke_" + _this.editor.name + "-editor");
+                //put your code here
+            });
         }
     }, {
         key: 'show',
         value: function show(full) {
-            $("#cke_" + this.editor.name + "-editor").show();
-            if (full) {
-                $("#" + this.editor.name + "-ace-editor").css("width", "100%");
-            }
-            return;
+            var _this2 = this;
+
+            this.ck.on("instanceReady", function (event) {
+                _this2.view.style.display = "block";
+                if (full) {
+                    _this2.view.style.width = "100%";
+                }
+            });
         }
     }, {
         key: 'hide',
         value: function hide() {
-            $("#cke_" + this.editor.name + "-editor").hide();
+            this.view.style.display = "none";
         }
     }, {
         key: 'valueFromForm',
         value: function valueFromForm() {
-            return this.view.setData(this.editor.textarea.val());
+            this.ck.setData(this.editor.textarea.value);
         }
     }, {
         key: 'valueToForm',
         value: function valueToForm() {
-            return $("textarea[name=\"" + this.editor.name + "\"]").val(this.view.getData());
+            this.editor.textarea.value = this.ck.getData();
         }
     }]);
 
@@ -1693,8 +2212,8 @@ var Editor = function () {
         value: function createEditors(editors) {
             for (var i = 0, editor; i < editors.length; i++) {
                 editor = editors[i];
-                var textarea = $("textarea[name=\"" + editor.name + "\"]");
-                if (textarea.length) {
+                var textarea = document.querySelector("textarea[name=\"" + editor.name + "\"]");
+                if (textarea) {
                     console.log("Editor found");
                     if (!(editor.mode != null)) {
                         editor.mode = user.editor.defaultMode;
@@ -1725,10 +2244,12 @@ var Editor = function () {
         this.readOnly = readOnly;
         this.stylesheets = stylesheets;
         this.modes = {};
-        this.textarea = $("textarea[name=\"" + this.name + "\"]");
-        this.container = this.textarea.parents("." + Editor.classes.editor.container);
-        var toggle = this.container.find("." + Editor.classes.button.fullscreenToggle);
-        this.fullscreenToggle = new FullscreenToggle(toggle, this.container, this.enterFullscreen, this.exitFullscreen);
+        this.textarea = document.querySelector("textarea[name=\"" + this.name + "\"]");
+        this.container = parentMatchingSelector(this.textarea, "." + Editor.classes.editor.container);
+        var toggle = this.container.querySelector("." + Editor.classes.button.fullscreenToggle);
+        if (toggle) {
+            this.fullscreenToggle = new FullscreenToggle(toggle, this.container, this.enterFullscreen, this.exitFullscreen);
+        }
 
         this.show();
         this.resizeToContent();
@@ -1750,12 +2271,36 @@ var Editor = function () {
             var _this = this;
 
             // switch editor button
-            this.container.find("." + Editor.classes.button.switchEditor).on("click", this.handleSwitchEditor);
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
 
-            // ask the form to tell us when its data is being read,
-            // so we can flush changes to the underlying <input>/<textarea> element
-            var form = $(this.container).parents("form")[0];
-            if (form !== undefined && form.formObject) {
+            try {
+                for (var _iterator = this.container.querySelectorAll("." + Editor.classes.button.switchEditor)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var button = _step.value;
+
+                    button.addEventListener("click", this.handleSwitchEditor);
+                }
+
+                // ask the form to tell us when its data is being read,
+                // so we can flush changes to the underlying <input>/<textarea> element
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            var form = parentMatchingSelector(this.container, "form");
+            if (form !== null && form.formObject) {
                 form.formObject.contentGenerators.push(function (form) {
                     return _this.valueToForm();
                 });
@@ -1825,7 +2370,7 @@ var Editor = function () {
         key: "resizeToContent",
         value: function resizeToContent() {
             // size to content
-            this.container.find("." + Editor.classes.editor.content).css("height", this.textarea.attr("rows") * 1.5 + "em");
+            this.container.querySelector("." + Editor.classes.editor.content).style.height = this.textarea.rows * 1.5 + "em";
 
             // resize ace
             if (this.modes.code) {
@@ -1855,7 +2400,7 @@ var Editor = function () {
         key: "handleSwitchEditor",
         value: function handleSwitchEditor(event) {
             console.log("Editor.handleSwitchEditor");
-            var editorToSwitch = $(event.target).attr("data-editor");
+            var editorToSwitch = event.currentTarget.getAttribute("data-editor");
             this.hide();
             return this.show(editorToSwitch);
         }
@@ -1908,44 +2453,35 @@ var PreviewInterface = function () {
     _createClass(PreviewInterface, [{
         key: "create",
         value: function create() {
-            var preview = $("<iframe id=\"" + this.editor.name + "-preview\" class=\"" + Editor.classes.editor.preview + "\"></iframe>");
-            preview.appendTo(this.editor.container.find(".Editor-content"));
-            return this.view = preview;
+            var preview = document.createElement("iframe");
+            preview.id = this.editor.name + "-preview";
+            preview.classList.add(Editor.classes.editor.preview);
+            this.editor.container.querySelector(".Editor-content").appendChild(preview);
+            this.view = preview;
         }
     }, {
         key: "show",
         value: function show(full) {
-            var preview = $("#" + this.editor.name + "-preview");
-            preview.removeClass(Editor.classes.state.isHidden);
+            var preview = document.getElementById(this.editor.name + "-preview");
+            preview.classList.remove(Editor.classes.state.isHidden);
 
             if (full) {
-                preview.css("width", "100%");
+                preview.style.width = "100%";
             }
-
-            // create the stylesheets
-            /*var head = "";
-            var iterable = this.editor.stylesheets;
-            for (var i = 0, stylesheet; i < iterable.length; i++) {
-                stylesheet = iterable[i];
-                head += "<link rel=\"stylesheet\" href=\"" + stylesheet + "\">";
-            }
-            this.view.contents().find("head").html(head);
-            return this.view.contents().find("html").addClass("no-js " + $("html").attr("class").replace("js ", ""));*/
         }
     }, {
         key: "hide",
         value: function hide() {
-            return $("#" + this.editor.name + "-preview").addClass(Editor.classes.state.isHidden);
+            return document.getElementById(this.editor.name + "-preview").classList.add(Editor.classes.state.isHidden);
         }
     }, {
         key: "valueFromForm",
         value: function valueFromForm() {
             var _this = this;
 
-            var promise = Ajax.request("GET", "content?content=" + encodeURIComponent(this.editor.textarea.val()), new FormData(), "html").then(function (data) {
-                _this.view[0].srcdoc = /*'data:text/html;charset=utf-8,' + encodeURIComponent(*/data;
-                console.log(data);
-            }).catch(Ajax.handleError);
+            var promise = window.fetch("content?content=" + encodeURIComponent(this.editor.textarea.value), FetchOptions.default().method('get')).then(Oxygen.respond.checkStatus).then(Oxygen.respond.text).then(function (data) {
+                _this.view.srcdoc = data;
+            }).catch(Oxygen.respond.error);
         }
 
         // we can't and don't want to do this
@@ -1957,22 +2493,6 @@ var PreviewInterface = function () {
 
     return PreviewInterface;
 }();
-
-function debounce(func, wait, immediate) {
-    var timeout;
-    return function () {
-        var context = this,
-            args = arguments;
-        var later = function later() {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-        };
-        var callNow = immediate && !timeout;
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-        if (callNow) func.apply(context, args);
-    };
-}
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1997,18 +2517,71 @@ var SplitViewInterface = function () {
     }, {
         key: "show",
         value: function show() {
-            this.editor.container.find("." + Editor.classes.editor.content).addClass(Editor.classes.state.contentIsSplit);
-            this.editor.show("code", false);
-            this.editor.show("preview", false);
-            $("#" + this.editor.name + "-ace-editor, #" + this.editor.name + "-preview").css("width", "50%");
-            return this.editor.modes.code.view.on("change", this.synchronize.bind(this));
+            var items = this.editor.container.querySelectorAll("." + Editor.classes.editor.content);
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var item = _step.value;
+
+                    item.classList.add(Editor.classes.state.contentIsSplit);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            var e = this.editor;
+
+            e.show("code", false);
+            e.show("preview", false);
+            e.modes.code.view.style.width = "50%";
+            e.modes.preview.view.style.width = "50%";
+            e.modes.code.ace.addEventListener("change", this.synchronize.bind(this));
         }
     }, {
         key: "hide",
         value: function hide() {
-            this.editor.container.find("." + Editor.classes.editor.content).removeClass(Editor.classes.state.contentIsSplit);
+            var items = this.editor.container.querySelectorAll("." + Editor.classes.editor.content);
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var item = _step2.value;
+
+                    item.classList.remove(Editor.classes.state.contentIsSplit);
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+
             this.editor.hide("code");
-            return this.editor.hide("preview");
+            this.editor.hide("preview");
         }
     }, {
         key: "valueFromForm",
@@ -2064,35 +2637,35 @@ var ImageEditor = function () {
         this.handleCropRelease = this.handleCropRelease.bind(this);
         this.handleResizeInputChange = this.handleResizeInputChange.bind(this);
         this.container = container;
-        this.image = this.container.find("." + ImageEditor.classes.layout.image);
-        if (!this.image.length) {
+        this.image = this.container.querySelector("." + ImageEditor.classes.layout.image);
+        if (!this.image) {
             throw new Error("<img> element doesn't exist");
         }
 
         this.forms = {
-            simple: this.image.parent().parent().find("." + ImageEditor.classes.form.simple),
-            advanced: this.image.parent().parent().find("." + ImageEditor.classes.form.advanced)
+            simple: this.image.parentNode.parentNode.querySelector("." + ImageEditor.classes.form.simple),
+            advanced: this.image.parentNode.parentNode.querySelector("." + ImageEditor.classes.form.advanced)
         };
 
         this.fields = {
             crop: {
-                x: this.container.find('[name="crop[x]"]'),
-                y: this.container.find('[name="crop[y]"]'),
-                width: this.container.find('[name="crop[width]"]'),
-                height: this.container.find('[name="crop[height]"]')
+                x: this.container.querySelector('[name="crop[x]"]'),
+                y: this.container.querySelector('[name="crop[y]"]'),
+                width: this.container.querySelector('[name="crop[width]"]'),
+                height: this.container.querySelector('[name="crop[height]"]')
             },
             resize: {
-                width: this.container.find('[name="resize[width]"]'),
-                height: this.container.find('[name="resize[height]"]'),
-                keepAspectRatio: this.container.find('[name="resize[keepAspectRatio]"][value="true"]')
+                width: this.container.querySelector('[name="resize[width]"]'),
+                height: this.container.querySelector('[name="resize[height]"]'),
+                keepAspectRatio: this.container.querySelector('[name="resize[keepAspectRatio]"][value="true"]')
             },
-            macro: this.container.find('[name="macro"]'),
-            name: this.container.find('[name="name"]'),
-            slug: this.container.find('[name="slug"]')
+            macro: this.container.querySelector('[name="macro"]'),
+            name: this.container.querySelector('[name="name"]'),
+            slug: this.container.querySelector('[name="slug"]')
         };
 
         var that = this;
-        this.image[0].onload = function () {
+        this.image.addEventListener("load", function () {
             console.log('Image Loaded');
             if (!(that.imageDimensions != null)) {
                 that.imageDimensions = { cropX: 0, cropY: 0 };
@@ -2105,14 +2678,14 @@ var ImageEditor = function () {
             that.fields.resize.width.val(that.imageDimensions.naturalWidth);
             that.fields.resize.height.val(that.imageDimensions.naturalHeight);
             return that.handleCropEnable();
-        };
+        });
 
-        this.fullscreenToggle = new FullscreenToggle(this.container.find("." + ImageEditor.classes.button.toggleFullscreen), this.container, function () {}, function () {});
+        this.fullscreenToggle = new FullscreenToggle(this.container.querySelector("." + ImageEditor.classes.button.toggleFullscreen), this.container);
 
-        this.container.find("." + ImageEditor.classes.button.apply).on("click", this.handlePreview);
-        this.container.find("." + ImageEditor.classes.button.save).on("click", this.handleSave);
-        this.container.find("." + ImageEditor.classes.form.crop).on("change", this.handleCropInputChange);
-        this.container.find("." + ImageEditor.classes.form.resize).on("change", this.handleResizeInputChange);
+        this.container.querySelector("." + ImageEditor.classes.button.apply).addEventListener("click", this.handlePreview);
+        this.container.querySelector("." + ImageEditor.classes.button.save).addEventListener("click", this.handleSave);
+        this.container.querySelector("." + ImageEditor.classes.form.crop).addEventListener("change", this.handleCropInputChange);
+        this.container.querySelector("." + ImageEditor.classes.form.resize).addEventListener("change", this.handleResizeInputChange);
 
         this.jCropApi = null;
         this.cropDisableCounter = 2;
@@ -2123,7 +2696,7 @@ var ImageEditor = function () {
         value: function handlePreview() {
             this.applyChanges(this.gatherData());
 
-            return this.progressNotification = new Notification({
+            this.progressNotification = new Notification({
                 content: "Processing Image",
                 status: "success"
             });
@@ -2137,7 +2710,7 @@ var ImageEditor = function () {
             data.slug = this.fields.slug.val();
             this.applyChanges(data);
 
-            return this.progressNotification = new Notification({
+            this.progressNotification = new Notification({
                 content: "Saving Image",
                 status: "success"
             });
@@ -2216,7 +2789,7 @@ var ImageEditor = function () {
     }, {
         key: "getAdvancedData",
         value: function getAdvancedData() {
-            return JSON.parse(this.fields.macro.val());
+            return JSON.parse(this.fields.macro.value);
         }
 
         // --------------------------------------------
@@ -2298,10 +2871,10 @@ var ImageEditor = function () {
         key: "handleCropSelect",
         value: function handleCropSelect(c) {
             if (this.cropDisableCounter > 1) {
-                this.fields.crop.x.val(Math.round(c.x / this.imageDimensions.width * this.imageDimensions.naturalWidth + this.imageDimensions.cropX));
-                this.fields.crop.y.val(Math.round(c.y / this.imageDimensions.height * this.imageDimensions.naturalHeight + this.imageDimensions.cropY));
-                this.fields.crop.width.val(Math.round(c.w / this.imageDimensions.width * this.imageDimensions.naturalWidth));
-                return this.fields.crop.height.val(Math.round(c.h / this.imageDimensions.height * this.imageDimensions.naturalHeight));
+                this.fields.crop.x.value = Math.round(c.x / this.imageDimensions.width * this.imageDimensions.naturalWidth + this.imageDimensions.cropX);
+                this.fields.crop.y.value = Math.round(c.y / this.imageDimensions.height * this.imageDimensions.naturalHeight + this.imageDimensions.cropY);
+                this.fields.crop.width.value = Math.round(c.w / this.imageDimensions.width * this.imageDimensions.naturalWidth);
+                return this.fields.crop.height.value = Math.round(c.h / this.imageDimensions.height * this.imageDimensions.naturalHeight);
             } else {
                 return this.cropDisableCounter++;
             }
@@ -2312,39 +2885,60 @@ var ImageEditor = function () {
             if (!(this.jCropApi != null)) {
                 return;
             }
-            var x = this.fields.crop.x.val() / this.imageDimensions.naturalWidth * this.imageDimensions.width - this.imageDimensions.cropX;
-            var y = this.fields.crop.y.val() / this.imageDimensions.naturalHeight * this.imageDimensions.height - this.imageDimensions.cropY;
+            var x = this.fields.crop.x.value / this.imageDimensions.naturalWidth * this.imageDimensions.width - this.imageDimensions.cropX;
+            var y = this.fields.crop.y.value / this.imageDimensions.naturalHeight * this.imageDimensions.height - this.imageDimensions.cropY;
             this.cropDisableCounter = 0;
-            return this.jCropApi.setSelect([x, y, x + this.fields.crop.width.val() / this.imageDimensions.naturalWidth * this.imageDimensions.width, y + this.fields.crop.height.val() / this.imageDimensions.naturalHeight * this.imageDimensions.height]);
+            return this.jCropApi.setSelect([x, y, x + this.fields.crop.width.value / this.imageDimensions.naturalWidth * this.imageDimensions.width, y + this.fields.crop.height.value / this.imageDimensions.naturalHeight * this.imageDimensions.height]);
         }
     }, {
         key: "handleCropRelease",
         value: function handleCropRelease() {
-            this.fields.crop.x.val(0);
-            this.fields.crop.y.val(0);
-            this.fields.crop.width.val(0);
-            return this.fields.crop.height.val(0);
+            this.fields.crop.x.value = 0;
+            this.fields.crop.y.value = 0;
+            this.fields.crop.width.value = 0;
+            this.fields.crop.height.value = 0;
         }
     }, {
         key: "handleResizeInputChange",
         value: function handleResizeInputChange(e) {
             if (this.fields.resize.keepAspectRatio[0].checked) {
                 var name = e.target.name;
-                var value = $(e.target).val();
+                var value = e.target.value;
                 console.log(name, value);
                 if (name === 'resize[width]') {
-                    return this.fields.resize.height.val(Math.round(value / this.imageDimensions.ratio));
+                    return this.fields.resize.height.value = Math.round(value / this.imageDimensions.ratio);
                 } else {
-                    return this.fields.resize.width.val(Math.round(value * this.imageDimensions.ratio));
+                    return this.fields.resize.width.value = Math.round(value * this.imageDimensions.ratio);
                 }
             }
         }
     }], [{
         key: "initialize",
         value: function initialize(container) {
-            return container.find("." + ImageEditor.classes.layout.container).each(function () {
-                return ImageEditor.list.push(new ImageEditor($(this)));
-            });
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = container.querySelectorAll("." + ImageEditor.classes.layout.container)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var item = _step.value;
+
+                    ImageEditor.list.push(new ImageEditor(item));
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
         }
     }]);
 
@@ -2406,35 +3000,157 @@ ImageEditor.classes = {
 
 Oxygen || (Oxygen = {});
 Oxygen.initLogin = function () {
-    var loginForm = $(".Login-form").addClass("Login--noTransition").addClass("Login--slideDown");
+    var loginForm = document.querySelector(".Login-form");
+    loginForm.classList.add("Login--noTransition");
+    loginForm.classList.add("Login--slideDown");
 
-    loginForm[0].offsetHeight;
-    loginForm.removeClass("Login--noTransition");
+    loginForm.offsetHeight;
+    loginForm.classList.remove("Login--noTransition");
 
     setTimeout(function () {
-        $("body").removeClass("Login--isHidden");
+        document.body.classList.remove("Login--isHidden");
     }, 500);
 
-    $(".Login-scrollDown").on("click", function () {
-        $(".Login-message").addClass("Login--slideUp");
-        loginForm.removeClass("Login--slideDown");
-        $(".Login-background--blur").addClass("Login--isHidden");
+    document.querySelector(".Login-scrollDown").addEventListener("click", function () {
+        document.querySelector(".Login-message").classList.add("Login--slideUp");
+        loginForm.classList.remove("Login--slideDown");
+        document.querySelector(".Login-background--blur").classList.add("Login--isHidden");
     });
 
-    loginForm.on("submit", function () {
-        loginForm.addClass("Login--slideUp");
+    var form = loginForm.querySelector("form");
+
+    form.addEventListener("submit", function () {
+        loginForm.classList.add("Login--slideUp");
     });
 
-    Ajax.errorCallbacks.push(function (error) {
-        loginForm.removeClass("Login--slideUp");
-        return error;
+    form.errorCallbacks = [];
+    form.errorCallbacks.push(function (error) {
+        loginForm.classList.remove("Login--slideUp");
+        throw error;
     });
 
-    Ajax.successCallbacks.push(function (data) {
-        if (data.status == "failed") {
-            loginForm.removeClass("Login--slideUp");
-        }
+    console.log("Setting Error Callbacks: ", form);
+
+    form.successCallbacks = [];
+    form.successCallbacks.push(function (data) {
+        data.clone().json().then(function (data) {
+            loginForm.classList.remove("Login--slideUp");
+        });
         return data;
     });
 };
-//# sourceMappingURL=app.js.map
+"use strict";
+
+window.Oxygen || (window.Oxygen = {});
+Oxygen.reset = function () {
+    window.editors = [];
+    Oxygen.load = [];
+    Oxygen.respond.errorCallbacks = [];
+    Oxygen.respond.successCallbacks = [];
+    Oxygen.setBodyScrollable(true);
+    return Dropdown.handleGlobalClick({ target: document.body });
+};
+
+Oxygen.setBodyScrollable = function (scrollable) {
+    if (scrollable) {
+        document.body.classList.remove("Body--noScroll");
+    } else {
+        document.body.classList.add("Body--noScroll");
+    }
+};
+
+Oxygen.init = function (container) {
+
+    //
+    // -------------------------
+    //       FLASH MESSAGE
+    // -------------------------
+    //
+    // This small delay helps to
+    // reduce lag on page load.
+    //
+
+    setTimeout(Notification.initializeExistingMessages, 250);
+
+    Dialog.registerEvents(container);
+
+    //
+    // -------------------------
+    //       IMAGE EDITOR
+    // -------------------------
+    //
+    // Initialises image editors for the page.
+    //
+
+    ImageEditor.initialize(container);
+
+    //
+    // -------------------------
+    //           LOGIN
+    // -------------------------
+    //
+    // Login form animations.
+    //
+
+    if (document.querySelector(".Login-form")) {
+        Oxygen.initLogin();
+    }
+
+    //
+    // -------------------------
+    //           OTHER
+    // -------------------------
+    //
+    // Other event handlers.
+    //
+
+    Dropdown.registerEvents(container);
+    EditableList.registerEvents(container);
+    Form.findAll(container);
+    Upload.registerEvents(container);
+    TabSwitcher.findAll(container);
+    Slider.findAll(container);
+
+    //
+    // -------------------------
+    //       CODE EDITOR
+    // -------------------------
+    //
+    // Initialises code editors for the page.
+    //
+
+    if (typeof editors !== "undefined" && editors !== null) {
+        Editor.createEditors(editors);
+    }
+
+    var load = Oxygen.load || [];
+    for (var i = 0, callback; i < load.length; i++) {
+        callback = load[i];
+        callback();
+    }
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+    MainNav.headroom();
+
+    if (typeof user !== "undefined" && user !== null) {
+        Preferences.setPreferences(user);
+    }
+
+    Oxygen.init(document);
+
+    if (Preferences.get('pageLoad.smoothState.enabled', true) === true) {
+        window.smoothState = new SmoothState();
+        SmoothState.setTheme(Preferences.get('pageLoad.smoothState.theme', 'slide'));
+    }
+
+    var progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner"]);
+    console.log("Applying progress themes:", progressThemes);
+    for (var i = 0, theme; i < progressThemes.length; i++) {
+        theme = progressThemes[i];
+        document.body.classList.add("Page-progress--" + theme);
+    }
+
+    Form.registerKeydownHandler();
+    Dropdown.registerGlobalEvent();
+});

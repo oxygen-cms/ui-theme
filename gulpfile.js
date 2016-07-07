@@ -7,13 +7,12 @@ var gulp            = require("gulp"),
     sourcemaps      = require("gulp-sourcemaps"),
     rename          = require('gulp-rename'),
     shell           = require("gulp-shell"),
-    notify          = require("gulp-notify"),
     gulpUtil        = require('gulp-util');
 
-var production = !gulpUtil.env.noProduction;
+var production = gulpUtil.env.release;
 
-if(!production) {
-    console.log("Not compiling for production");
+if(production) {
+    console.log("Compiling for production");
 }
 
 
@@ -23,31 +22,18 @@ if(!production) {
 
 gulp.task("scss", function() {
     sassOptions = {
-        outputStyle: production ? "compressed" : "expanded",
-        onError: function(err) {
-            return notify().write({
-                title: "SCSS Complilation Failed",
-                subtitle: "Failed",
-                message: err
-            });
-        }
+        outputStyle: production ? "compressed" : "expanded"
     };
 
     return gulp.src("resources/scss/*.scss")
         .pipe(libsass(sassOptions))
         .pipe(prefix(
             "last 2 versions",
-            "Explorer >= 9",
+            "Explorer >= 10",
             "Safari >= 5"
         ))
         .pipe(production ? rename(function(path) { path.extname = ".min.css"; }) : gulpUtil.noop())
-        .pipe(gulp.dest("public/css"))
-        .pipe(notify({
-            title: 'Compiled SCSS',
-            subtitle: 'Success',
-            message: "File: <%= file.relative %>",
-            onLast: true
-        }));
+        .pipe(gulp.dest("public/css"));
 });
 
 /* ==============
@@ -55,20 +41,14 @@ gulp.task("scss", function() {
    ============== */
 
 gulp.task("js", function() {
-    return gulp.src("resources/js/**/*.js")
+    return gulp.src(["resources/js/util.js", "resources/js/Core/*.js", "resources/js/Editor/*.js", "resources/js/ImageEditor/*.js", "resources/js/login.js", "resources/js/app.js"], { base: 'resources/js' })
         .pipe(sourcemaps.init())
             .pipe(babel())
             .pipe(concat("app.js"))
             .pipe(production ? uglify() : gulpUtil.noop())
             .pipe(production ? rename(function(path) { path.extname = ".min.js"; }) : gulpUtil.noop())
-        .pipe(sourcemaps.write("."))
-        .pipe(gulp.dest("public/js"))
-        .pipe(notify({
-            title: 'Compiled JavaScript',
-            subtitle: 'Success',
-            message: "File: <%= file.relative %>",
-            onLast: true
-        }));
+        .pipe(sourcemaps.write(".", { includeContent: false}))
+        .pipe(gulp.dest("public/js"));
 });
 
 gulp.task("vendor", shell.task([
@@ -76,16 +56,24 @@ gulp.task("vendor", shell.task([
     // Modernizr
     'rsync -a resources/vendor/modernizr-2.8.3.min.js public/vendor/modernizr.min.js',
     // Ace
-    'rsync -ar --delete bower_components/ace-builds/src-min/ public/vendor/ace',
+    'rsync -ar --delete node_modules/ace-builds/src-min/ public/vendor/ace',
+    // Vex
+    'mkdir -p public/vendor/vex',
+    'rsync -a node_modules/vex-js/js/vex.combined.min.js public/vendor/vex/vex.min.js',
+    'rsync -a node_modules/vex-js/css/vex.css public/vendor/vex/vex.css',
+    // Babel Polyfill
+    'mkdir -p public/vendor/babel-polyfill',
+    'rsync -a node_modules/babel-polyfill/dist/polyfill.min.js public/vendor/babel-polyfill/polyfill.min.js',
+    // window.fetch polyfill
+    'rsync -a node_modules/whatwg-fetch/fetch.js public/vendor/fetch.js',
+
+    /// Legacy dependencies using bower... We should get rid of this.
+
+    // Pace,
+    'rsync -a node_modules/pace/pace.min.js public/vendor/pace.min.js',
     // JQuery
     'rsync -a bower_components/jquery/dist/jquery.min.js public/vendor/jquery.min.js',
     'rsync -a bower_components/jquery/dist/jquery.min.map public/vendor/jquery.min.map',
-    // Vex
-    'mkdir -p public/vendor/vex',
-    'rsync -a bower_components/vex/js/vex.combined.min.js public/vendor/vex/vex.min.js',
-    'rsync -a bower_components/vex/css/vex.css public/vendor/vex/vex.css',
-    // Pace,
-    'rsync -a bower_components/pace/pace.min.js public/vendor/pace.min.js',
     // Smooth State
     'rsync -a bower_components/smoothstate-with-root-option/jquery.smoothState.min.js public/vendor/smoothState.js',
     // Headroom
@@ -100,9 +88,7 @@ gulp.task("vendor", shell.task([
     'mkdir -p public/vendor/jcrop',
     'rsync -a bower_components/Jcrop/js/jquery.Jcrop.min.js public/vendor/jcrop/jcrop.min.js',
     'rsync -a bower_components/Jcrop/css/jquery.Jcrop.min.css public/vendor/jcrop/jcrop.min.css',
-    // Babel Polyfill
-    'mkdir -p public/vendor/babel-polyfill',
-    'rsync -a node_modules/babel-polyfill/dist/polyfill.min.js public/vendor/babel-polyfill/polyfill.min.js'
+    'rsync -a bower_components/Jcrop/css/Jcrop.gif public/vendor/jcrop/Jcrop.gif',
 ]));
 
 gulp.task("build", ["js", "scss", "vendor"]);

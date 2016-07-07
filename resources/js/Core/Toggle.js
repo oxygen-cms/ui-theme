@@ -13,18 +13,18 @@ class Toggle {
     }
 
     registerEvents() {
-        this.toggle.on("click", event => this.handleToggle(event));
-        if(this.toggle.attr("data-enabled") == undefined) {
-            this.toggle.attr("data-enabled", "false");
+        this.toggle.addEventListener("click", event => this.handleToggle(event));
+        if(this.toggle.getAttribute("data-enabled") == undefined) {
+            this.toggle.setAttribute("data-enabled", "false");
         }
     }
 
     handleToggle(event) {
-        if (this.toggle.attr("data-enabled") === "true") {
-            this.toggle.attr("data-enabled", "false");
+        if (this.toggle.getAttribute("data-enabled") === "true") {
+            this.toggle.setAttribute("data-enabled", "false");
             this.disableCallback(event);
         } else {
-            this.toggle.attr("data-enabled", "true");
+            this.toggle.setAttribute("data-enabled", "true");
             this.enableCallback(event);
         }
     }
@@ -41,7 +41,7 @@ Toggle.classes = {
 
 class FullscreenToggle extends Toggle {
 
-    constructor(toggle, fullscreenElement, enterFullscreenCallback, exitFullscreenCallback) {
+    constructor(toggle, fullscreenElement, enterFullscreenCallback = function() {}, exitFullscreenCallback = function() {}) {
         super(toggle, null, null);
         this.fullscreenElement = fullscreenElement;
         this.enableCallback = this.enterFullscreen;
@@ -51,8 +51,8 @@ class FullscreenToggle extends Toggle {
     }
 
     enterFullscreen() {
-        this.fullscreenElement.addClass("FullscreenToggle--isFullscreen");
-        $(document.body).addClass("Body--noScroll");
+        this.fullscreenElement.classList.add("FullscreenToggle--isFullscreen");
+        document.body.classList.add("Body--noScroll");
 
         var elem = document.documentElement;
         if (elem.requestFullscreen) {
@@ -69,8 +69,8 @@ class FullscreenToggle extends Toggle {
     }
 
     exitFullscreen() {
-        this.fullscreenElement.removeClass("FullscreenToggle--isFullscreen");
-        $(document.body).removeClass("Body--noScroll");
+        this.fullscreenElement.classList.remove("FullscreenToggle--isFullscreen");
+        document.body.classList.remove("Body--noScroll");
 
         if (document.exitFullscreen) {
             document.exitFullscreen();
