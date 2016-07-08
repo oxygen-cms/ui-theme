@@ -26,13 +26,12 @@ Oxygen.initLogin = function() {
     form.modifyPromise = function(promise) {
         return promise.then(
             function(data) {
-                if(data.status !== "success") {
+                if(data.status !== undefined && data.status !== "success") {
                     loginForm.classList.remove("Login--slideUp");
                 }
                 return data;
             },
             function(error) {
-                alert("awesome");
                 loginForm.classList.remove("Login--slideUp");
                 throw error;
             }
