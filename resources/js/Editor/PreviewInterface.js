@@ -31,10 +31,18 @@ class PreviewInterface {
     }
 
     valueFromForm() {
-        Pace.start();
+        let data = {
+            _token: this.editor.container.querySelector("[name=\"contentPreviewCSRFToken\"]").value,
+            content: this.editor.textarea.value
+        };
+        let url = this.editor.container.querySelector("[name=\"contentPreviewURL\"]").value;
+        let method = this.editor.container.querySelector("[name=\"contentPreviewMethod\"]").value;
+        console.log("Generating content using data ", data);
         var promise = window.fetch(
-            "content?content=" + encodeURIComponent(this.editor.textarea.value),
-            FetchOptions.default().method('get')
+            url,
+            FetchOptions.default()
+                .method(method)
+                .body(getFormDataObject(data))
         )
             .then(Oxygen.respond.checkStatus)
             .then(Oxygen.respond.text)
