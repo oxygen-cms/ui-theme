@@ -100,7 +100,7 @@ Oxygen.respond.handleAPIError = function(error) {
                 console.err("Error response did not contain valid JSON: ", err);
                 NotificationCenter.present(new Notification({
                     content: "Whoops, looks like something went wrong.",
-                    status: "failed"
+                    status: "bug"
                 }));
             });
     } else {
@@ -126,7 +126,7 @@ Oxygen.handleAPIError = function(content) {
 
         NotificationCenter.present(new Notification({
             content: "Whoops, looks like something went wrong.",
-            status: "failed"
+            status: "bug"
         }));
     }
 };
