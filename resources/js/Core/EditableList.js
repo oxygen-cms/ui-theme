@@ -20,7 +20,7 @@ class EditableList {
     }
 
     static handleRemove(event) {
-        let item = parentOrSelfMatchingSelector(event.target, "." + EditableList.classes.row);
+        let item = parentOrSelfMatchingSelector(event.target, "." + EditableList.classes.remove);
         if(item) {
             var row = parentMatchingSelector(event.target, "." + EditableList.classes.row);
             if(row) {

@@ -47,7 +47,7 @@ gulp.task("js", function() {
             .pipe(concat("app.js"))
             .pipe(production ? uglify() : gulpUtil.noop())
             .pipe(production ? rename(function(path) { path.extname = ".min.js"; }) : gulpUtil.noop())
-        .pipe(sourcemaps.write(".", { includeContent: false}))
+        .pipe(sourcemaps.write("."))
         .pipe(gulp.dest("public/js"));
 });
 
