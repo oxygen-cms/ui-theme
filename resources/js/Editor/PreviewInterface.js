@@ -32,11 +32,11 @@ class PreviewInterface {
 
     valueFromForm() {
         let data = {
-            _token: this.editor.container.querySelector("[name=\"contentPreviewCSRFToken\"]").value,
+            _token: this.editor.container.querySelector(".contentPreviewCSRFToken").value,
             content: this.editor.textarea.value
         };
-        let url = this.editor.container.querySelector("[name=\"contentPreviewURL\"]").value;
-        let method = this.editor.container.querySelector("[name=\"contentPreviewMethod\"]").value;
+        let url = this.editor.container.querySelector(".contentPreviewURL").value;
+        let method = this.editor.container.querySelector(".contentPreviewMethod").value;
         console.log("Generating content using data ", data);
         var promise = window.fetch(
             url,

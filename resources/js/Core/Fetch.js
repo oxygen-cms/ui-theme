@@ -93,7 +93,16 @@ Oxygen.respond.redirect = function(data) {
 
 Oxygen.respond.handleAPIError = function(error) {
     if(error.response && error.response instanceof Response) {
-        error.response.json().then(Oxygen.handleAPIError);
+        error.response
+            .json()
+            .then(Oxygen.handleAPIError)
+            .catch(err => {
+                console.err("Error response did not contain valid JSON: ", err);
+                NotificationCenter.present(new Notification({
+                    content: "Whoops, looks like something went wrong.",
+                    status: "failed"
+                }));
+            });
     } else {
         throw error;
     }
