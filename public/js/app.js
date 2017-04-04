@@ -19,6 +19,22 @@ var parentMatchingSelector = function parentMatchingSelector(elem, selector) {
     return null;
 };
 
+var parentOrSelfMatchingSelector = function parentOrSelfMatchingSelector(elem, selector) {
+    if (elem.matchesSelector(selector)) {
+        return elem;
+    }
+
+    // Get closest match
+    for (; elem && elem !== document; elem = elem.parentNode) {
+
+        if (elem.matchesSelector(selector)) {
+            return elem;
+        }
+    }
+
+    return null;
+};
+
 NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
 HTMLCollection.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
 
@@ -316,22 +332,20 @@ var EditableList = function () {
         value: function handleAdd(event) {
             var container = event.currentTarget.parentNode.querySelector("." + EditableList.classes.container);
             var template = container.querySelector("." + EditableList.classes.template);
-            var template2 = template.clone();
+            var template2 = template.cloneNode(true);
             template2.classList.remove(EditableList.classes.template);
-            console.log(template2);
             container.appendChild(template2);
-            console.log('add');
         }
     }, {
         key: "handleRemove",
         value: function handleRemove(event) {
-            if (event.target.classList.contains(EditableList.classes.remove)) {
+            var item = parentOrSelfMatchingSelector(event.target, "." + EditableList.classes.remove);
+            if (item) {
                 var row = parentMatchingSelector(event.target, "." + EditableList.classes.row);
                 if (row) {
                     row.parentNode.removeChild(row);
+                    console.log('removed node');
                 }
-
-                console.log('remove');
             }
         }
     }]);
@@ -384,9 +398,9 @@ var FetchOptions = function () {
             return this;
         }
     }, {
-        key: "data",
-        value: function data(_data) {
-            this.data = _data;
+        key: "body",
+        value: function body(_body) {
+            this.body = _body;
             return this;
         }
     }, {
@@ -405,50 +419,22 @@ var FetchOptions = function () {
     return FetchOptions;
 }();
 
-/*class Ajax {
-
-    static request(type, url, data, dataType = "json") {
-        var promise = new Promise(function(resolve, reject) {
-            $.ajax({
-                dataType: dataType,
-                type: type,
-                url: url,
-                data: data,
-                processData: false,
-                contentType: false,
-                success: data => resolve(data),
-                error: (response, textStatus, errorThrown) => reject({ response: response, textStatus: textStatus, errorThrown: errorThrown })
-            })
-        });
-
-        return promise;
-    }
-
-}*/
-
 Oxygen.respond = {};
-Oxygen.error = {};
-
-Oxygen.respond.successCallbacks = [];
-Oxygen.respond.errorCallbacks = [];
 
 Oxygen.respond.text = function (response) {
     return response.text();
 };
 Oxygen.respond.json = function (response) {
-    return response.json(); /*.clone().json().catch(error => {
-                            response.text().then(text => {
-                            Oxygen.error.jsonParseError(error, text);
-                            });
-                            throw error;
-                            })*/
+    return response.json();
 };
 
 Oxygen.respond.checkStatus = function (response) {
     if (response.ok) {
         return response;
     } else {
-        response.clone().json().then(Oxygen.respond.handleAPIError);
+        var error = new Error();
+        error.response = response;
+        throw error;
         /*.catch(error => {
             response.text().then(text => {
                 Oxygen.error.jsonParseError(error, text);
@@ -459,7 +445,9 @@ Oxygen.respond.checkStatus = function (response) {
 };
 
 Oxygen.respond.notification = function (data) {
-    new Notification(data);
+    if (Notification.isNotification(data)) {
+        NotificationCenter.present(new Notification(data));
+    }
     return data;
 };
 
@@ -488,21 +476,36 @@ Oxygen.respond.redirect = function (data) {
 //     });
 // };
 
-Oxygen.error.handleAPIError = function (content) {
-    if (content.content) {
-        new Notification(content);
-    } else if (content.error) {
-        new Notification({
-            content: "Exception of type <code class=\"no-wrap\">" + content.error.type + "</code> with message <code class=\"no-wrap\">" + content.error.message + "</code> thrown at <code class=\"no-wrap\">" + content.error.file + ":" + content.error.line + "</code>",
-            status: "failed"
+Oxygen.respond.handleAPIError = function (error) {
+    if (error.response && error.response instanceof Response) {
+        error.response.json().then(Oxygen.handleAPIError).catch(function (err) {
+            console.error("Error response did not contain valid JSON: ", err);
+            NotificationCenter.present(new Notification({
+                content: "Whoops, looks like something went wrong.",
+                status: "bug"
+            }));
         });
+    } else {
+        throw error;
+    }
+};
+
+Oxygen.handleAPIError = function (content) {
+    console.error(content);
+    if (Notification.isNotification(content)) {
+        NotificationCenter.present(new Notification(content));
+    } else if (content.error) {
+        NotificationCenter.present(new Notification({
+            content: "PHP Exception of type <code class=\"no-wrap\">" + content.error.type + "</code> with message <code class=\"no-wrap\">" + content.error.message + "</code> thrown at <code class=\"no-wrap\">" + content.error.file + ":" + content.error.line + "</code>",
+            status: "bug"
+        }));
     } else {
         console.log("JSON error response unhandled: ", content);
 
-        new Notification({
+        NotificationCenter.present(new Notification({
             content: "Whoops, looks like something went wrong.",
-            status: "failed"
-        });
+            status: "bug"
+        }));
     }
 };
 "use strict";
@@ -518,8 +521,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 //
 // The Form helper can:
 // - display a message upon exit if there are any unsaved changes.
-// - send an ajax request with the form data on submit or change
-//
+// - send an async request with the form data on submit or change
 
 var Form = function () {
     _createClass(Form, null, [{
@@ -581,7 +583,7 @@ var Form = function () {
         _classCallCheck(this, Form);
 
         this.form = element;
-        this.originalData = Form.getFormData(this.form);
+        this.originalData = getFormData(this.form);
         //# content generators are notified before the form content is read
         this.contentGenerators = [];
         this.registerEvents();
@@ -622,14 +624,14 @@ var Form = function () {
                 }
             }
 
-            // Submit via AJAX
+            // Submit asynchronously
             this.form.addEventListener("submit", function (event) {
                 return _this.handleSubmit(event);
             });
-            if (this.form.classList.contains(Form.classes.sendAjaxOnChange)) {
+            if (this.form.classList.contains(Form.classes.submitAsyncOnChange)) {
                 this.form.addEventListener("change", function (event) {
                     event.preventDefault();
-                    _this.submitViaAjax();
+                    _this.submitAsync();
                 });
             }
 
@@ -647,7 +649,9 @@ var Form = function () {
                 return;
             }
             this.generateContent();
-            if (Form.getFormData(this.form) == this.originalData) {
+            console.log(getFormData(this.form));
+            console.log(this.originalData);
+            if (!formDataEqual(getFormData(this.form), this.originalData)) {
                 var target = event.currentTarget;
 
                 if (!(target.getAttribute("data-dialog-disabled") === "true")) {
@@ -675,17 +679,17 @@ var Form = function () {
                         callback: function callback(value) {
                             if (value == "continue") {
                                 target.setAttribute("data-dialog-disabled", "true");
-                                return target[0].click();
+                                return target.click();
                             } else if (value == "save") {
-                                if (_this2.form.classList.contains(Form.classes.sendAjax)) {
-                                    _this2.submitViaAjax(true);
+                                if (_this2.form.classList.contains(Form.classes.submitAsync)) {
+                                    _this2.submitAsync(true);
                                     target.setAttribute("data-dialog-disabled", "true");
-                                    target[0].click();
+                                    target.click();
                                 } else {
                                     // not sure if this works
                                     _this2.submit();
                                     //target.attr("data-dialog-disabled", "true");
-                                    //target[0].click();
+                                    //target.click();
                                 }
                             }
                         }
@@ -730,149 +734,144 @@ var Form = function () {
         key: "handleSubmit",
         value: function handleSubmit(event) {
             this.generateContent();
-            if (this.form.classList.contains(Form.classes.sendAjax) && !Form.disableAjax) {
+            if (this.form.classList.contains(Form.classes.submitAsync) && !Form.disableAsync) {
                 event.preventDefault();
-                this.submitViaAjax();
+                this.submitAsync();
             }
         }
     }, {
-        key: "submitViaAjax",
-        value: function submitViaAjax(ignoreRedirectResponse) {
+        key: "submitAsync",
+        value: function submitAsync(ignoreRedirectResponse) {
             var _this3 = this;
 
             var saveData = function saveData(data) {
                 if (data.status === 'success') {
-                    _this3.originalData = $(_this3.form).serializeArray();
+                    _this3.originalData = getFormData(_this3.form);
                     console.log('Form Saved Successfully');
                 }
                 return data;
             };
 
-            var promise = window.fetch(this.form.action, FetchOptions.default().method(this.form.method).data(Form.getFormDataObject(Form.getFormData(this.form))).wantJson()).then(Oxygen.respond.checkStatus).then(Oxygen.respond.json).then(saveData).then(Oxygen.respond.notification);
+            var data = getFormData(this.form);
+            console.log("Submitting Form with Data: ", data);
+
+            var promise = window.fetch(this.form.action, FetchOptions.default().method(this.form.method).body(getFormDataObject(data)).wantJson()).then(Oxygen.respond.checkStatus).then(Oxygen.respond.json).then(saveData);
+
+            var modifyPromise = this.form.modifyPromise;
+            if (modifyPromise === undefined) {
+                modifyPromise = function modifyPromise(promise) {
+                    return promise;
+                };
+            }
+
+            promise = promise.then(Oxygen.respond.notification);
 
             if (!ignoreRedirectResponse) {
                 promise = promise.then(Oxygen.respond.redirect);
             }
 
-            console.log("Form Error Callbacks: ", this.form, this.form.errorCallbacks);
-            var _iteratorNormalCompletion4 = true;
-            var _didIteratorError4 = false;
-            var _iteratorError4 = undefined;
-
-            try {
-                for (var _iterator4 = (this.form.successCallbacks || [])[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                    var callback = _step4.value;
-
-                    promise = promise.then(callback);
-                }
-            } catch (err) {
-                _didIteratorError4 = true;
-                _iteratorError4 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                        _iterator4.return();
-                    }
-                } finally {
-                    if (_didIteratorError4) {
-                        throw _iteratorError4;
-                    }
-                }
-            }
-
-            var _iteratorNormalCompletion5 = true;
-            var _didIteratorError5 = false;
-            var _iteratorError5 = undefined;
-
-            try {
-                for (var _iterator5 = (this.form.errorCallbacks || [])[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                    var _callback = _step5.value;
-
-                    promise = promise.catch(_callback);
-                }
-
-                //promise = promise.catch(Oxygen.error.catchAll);
-            } catch (err) {
-                _didIteratorError5 = true;
-                _iteratorError5 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                        _iterator5.return();
-                    }
-                } finally {
-                    if (_didIteratorError5) {
-                        throw _iteratorError5;
-                    }
-                }
-            }
+            promise = modifyPromise(promise);
+            promise = promise.catch(Oxygen.respond.handleAPIError);
 
             return promise;
         }
-    }], [{
-        key: "getFormData",
-        value: function getFormData(form) {
-            var data = {};
+    }]);
 
+    return Form;
+}();
+
+function getFormData(form) {
+    var data = {};
+
+    var _iteratorNormalCompletion4 = true;
+    var _didIteratorError4 = false;
+    var _iteratorError4 = undefined;
+
+    try {
+        for (var _iterator4 = form.querySelectorAll("[name]")[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var item = _step4.value;
+
+            if (item.type == "checkbox" || item.type == "radio") {
+                if (!item.checked) {
+                    continue;
+                }
+            }
+
+            if (item.name == undefined) {
+                console.dir(item);
+            }
+            if (item.type == "select-multiple") {
+                data[item.name] = [];
+                var _iteratorNormalCompletion5 = true;
+                var _didIteratorError5 = false;
+                var _iteratorError5 = undefined;
+
+                try {
+                    for (var _iterator5 = item.options[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                        var option = _step5.value;
+
+                        if (option.selected) {
+                            data[item.name].push(option.value);
+                        }
+                    }
+                } catch (err) {
+                    _didIteratorError5 = true;
+                    _iteratorError5 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                            _iterator5.return();
+                        }
+                    } finally {
+                        if (_didIteratorError5) {
+                            throw _iteratorError5;
+                        }
+                    }
+                }
+            } else if (item.type == "file") {
+                var ref;
+                var files = (ref = item.filesToUpload) != null ? ref : item.files;
+                data[item.name] = [];
+                for (var i = 0, file; i < files.length; i++) {
+                    file = files[i];
+                    data[item.name].push(file);
+                }
+            } else {
+                data[item.name] = item.value;
+            }
+        }
+    } catch (err) {
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                _iterator4.return();
+            }
+        } finally {
+            if (_didIteratorError4) {
+                throw _iteratorError4;
+            }
+        }
+    }
+
+    return data;
+}
+
+function getFormDataObject(data) {
+    var formData = new FormData();
+
+    for (var key in data) {
+        if (data[key] instanceof Array) {
             var _iteratorNormalCompletion6 = true;
             var _didIteratorError6 = false;
             var _iteratorError6 = undefined;
 
             try {
-                for (var _iterator6 = form.querySelectorAll("[name]")[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-                    var item = _step6.value;
+                for (var _iterator6 = data[key][Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                    var value = _step6.value;
 
-                    if (item.type == "checkbox" || item.type == "radio") {
-                        if (!item.checked) {
-                            continue;
-                        }
-                    }
-
-                    if (item.tagName == "select" && item.multiple) {
-                        if (item.value) {
-                            data[item.name] = [];
-                            var _iteratorNormalCompletion7 = true;
-                            var _didIteratorError7 = false;
-                            var _iteratorError7 = undefined;
-
-                            try {
-                                for (var _iterator7 = item.value[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-                                    var element = _step7.value;
-
-                                    data[item.name].push(element);
-                                }
-                            } catch (err) {
-                                _didIteratorError7 = true;
-                                _iteratorError7 = err;
-                            } finally {
-                                try {
-                                    if (!_iteratorNormalCompletion7 && _iterator7.return) {
-                                        _iterator7.return();
-                                    }
-                                } finally {
-                                    if (_didIteratorError7) {
-                                        throw _iteratorError7;
-                                    }
-                                }
-                            }
-                        } else {
-                            data[item.name] = [""];
-                        }
-                        continue;
-                    }
-
-                    if (item.type == "file") {
-                        var ref;
-                        var files = (ref = item.filesToUpload) != null ? ref : item.files;
-                        data[item.name] = [];
-                        for (var i = 0, file; i < files.length; i++) {
-                            file = files[i];
-                            data[item.name].push(file);
-                        }
-                        continue;
-                    }
-
-                    data[item.name] = item.value;
+                    formData.append(key, value);
                 }
             } catch (err) {
                 _didIteratorError6 = true;
@@ -888,62 +887,45 @@ var Form = function () {
                     }
                 }
             }
-
-            console.log("Form Data: ", data);
-            return data;
+        } else {
+            formData.append(key, data[key]);
         }
-    }, {
-        key: "getFormDataObject",
-        value: function getFormDataObject(data) {
-            var formData = new FormData();
+    }
 
-            for (var key in data) {
-                var _iteratorNormalCompletion8 = true;
-                var _didIteratorError8 = false;
-                var _iteratorError8 = undefined;
+    return formData;
+}
 
-                try {
-                    for (var _iterator8 = data[key][Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-                        var value = _step8.value;
-
-                        formData.append(key, value);
-                    }
-                } catch (err) {
-                    _didIteratorError8 = true;
-                    _iteratorError8 = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion8 && _iterator8.return) {
-                            _iterator8.return();
-                        }
-                    } finally {
-                        if (_didIteratorError8) {
-                            throw _iteratorError8;
-                        }
-                    }
-                }
+function formDataEqual(a, b) {
+    for (var property in b) {
+        if (b.hasOwnProperty(property)) {
+            if (a[property] !== b[property]) {
+                return false;
             }
-
-            return formData;
         }
-    }]);
+    }
+    for (var _property in a) {
+        if (a.hasOwnProperty(_property)) {
+            if (a[_property] !== b[_property]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
-    return Form;
-}();
-
-Form.disableAjax = false;
+Form.disableAsync = false;
 
 /**
- * Toggles whether form submission via AJAX is enabled globally, using Alt + Command/Control + J
+ * Toggles whether asynchronous form submission is enabled globally, using Alt + Command/Control + J
  */
 document.addEventListener("keydown", function (event) {
     if (event.altKey && (event.controlKey || event.metaKey) && event.which == 74) {
-        Form.disableAjax = !Form.disableAjax;
+        Form.disableAsync = !Form.disableAsync;
         event.preventDefault();
-        new Notification({
-            content: "Asynchronous form submission " + (Form.disableAjax ? "disabled" : "enabled"),
+        NotificationCenter.present(new Notification({
+            content: "Asynchronous form submission " + (Form.disableAsync ? "disabled" : "enabled"),
             status: "info"
-        });
+        }));
     }
 });
 
@@ -954,8 +936,8 @@ Form.messages = {
 Form.classes = {
     warnBeforeExit: "Form--warnBeforeExit",
     submitOnKeydown: "Form--submitOnKeydown",
-    sendAjax: "Form--sendAjax",
-    sendAjaxOnChange: "Form--sendAjaxOnChange",
+    submitAsync: "Form--sendAjax",
+    submitAsyncOnChange: "Form--sendAjaxOnChange",
     autoSubmit: "Form--autoSubmit",
     taggableInput: ".Form-taggable"
 };
@@ -1007,21 +989,26 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 //             Notification
 // ================================
 
-var Notification = function () {
-    _createClass(Notification, null, [{
+var NotificationCenter = function () {
+    function NotificationCenter() {
+        _classCallCheck(this, NotificationCenter);
+    }
+
+    _createClass(NotificationCenter, null, [{
         key: "initializeExistingMessages",
         value: function initializeExistingMessages() {
+            var notifications = document.querySelector("." + Notification.classes.container).querySelectorAll("." + Notification.classes.item);
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
             var _iteratorError = undefined;
 
             try {
-                for (var _iterator = document.querySelector("." + Notification.classes.container).querySelectorAll("." + Notification.classes.item)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                for (var _iterator = notifications[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                     var item = _step.value;
 
-                    new Notification({
+                    NotificationCenter.registerHide(new Notification({
                         message: item
-                    });
+                    }));
                 }
             } catch (err) {
                 _didIteratorError = true;
@@ -1038,8 +1025,46 @@ var Notification = function () {
                 }
             }
         }
+    }, {
+        key: "present",
+        value: function present(notification) {
+            document.querySelector("." + Notification.classes.container).appendChild(notification.message);
+
+            NotificationCenter.registerHide(notification);
+        }
+    }, {
+        key: "registerHide",
+        value: function registerHide(notification) {
+            if (notification.hideAfter != null) {
+                var _auto = setTimeout(function () {
+                    NotificationCenter.hide(notification);
+                }, notification.hideAfter);
+            }
+
+            notification.message.addEventListener("click", function (event) {
+                NotificationCenter.hide(notification);
+                if (typeof auto !== 'undefined') {
+                    clearTimeout(auto);
+                }
+            });
+        }
+    }, {
+        key: "hide",
+        value: function hide(notification) {
+            notification.message.classList.add("is-sliding-up");
+            setTimeout(function () {
+                var node = notification.message;
+                if (node.parentNode) {
+                    node.parentNode.removeChild(node);
+                }
+            }, 500);
+        }
     }]);
 
+    return NotificationCenter;
+}();
+
+var Notification = function () {
     function Notification(options) {
         _classCallCheck(this, Notification);
 
@@ -1047,47 +1072,32 @@ var Notification = function () {
             console.log(options.log);
         }
 
+        this.hideAfter = 15 * 1000;
+
         if (options.message) {
             // Constructs a Notification object
             // using a pre-existing message element.
             this.message = options.message;
             this.message.classList.remove("is-hidden");
-            this.registerHide();
         } else if (options.status && options.content) {
             // Constructs a Notification object,
             // creating a new message element.
             this.message = document.createElement("div");
             this.message.classList.add(Notification.classes.item);
             this.message.classList.add("Notification--" + options.status);
+            if (options.status == "failed") {
+                this.hideAfter = null;
+            }
             this.message.innerHTML = options.content + "<span class=\"Notification-dismiss Icon Icon-times\"></span>";
-            this.show();
         } else {
-            console.error("Invalid Arguments For New Notification: ", options);
+            throw new Error("Invalid Arguments For New Notification: " + JSON.stringify(options));
         }
     }
 
-    _createClass(Notification, [{
-        key: "show",
-        value: function show() {
-            document.querySelector("." + Notification.classes.container).appendChild(this.message);
-            this.registerHide();
-        }
-    }, {
-        key: "registerHide",
-        value: function registerHide() {
-            this.message.click(this.hide.bind(this));
-            setTimeout(this.hide.bind(this), 20000);
-        }
-    }, {
-        key: "hide",
-        value: function hide() {
-            this.message.classList.add("is-sliding-up");
-            setTimeout(this.remove.bind(this), 500);
-        }
-    }, {
-        key: "remove",
-        value: function remove() {
-            this.message.parentNode.removeChild(this.message);
+    _createClass(Notification, null, [{
+        key: "isNotification",
+        value: function isNotification(obj) {
+            return obj.message !== undefined || obj.content !== undefined && obj.status !== undefined;
         }
     }]);
 
@@ -1121,7 +1131,7 @@ var Preferences = function () {
     }, {
         key: 'get',
         value: function get(key) {
-            var fallback = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+            var fallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
             var o = Preferences.preferences;
 
@@ -1491,18 +1501,23 @@ var SmoothState = function () {
             var elements = document.getElementsByClassName('Block');
             var blocks = Array.prototype.slice.call(elements);
             blocks.reverse();
-            for (var i = 0; i < blocks.length; i++) {
+
+            var _loop = function _loop(i) {
                 var block = blocks[i];
                 setTimeout(function () {
                     return block.classList.add('Block--isExiting');
-                }, i * 100);
+                }, i * 50);
+            };
+
+            for (var i = 0; i < blocks.length; i++) {
+                _loop(i);
             }
 
-            setTimeout(function () {
-                if (this.loading) {
+            /*setTimeout(function() {
+                if(this.loading) {
                     return document.querySelector(".pace-activity").classList.add("pace-activity-active");
                 }
-            }, blocks.length * 100);
+            }, blocks.length * 100);*/
         }
     }, {
         key: "onProgress",
@@ -1520,7 +1535,7 @@ var SmoothState = function () {
             document.querySelector(".pace-activity").classList.remove("pace-activity-active");
             var blocks = document.getElementsByClassName('Block');
 
-            var _loop = function _loop() {
+            var _loop2 = function _loop2() {
                 var block = blocks[i];
                 block.classList.add('Block--isHidden');
                 setTimeout(function () {
@@ -1528,12 +1543,12 @@ var SmoothState = function () {
                     block.classList.add('Block--isEntering');
                     setTimeout(function () {
                         block.classList.remove('Block--isEntering');
-                    }, 350);
-                }, i * 100);
+                    }, 250);
+                }, i * 50);
             };
 
             for (var i = 0; i < blocks.length; i++) {
-                _loop();
+                _loop2();
             }
             container[0].style.display = 'block';
         }
@@ -1541,7 +1556,7 @@ var SmoothState = function () {
         key: "onAfter",
         value: function onAfter(container, content) {
             this.loading = false;
-            document.querySelector(".pace-activity").classList.remove("pace-activity-active");
+            //document.querySelector(".pace-activity").classList.remove("pace-activity-active");
             return Oxygen.init(document.getElementById("page"));
         }
     }, {
@@ -1607,9 +1622,10 @@ var SmoothState = function () {
     }, {
         key: "setTheme",
         value: function setTheme(theme) {
+            console.log("Setting SmoothState Theme: ", theme);
             var page = document.getElementById("page");
             if (page) {
-                page.classList.remove('Page-transition--' + theme);
+                page.classList.add('Page-transition--' + theme);
             }
         }
     }]);
@@ -1635,21 +1651,22 @@ var TabSwitcher = function () {
             var _iteratorError = undefined;
 
             try {
-                for (var _iterator = container.getElementsByClassName("." + TabSwitcher.classes.tabs)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                for (var _iterator = container.querySelectorAll(TabSwitcher.selectors.container)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                     var item = _step.value;
 
-                    var tabs = $(item);
+                    console.log(item);
+                    /*var tabs = $(item);
                     if (tabs.classList.contains(TabSwitcher.classes.content)) {
                         container = tabs;
                     } else {
                         container = tabs.parentNode.querySelector("." + TabSwitcher.classes.content);
                     }
+                     if (container.length === 0) { container = tabs.parentNode.parentNode.querySelector("." + TabSwitcher.classes.content); }*/
 
-                    if (container.length === 0) {
-                        container = tabs.parentNode.parentNode.querySelector("." + TabSwitcher.classes.content);
-                    }
+                    var tabs = item.matchesSelector(TabSwitcher.selectors.tabs) ? item : item.querySelector(TabSwitcher.selectors.tabs);
+                    var content = item.matchesSelector(TabSwitcher.selectors.content) ? item : item.querySelector(TabSwitcher.selectors.content);
 
-                    TabSwitcher.list.push(new TabSwitcher(tabs, container));
+                    TabSwitcher.list.push(new TabSwitcher(tabs, content));
                 }
             } catch (err) {
                 _didIteratorError = true;
@@ -1673,12 +1690,11 @@ var TabSwitcher = function () {
 
     }]);
 
-    function TabSwitcher(tabs, container) {
+    function TabSwitcher(tabs, content) {
         _classCallCheck(this, TabSwitcher);
 
-        this.handleClick = this.handleClick.bind(this);
         this.tabs = tabs;
-        this.container = container;
+        this.content = content;
         this.findDefault();
         this.registerEvents();
     }
@@ -1686,21 +1702,19 @@ var TabSwitcher = function () {
     _createClass(TabSwitcher, [{
         key: "findDefault",
         value: function findDefault() {
-            var tab = this.tabs.querySelector("[data-default-tab]").attr("data-switch-to-tab");
+            var tab = this.tabs.querySelector("[data-default-tab]").getAttribute("data-switch-to-tab");
             this.setTo(tab);
         }
     }, {
         key: "registerEvents",
         value: function registerEvents() {
+            var _this = this;
+
             this.tabs.querySelectorAll("[data-switch-to-tab]").forEach(function (item) {
-                item.addEventListener("click", this.handleClick);
+                item.addEventListener("click", function (event) {
+                    _this.setTo(event.currentTarget.getAttribute("data-switch-to-tab"));
+                });
             });
-        }
-    }, {
-        key: "handleClick",
-        value: function handleClick(event) {
-            var tab = $(event.currentTarget).attr("data-switch-to-tab");
-            this.setTo(tab);
         }
     }, {
         key: "setTo",
@@ -1712,8 +1726,9 @@ var TabSwitcher = function () {
             var _iteratorError2 = undefined;
 
             try {
-                for (var _iterator2 = this.container.querySelectorAll("[data-tab]")[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                for (var _iterator2 = this.content.querySelectorAll("[data-tab]")[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                     var item = _step2.value;
+
                     item.classList.remove(TabSwitcher.classes.active);
                 }
             } catch (err) {
@@ -1731,7 +1746,7 @@ var TabSwitcher = function () {
                 }
             }
 
-            this.container.querySelector("[data-tab=\"" + tab + "\"]").classList.add(TabSwitcher.classes.active);
+            this.content.querySelector("[data-tab=\"" + tab + "\"]").classList.add(TabSwitcher.classes.active);
 
             var _iteratorNormalCompletion3 = true;
             var _didIteratorError3 = false;
@@ -1740,6 +1755,7 @@ var TabSwitcher = function () {
             try {
                 for (var _iterator3 = this.tabs.querySelectorAll("[data-switch-to-tab]")[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
                     var _item = _step3.value;
+
                     _item.classList.remove(TabSwitcher.classes.active);
                 }
             } catch (err) {
@@ -1769,9 +1785,13 @@ var TabSwitcher = function () {
 // -----------------
 
 TabSwitcher.classes = {
-    tabs: "TabSwitcher-tabs",
-    content: "TabSwitcher-content",
     active: "TabSwitcher--isActive"
+};
+
+TabSwitcher.selectors = {
+    container: ".TabSwitcher",
+    tabs: ".TabSwitcher-tabs",
+    content: ".TabSwitcher-content"
 };
 
 TabSwitcher.list = [];
@@ -1841,12 +1861,12 @@ var FullscreenToggle = function (_Toggle) {
     _inherits(FullscreenToggle, _Toggle);
 
     function FullscreenToggle(toggle, fullscreenElement) {
-        var enterFullscreenCallback = arguments.length <= 2 || arguments[2] === undefined ? function () {} : arguments[2];
-        var exitFullscreenCallback = arguments.length <= 3 || arguments[3] === undefined ? function () {} : arguments[3];
+        var enterFullscreenCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+        var exitFullscreenCallback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function () {};
 
         _classCallCheck(this, FullscreenToggle);
 
-        var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(FullscreenToggle).call(this, toggle, null, null));
+        var _this2 = _possibleConstructorReturn(this, (FullscreenToggle.__proto__ || Object.getPrototypeOf(FullscreenToggle)).call(this, toggle, null, null));
 
         _this2.fullscreenElement = fullscreenElement;
         _this2.enableCallback = _this2.enterFullscreen;
@@ -1955,56 +1975,83 @@ var Upload = function () {
             event.preventDefault();
             event.currentTarget.classList.remove(Upload.states.onDragOver);
             var upload = parentMatchingSelector(event.currentTarget, Upload.selectors.uploadElement);
-            Upload.addFiles(upload, event.originalEvent.dataTransfer.files);
+            Upload.addFiles(upload, event.dataTransfer.files);
         }
     }, {
         key: "handleChange",
         value: function handleChange(event) {
-            return Upload.addFiles(parentMatchingSelector(event.currentTarget, Upload.selectors.uploadElement), event.currentTarget.files);
+            Upload.addFiles(parentMatchingSelector(event.currentTarget, Upload.selectors.uploadElement), event.currentTarget.files);
+            console.dir(event.currentTarget);
+            event.currentTarget.value = ""; // reset the input field, so that the change event is always called.
         }
     }, {
         key: "addFiles",
         value: function addFiles(upload, files) {
-            var input = upload.find('input[type="file"]')[0];
-            for (var i = 0, len = files.length; i < len; i++) {
-                var file = files[i];
-                var imageType = /^image\//;
-                console.log(file.type);
-                var preview = document.createElement("div");
-                preview.classList.add("FileUpload-preview");
-                preview.innerHTML = '<div class="FileUpload-preview-info">' + '<span>' + file.name + '</span>' + '<button type="button" class="FileUpload-preview-remove Button--transparent Icon Icon-times"></button>' + '<span class="FileUpload-preview-size">' + fileSize(file.size) + '</span>' + '</div>';
-                preview.querySelector(Upload.selectors.removeFile).on("click", function (event) {
-                    var button, index;
-                    button = event.currentTarget;
-                    preview = parentMatchingSelector(button, Upload.selectors.previewElement);
-                    index = input.filesToUpload.indexOf(file);
+            var input = upload.querySelector('input[type="file"]');
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
 
-                    if (index > -1) {
-                        input.filesToUpload.splice(index, 1);
+            try {
+                var _loop = function _loop() {
+                    var file = _step2.value;
+
+                    var imageType = /^image\//;
+                    console.log(file.type);
+                    var preview = document.createElement("div");
+                    preview.classList.add("FileUpload-preview");
+                    preview.innerHTML = '<div class="FileUpload-preview-info">' + '<span>' + file.name + '</span>' + '<button type="button" class="FileUpload-preview-remove Button--transparent Icon Icon-times"></button>' + '<span class="FileUpload-preview-size">' + fileSize(file.size) + '</span>' + '</div>';
+                    upload.insertBefore(preview, upload.firstChild);
+                    preview.querySelector(Upload.selectors.removeFile).addEventListener("click", function (event) {
+                        var button, index;
+                        button = event.currentTarget;
+                        preview = parentMatchingSelector(button, Upload.selectors.previewElement);
+                        index = input.filesToUpload.indexOf(file);
+
+                        if (index > -1) {
+                            input.filesToUpload.splice(index, 1);
+                        }
+                        Upload.recalculateDropzoneVisibility(upload, files);
+                        preview.parentNode.removeChild(preview);
+                    });
+                    if (input.filesToUpload == null) {
+                        input.filesToUpload = [];
                     }
-                    Upload.recalculateDropzoneVisibility(upload, files);
-                    preview.parentNode.removeChild(preview);
-                });
-                upload.insertBefore(preview, upload.firstChild);
-                if (input.filesToUpload == null) {
-                    input.filesToUpload = [];
+                    input.filesToUpload.push(file);
+                    if (imageType.test(file.type)) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            preview.style.backgroundImage = 'url(' + e.target.result + ')';
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        var container = document.createElement("div");
+                        container.classList.add("Icon-container");
+                        var icon = document.createElement("span");
+                        icon.classList.add("Icon", "Icon--gigantic", "Icon--light", "Icon-file-text");
+                        container.appendChild(icon);
+                        preview.insertBefore(container, preview.firstChild);
+                    }
+                };
+
+                for (var _iterator2 = files[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    _loop();
                 }
-                input.filesToUpload.push(file);
-                if (imageType.test(file.type)) {
-                    var reader = new FileReader();
-                    reader.onload = function (e) {
-                        preview.style.backgroundImage = 'url(' + e.target.result + ')';
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    var container = document.createElement("div");
-                    container.classList.add("Icon-container");
-                    var icon = document.createElement("span");
-                    icon.classList.add("Icon", "Icon--gigantic", "Icon--light", "Icon-file-text");
-                    container.appendChild(icon);
-                    preview.insertBefore(container, preview.firstChild);
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
                 }
             }
+
             Upload.recalculateDropzoneVisibility(upload);
             console.log(files);
         }
@@ -2095,7 +2142,7 @@ var CodeViewInterface = function () {
 
             this.view.classList.remove(Editor.classes.state.isHidden);
             if (full) {
-                return this.view.style.width = "100%";
+                this.view.style.width = "100%";
             }
 
             // after animation is completed
@@ -2230,7 +2277,7 @@ var Editor = function () {
     }]);
 
     function Editor(name, language, currentMode, readOnly) {
-        var stylesheets = arguments.length <= 4 || arguments[4] === undefined ? [] : arguments[4];
+        var stylesheets = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
 
         _classCallCheck(this, Editor);
 
@@ -2329,7 +2376,7 @@ var Editor = function () {
     }, {
         key: "show",
         value: function show(m) {
-            var full = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
+            var full = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
             var mode = this.getMode(m);
             if (!(this.modes[mode] != null)) {
@@ -2479,9 +2526,16 @@ var PreviewInterface = function () {
         value: function valueFromForm() {
             var _this = this;
 
-            var promise = window.fetch("content?content=" + encodeURIComponent(this.editor.textarea.value), FetchOptions.default().method('get')).then(Oxygen.respond.checkStatus).then(Oxygen.respond.text).then(function (data) {
+            var data = {
+                _token: this.editor.container.querySelector(".contentPreviewCSRFToken").value,
+                content: this.editor.textarea.value
+            };
+            var url = this.editor.container.querySelector(".contentPreviewURL").value;
+            var method = this.editor.container.querySelector(".contentPreviewMethod").value;
+            console.log("Generating content using data ", data);
+            var promise = window.fetch(url, FetchOptions.default().method(method).body(getFormDataObject(data))).then(Oxygen.respond.checkStatus).then(Oxygen.respond.text).then(function (data) {
                 _this.view.srcdoc = data;
-            }).catch(Oxygen.respond.error);
+            }).catch(Oxygen.respond.handleAPIError);
         }
 
         // we can't and don't want to do this
@@ -2625,19 +2679,16 @@ var ImageEditor = function () {
     // -----------------
 
     function ImageEditor(container) {
+        var _this = this;
+
         _classCallCheck(this, ImageEditor);
 
-        this.handlePreview = this.handlePreview.bind(this);
-        this.handleSave = this.handleSave.bind(this);
-        this.onRequestEnd = this.onRequestEnd.bind(this);
-        this.handleCropEnable = this.handleCropEnable.bind(this);
-        this.handleCropDisable = this.handleCropDisable.bind(this);
-        this.handleCropSelect = this.handleCropSelect.bind(this);
-        this.handleCropInputChange = this.handleCropInputChange.bind(this);
-        this.handleCropRelease = this.handleCropRelease.bind(this);
-        this.handleResizeInputChange = this.handleResizeInputChange.bind(this);
         this.container = container;
+        this.jCropApi = null;
+        this.cropDisableCounter = 0;
+        this.cropOrigin = { x: 0, y: 0 };
         this.image = this.container.querySelector("." + ImageEditor.classes.layout.image);
+        this.$image = $(this.image);
         if (!this.image) {
             throw new Error("<img> element doesn't exist");
         }
@@ -2664,56 +2715,46 @@ var ImageEditor = function () {
             slug: this.container.querySelector('[name="slug"]')
         };
 
-        var that = this;
-        this.image.addEventListener("load", function () {
+        this.image.addEventListener("load", function (event) {
             console.log('Image Loaded');
-            if (!(that.imageDimensions != null)) {
-                that.imageDimensions = { cropX: 0, cropY: 0 };
-            }
-            that.imageDimensions.width = this.clientWidth;
-            that.imageDimensions.height = this.clientHeight;
-            that.imageDimensions.naturalWidth = this.naturalWidth;
-            that.imageDimensions.naturalHeight = this.naturalHeight;
-            that.imageDimensions.ratio = this.naturalWidth / this.naturalHeight;
-            that.fields.resize.width.val(that.imageDimensions.naturalWidth);
-            that.fields.resize.height.val(that.imageDimensions.naturalHeight);
-            return that.handleCropEnable();
+            var image = event.currentTarget;
+            _this.imageAspectRatio = image.naturalWidth / image.naturalHeight;
+            _this.fields.resize.width.value = image.naturalWidth;
+            _this.fields.resize.height.value = image.naturalHeight;
+            _this.enableCropping();
         });
 
         this.fullscreenToggle = new FullscreenToggle(this.container.querySelector("." + ImageEditor.classes.button.toggleFullscreen), this.container);
 
-        this.container.querySelector("." + ImageEditor.classes.button.apply).addEventListener("click", this.handlePreview);
-        this.container.querySelector("." + ImageEditor.classes.button.save).addEventListener("click", this.handleSave);
-        this.container.querySelector("." + ImageEditor.classes.form.crop).addEventListener("change", this.handleCropInputChange);
-        this.container.querySelector("." + ImageEditor.classes.form.resize).addEventListener("change", this.handleResizeInputChange);
-
-        this.jCropApi = null;
-        this.cropDisableCounter = 2;
+        this.container.querySelector("." + ImageEditor.classes.button.apply).addEventListener("click", this.handlePreview.bind(this));
+        this.container.querySelector("." + ImageEditor.classes.button.save).addEventListener("click", this.handleSave.bind(this));
+        this.container.querySelectorAll("." + ImageEditor.classes.form.crop).forEach(function (item) {
+            item.addEventListener("input", _this.handleCropInputChange.bind(_this));
+        });
+        this.container.querySelectorAll("." + ImageEditor.classes.form.resize).forEach(function (item) {
+            item.addEventListener("input", _this.handleResizeInputChange.bind(_this));
+        });
     }
 
     _createClass(ImageEditor, [{
         key: "handlePreview",
         value: function handlePreview() {
             this.applyChanges(this.gatherData());
-
-            this.progressNotification = new Notification({
-                content: "Processing Image",
-                status: "success"
-            });
         }
     }, {
         key: "handleSave",
         value: function handleSave() {
             var data = this.gatherData();
             data.save = true;
-            data.name = this.fields.name.val();
-            data.slug = this.fields.slug.val();
+            data.name = this.fields.name.value;
+            data.slug = this.fields.slug.value;
             this.applyChanges(data);
 
             this.progressNotification = new Notification({
                 content: "Saving Image",
                 status: "success"
             });
+            NotificationCenter.present(this.progressNotification);
         }
     }, {
         key: "gatherData",
@@ -2731,15 +2772,15 @@ var ImageEditor = function () {
     }, {
         key: "getSimpleData",
         value: function getSimpleData() {
-            return this.removeDefaultFields(Form.getFormData(this.forms.simple));
+            return this.removeDefaultFields(getFormData(this.forms.simple));
         }
     }, {
         key: "removeDefaultFields",
         value: function removeDefaultFields(formData) {
-            var _this = this;
+            var _this2 = this;
 
             var resize = function resize(formData) {
-                return (!formData["resize[width]"] || formData["resize[width]"] === _this.imageDimensions.naturalWidth.toString()) && (!formData["resize[height]"] || formData["resize[height]"] === _this.imageDimensions.naturalHeight.toString());
+                return (!formData["resize[width]"] || formData["resize[width]"] === _this2.image.naturalWidth.toString()) && (!formData["resize[height]"] || formData["resize[height]"] === _this2.image.naturalHeight.toString());
             };
 
             var defaults = {
@@ -2768,10 +2809,18 @@ var ImageEditor = function () {
                     return item === "#ffffff";
                 },
                 "crop[x]": function cropX(item) {
-                    return _this.imageDimensions.cropX = item === "" ? 0 : parseInt(item);
+                    //return item === ""  0 : parseInt(item)
+                    if (_this2.pendingCropOrigin === undefined) {
+                        _this2.pendingCropOrigin = {};
+                    }
+                    _this2.pendingCropOrigin.x = parseInt(item);
                 },
                 "crop[y]": function cropY(item) {
-                    return _this.imageDimensions.cropY = item === "" ? 0 : parseInt(item);
+                    if (_this2.pendingCropOrigin === undefined) {
+                        _this2.pendingCropOrigin = {};
+                    }
+                    _this2.pendingCropOrigin.y = parseInt(item);
+                    //this.imageDimensions.cropY = item === "" ? 0 : parseInt(item);
                 }
             };
 
@@ -2799,47 +2848,63 @@ var ImageEditor = function () {
     }, {
         key: "applyChanges",
         value: function applyChanges(data) {
-            var _this2 = this;
+            var _this3 = this;
 
             if (this.applyingChanges) {
-                new Notification({
+                NotificationCenter.present(new Notification({
                     content: "Already Processing",
                     status: "failed"
-                });
+                }));
                 return;
+            } else {
+                this.progressNotification = new Notification({
+                    content: "Processing Image",
+                    status: "success"
+                });
+                NotificationCenter.present(this.progressNotification);
             }
 
-            $.ajax({
-                type: "GET",
-                url: this.image.attr("data-root"),
-                data: data,
-                contentType: false,
-                success: this.onRequestEnd,
-                error: function error() {
-                    _this2.progressNotification.hide();
-                    return Ajax.handleError();
+            this.applyingChanges = true;
+
+            console.log("Processing Image Using Commands: ", data);
+
+            window.fetch(this.image.getAttribute("data-root") + "?" + serializeToQueryString(data), FetchOptions.default().method("GET").wantJson()).then(Oxygen.respond.checkStatus).then(function (response) {
+                return response.blob();
+            }).then(function (myBlob) {
+                if (_this3.jCropApi != null) {
+                    _this3.jCropApi.destroy();
+                }
+                _this3.jCropApi = null;
+                _this3.cropOrigin = _this3.pendingCropOrigin;
+
+                var objectURL = URL.createObjectURL(myBlob);
+                _this3.image.style.removeProperty('width');
+                _this3.image.style.removeProperty('height');
+                _this3.image.src = objectURL;
+
+                //this.image[0].src = "data:image/jpeg;base64," + base64Encode(response);
+            }).then(function (r) {
+                NotificationCenter.present(new Notification({ content: "Image Processing Successful", status: "success" }));
+                _this3.applyingChanges = false;
+            }, function (e) {
+                _this3.applyingChanges = false;throw e;
+            }).catch(Oxygen.respond.handleAPIError);
+            /*$.ajax({
+                type:           "GET",
+                url:            this.image.attr("data-root"),
+                data:           data,
+                contentType:    false,
+                success:        this.onRequestEnd.bind(this),
+                error:          () => {
+                    //this.progressNotification.hide();
+                    //return Ajax.handleError();
                 },
-                xhr: function xhr() {
+                xhr:            () => {
                     var object = window.ActiveXObject ? new ActiveXObject("XMLHttp") : new XMLHttpRequest();
                     object.overrideMimeType("text/plain; charset=x-user-defined");
                     return object;
                 }
-            });
-            return this.applyingChanges = true;
-        }
-    }, {
-        key: "onRequestEnd",
-        value: function onRequestEnd(response, status, request) {
-            this.applyingChanges = false;
-            this.progressNotification.hide();
-            if (this.jCropApi != null) {
-                this.jCropApi.destroy();
-            }
-            this.jCropApi = null;
-            this.forms.simple.attr("data-changed", false);
-            this.forms.advanced.attr("data-changed", false);
-
-            return this.image[0].src = "data:image/jpeg;base64," + base64Encode(response);
+            });*/
         }
 
         // --------------------------------------------
@@ -2847,48 +2912,50 @@ var ImageEditor = function () {
         // --------------------------------------------
 
     }, {
-        key: "handleCropEnable",
-        value: function handleCropEnable() {
-            if (this.jCropApi != null) {
-                return this.jCropApi.enable();
-            } else {
-                var that = this;
-                return this.image.Jcrop({
-                    onChange: this.handleCropSelect,
-                    onSelect: this.handleCropSelect,
-                    onRelease: this.handleCropRelease
-                }, function () {
-                    return that.jCropApi = this;
-                });
-            }
-        }
-    }, {
-        key: "handleCropDisable",
-        value: function handleCropDisable() {
-            return this.jCropApi.disable();
+        key: "enableCropping",
+        value: function enableCropping() {
+            /*if(this.jCropApi != null) {
+                this.jCropApi.enable();
+            } else {*/
+            var that = this;
+            this.$image.Jcrop({
+                trueSize: [this.image.naturalWidth, this.image.naturalHeight],
+                onChange: this.handleCropSelect.bind(this),
+                onSelect: this.handleCropSelect.bind(this),
+                onRelease: this.handleCropRelease.bind(this)
+            }, function () {
+                that.jCropApi = this;
+            });
+            //}
         }
     }, {
         key: "handleCropSelect",
         value: function handleCropSelect(c) {
-            if (this.cropDisableCounter > 1) {
-                this.fields.crop.x.value = Math.round(c.x / this.imageDimensions.width * this.imageDimensions.naturalWidth + this.imageDimensions.cropX);
-                this.fields.crop.y.value = Math.round(c.y / this.imageDimensions.height * this.imageDimensions.naturalHeight + this.imageDimensions.cropY);
-                this.fields.crop.width.value = Math.round(c.w / this.imageDimensions.width * this.imageDimensions.naturalWidth);
-                return this.fields.crop.height.value = Math.round(c.h / this.imageDimensions.height * this.imageDimensions.naturalHeight);
+            if (this.cropDisableCounter <= 0) {
+                this.fields.crop.x.value = Math.round(c.x + this.cropOrigin.x).toString();
+                this.fields.crop.y.value = Math.round(c.y + this.cropOrigin.y).toString();
+                this.fields.crop.width.value = Math.round(c.w).toString();
+                this.fields.crop.height.value = Math.round(c.h).toString();
             } else {
-                return this.cropDisableCounter++;
+                this.cropDisableCounter--;
             }
         }
     }, {
         key: "handleCropInputChange",
-        value: function handleCropInputChange() {
-            if (!(this.jCropApi != null)) {
+        value: function handleCropInputChange(event) {
+            if (this.jCropApi === null) {
                 return;
             }
-            var x = this.fields.crop.x.value / this.imageDimensions.naturalWidth * this.imageDimensions.width - this.imageDimensions.cropX;
-            var y = this.fields.crop.y.value / this.imageDimensions.naturalHeight * this.imageDimensions.height - this.imageDimensions.cropY;
-            this.cropDisableCounter = 0;
-            return this.jCropApi.setSelect([x, y, x + this.fields.crop.width.value / this.imageDimensions.naturalWidth * this.imageDimensions.width, y + this.fields.crop.height.value / this.imageDimensions.naturalHeight * this.imageDimensions.height]);
+            var x = parseInt(this.fields.crop.x.value === "" ? 0 : this.fields.crop.x.value);
+            var y = parseInt(this.fields.crop.y.value === "" ? 0 : this.fields.crop.y.value);
+            var w = parseInt(this.fields.crop.width.value === "" ? 0 : this.fields.crop.width.value);
+            var h = parseInt(this.fields.crop.height.value === "" ? 0 : this.fields.crop.height.value);
+
+            // this counts down from 2, so the next two events generated by Jcrop are ignored.
+            this.cropDisableCounter = 2;
+
+            return this.jCropApi.setSelect([x, y, x + w, y + h]);
+            console.log("end");
         }
     }, {
         key: "handleCropRelease",
@@ -2906,9 +2973,9 @@ var ImageEditor = function () {
                 var value = e.target.value;
                 console.log(name, value);
                 if (name === 'resize[width]') {
-                    return this.fields.resize.height.value = Math.round(value / this.imageDimensions.ratio);
+                    return this.fields.resize.height.value = Math.round(value / this.imageAspectRatio);
                 } else {
-                    return this.fields.resize.width.value = Math.round(value * this.imageDimensions.ratio);
+                    return this.fields.resize.width.value = Math.round(value * this.imageAspectRatio.ratio);
                 }
             }
         }
@@ -2947,35 +3014,11 @@ var ImageEditor = function () {
 
 ;
 
-var base64Encode = function base64Encode(inputStr) {
-    var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-    var outputStr = "";
-    var i = 0;
-    while (i < inputStr.length) {
-
-        //all three "& 0xff" added below are there to fix a known bug
-        //with bytes returned by xhr.responseText
-        var byte1 = inputStr.charCodeAt(i++) & 0xff;
-        var byte2 = inputStr.charCodeAt(i++) & 0xff;
-        var byte3 = inputStr.charCodeAt(i++) & 0xff;
-        var enc1 = byte1 >> 2;
-        var enc2 = (byte1 & 3) << 4 | byte2 >> 4;
-        var enc3 = undefined;
-        var enc4 = undefined;
-        if (isNaN(byte2)) {
-            enc3 = enc4 = 64;
-        } else {
-            enc3 = (byte2 & 15) << 2 | byte3 >> 6;
-            if (isNaN(byte3)) {
-                enc4 = 64;
-            } else {
-                enc4 = byte3 & 63;
-            }
-        }
-        outputStr += b64.charAt(enc1) + b64.charAt(enc2) + b64.charAt(enc3) + b64.charAt(enc4);
-    }
-    return outputStr;
-};
+function serializeToQueryString(object) {
+    return Object.keys(object).reduce(function (a, k) {
+        a.push(k + '=' + encodeURIComponent(object[k]));return a;
+    }, []).join('&');
+}
 
 ImageEditor.list = [];
 
@@ -3023,21 +3066,17 @@ Oxygen.initLogin = function () {
         loginForm.classList.add("Login--slideUp");
     });
 
-    form.errorCallbacks = [];
-    form.errorCallbacks.push(function (error) {
-        loginForm.classList.remove("Login--slideUp");
-        throw error;
-    });
-
-    console.log("Setting Error Callbacks: ", form);
-
-    form.successCallbacks = [];
-    form.successCallbacks.push(function (data) {
-        data.clone().json().then(function (data) {
+    form.modifyPromise = function (promise) {
+        return promise.then(function (data) {
+            if (data.status !== undefined && data.status !== "success") {
+                loginForm.classList.remove("Login--slideUp");
+            }
+            return data;
+        }, function (error) {
             loginForm.classList.remove("Login--slideUp");
+            throw error;
         });
-        return data;
-    });
+    };
 };
 "use strict";
 
@@ -3045,8 +3084,6 @@ window.Oxygen || (window.Oxygen = {});
 Oxygen.reset = function () {
     window.editors = [];
     Oxygen.load = [];
-    Oxygen.respond.errorCallbacks = [];
-    Oxygen.respond.successCallbacks = [];
     Oxygen.setBodyScrollable(true);
     return Dropdown.handleGlobalClick({ target: document.body });
 };
@@ -3070,7 +3107,7 @@ Oxygen.init = function (container) {
     // reduce lag on page load.
     //
 
-    setTimeout(Notification.initializeExistingMessages, 250);
+    NotificationCenter.initializeExistingMessages();
 
     Dialog.registerEvents(container);
 
@@ -3154,3 +3191,4 @@ document.addEventListener("DOMContentLoaded", function () {
     Form.registerKeydownHandler();
     Dropdown.registerGlobalEvent();
 });
+//# sourceMappingURL=app.js.map

@@ -70,7 +70,8 @@
   margin: 0;
   padding: 0;
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html {
@@ -250,34 +251,34 @@ img, canvas {
 @-webkit-keyframes spin {
   0% {
     -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
     -webkit-transform: rotate(359deg);
-            transform: rotate(359deg);
+    transform: rotate(359deg);
   }
 }
 
 @keyframes spin {
   0% {
     -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
     -webkit-transform: rotate(359deg);
-            transform: rotate(359deg);
+    transform: rotate(359deg);
   }
 }
 
 @-webkit-keyframes slideDown4Em {
   0% {
     -webkit-transform: translateY(4em);
-            transform: translateY(4em);
+    transform: translateY(4em);
     opacity: 0;
   }
   100% {
     -webkit-transform: translateY(0);
-            transform: translateY(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
@@ -285,12 +286,12 @@ img, canvas {
 @keyframes slideDown4Em {
   0% {
     -webkit-transform: translateY(4em);
-            transform: translateY(4em);
+    transform: translateY(4em);
     opacity: 0;
   }
   100% {
     -webkit-transform: translateY(0);
-            transform: translateY(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
@@ -298,12 +299,12 @@ img, canvas {
 @-webkit-keyframes slideUp4Em {
   0% {
     -webkit-transform: translateY(0);
-            transform: translateY(0);
+    transform: translateY(0);
     opacity: 1;
   }
   100% {
     -webkit-transform: translateY(4em);
-            transform: translateY(4em);
+    transform: translateY(4em);
     opacity: 0;
   }
 }
@@ -311,12 +312,12 @@ img, canvas {
 @keyframes slideUp4Em {
   0% {
     -webkit-transform: translateY(0);
-            transform: translateY(0);
+    transform: translateY(0);
     opacity: 1;
   }
   100% {
     -webkit-transform: translateY(4em);
-            transform: translateY(4em);
+    transform: translateY(4em);
     opacity: 0;
   }
 }
@@ -324,12 +325,12 @@ img, canvas {
 @-webkit-keyframes slideUp50Percent {
   0% {
     -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
     opacity: 1;
   }
   100% {
     -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
     opacity: 0;
   }
 }
@@ -337,12 +338,12 @@ img, canvas {
 @keyframes slideUp50Percent {
   0% {
     -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
     opacity: 1;
   }
   100% {
     -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
     opacity: 0;
   }
 }
@@ -350,12 +351,12 @@ img, canvas {
 @-webkit-keyframes slideDown50Percent {
   0% {
     -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
     opacity: 0;
   }
   100% {
     -webkit-transform: translateY(0);
-            transform: translateY(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
@@ -363,12 +364,12 @@ img, canvas {
 @keyframes slideDown50Percent {
   0% {
     -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
     opacity: 0;
   }
   100% {
     -webkit-transform: translateY(0);
-            transform: translateY(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
@@ -412,12 +413,12 @@ img, canvas {
 @-webkit-keyframes slideRight {
   0% {
     -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
     opacity: 1;
   }
   100% {
     -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
     opacity: 0;
   }
 }
@@ -425,12 +426,12 @@ img, canvas {
 @keyframes slideRight {
   0% {
     -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
     opacity: 1;
   }
   100% {
     -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
     opacity: 0;
   }
 }
@@ -438,12 +439,12 @@ img, canvas {
 @-webkit-keyframes slideDown {
   0% {
     -webkit-transform: translateY(-100%);
-            transform: translateY(-100%);
+    transform: translateY(-100%);
     opacity: 0;
   }
   100% {
     -webkit-transform: translateY(0);
-            transform: translateY(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
@@ -451,12 +452,12 @@ img, canvas {
 @keyframes slideDown {
   0% {
     -webkit-transform: translateY(-100%);
-            transform: translateY(-100%);
+    transform: translateY(-100%);
     opacity: 0;
   }
   100% {
     -webkit-transform: translateY(0);
-            transform: translateY(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
@@ -474,7 +475,7 @@ img, canvas {
   margin: 0 auto;
   padding: 0.5em;
   -webkit-transition: -webkit-transform 0.2s ease;
-          transition: transform 0.2s ease;
+  transition: transform 0.2s ease;
   background-color: #fbfbfb;
 }
 
@@ -531,8 +532,7 @@ img, canvas {
   position: absolute;
   top: 50%;
   -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-          transform: translateY(-50%);
+  transform: translateY(-50%);
 }
 
 .Block--centered {
@@ -540,8 +540,7 @@ img, canvas {
   top: 50%;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
-      -ms-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .Block--link {
@@ -607,9 +606,9 @@ input[type="button"] {
   color: inherit;
   outline: none;
   -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   display: inline-block;
   margin: 0;
   padding: 0.75em 1em;
@@ -643,7 +642,7 @@ input[type="button"] {
 .Button--forward {
   background-color: #eee;
   -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
   position: relative;
   z-index: 1;
 }
@@ -683,7 +682,7 @@ input[type="button"] {
   left: -0.92rem;
   border-right: 1.3rem solid #eee;
   -webkit-transition: border-right-color 0.2s ease;
-          transition: border-right-color 0.2s ease;
+  transition: border-right-color 0.2s ease;
 }
 
 .Button--back:hover:before {
@@ -702,7 +701,7 @@ input[type="button"] {
   right: -0.92rem;
   border-left: 1.3rem solid #eee;
   -webkit-transition: border-left-color 0.2s ease;
-          transition: border-left-color 0.2s ease;
+  transition: border-left-color 0.2s ease;
 }
 
 .Button--forward:hover:before {
@@ -776,9 +775,9 @@ input[type="button"] {
    ================= */
 .Button-color--grey, .Dialog .vex-dialog-button.vex-dialog-button-secondary {
   background-color: #ccc;
-  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
   border-bottom: 0.25em solid #b3b3b3;
+  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .Button-color--grey:hover, .Dialog .vex-dialog-button.vex-dialog-button-secondary:hover {
@@ -793,9 +792,9 @@ input[type="button"] {
 
 .Button-color--white {
   background-color: #eee;
-  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
   border-bottom: 0.25em solid #d5d5d5;
+  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .Button-color--white:hover {
@@ -810,9 +809,9 @@ input[type="button"] {
 
 .Button-color--black {
   background-color: #333;
-  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
   border-bottom: 0.25em solid #1a1a1a;
+  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .Button-color--black:hover {
@@ -827,9 +826,9 @@ input[type="button"] {
 
 .Button-color--green {
   background-color: #2ecc40;
-  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
   border-bottom: 0.25em solid #25a233;
+  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .Button-color--green:hover {
@@ -844,9 +843,9 @@ input[type="button"] {
 
 .Button-color--red {
   background-color: #ff6f55;
-  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
   border-bottom: 0.25em solid #ff4422;
+  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .Button-color--red:hover {
@@ -861,9 +860,9 @@ input[type="button"] {
 
 .Button-color--blue, .Dialog .vex-dialog-button.vex-dialog-button-primary {
   background-color: #83c8fc;
-  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
   border-bottom: 0.25em solid #51b2fb;
+  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .Button-color--blue:hover, .Dialog .vex-dialog-button.vex-dialog-button-primary:hover {
@@ -887,16 +886,16 @@ input[type="button"] {
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
   -webkit-flex-direction: row;
-      -ms-flex-direction: row;
-          flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
   -webkit-box-pack: start;
   -webkit-justify-content: flex-start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
   -webkit-box-align: stretch;
   -webkit-align-items: stretch;
-      -ms-flex-align: stretch;
-          align-items: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
 }
 
 .no-flexbox .ButtonTabGroup:before, .no-flexbox .ButtonTabGroup:after {
@@ -947,19 +946,19 @@ input[type="button"] {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
     -webkit-flex-direction: row;
-        -ms-flex-direction: row;
-            flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
     -webkit-box-pack: start;
     -webkit-justify-content: flex-start;
-        -ms-flex-pack: start;
-            justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
     -webkit-box-align: center;
     -webkit-align-items: center;
-        -ms-flex-align: center;
-            align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
     -webkit-flex-wrap: wrap;
-        -ms-flex-wrap: wrap;
-            flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
   }
   .no-flexbox .Row--layout:before, .no-flexbox .Row:before, .no-flexbox .Row--layout:after, .no-flexbox .Row:after {
     content: " ";
@@ -975,8 +974,8 @@ input[type="button"] {
 
 .Row--wrap {
   -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-          flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
 .Row--visual, .Row {
@@ -988,10 +987,10 @@ input[type="button"] {
 }
 
 .Row--alignTop {
-  -webkit-box-align: start !important;
+  -webkit-box-align: flex-start !important;
   -webkit-align-items: flex-start !important;
-      -ms-flex-align: start !important;
-          align-items: flex-start !important;
+  -ms-flex-align: flex-start !important;
+  align-items: flex-start !important;
 }
 
 .Row--border {
@@ -1071,12 +1070,12 @@ input[type="button"] {
 
 .Dialog.vex.vex-closing .vex-content {
   -webkit-animation: slideUp50Percent 0.5s both;
-          animation: slideUp50Percent 0.5s both;
+  animation: slideUp50Percent 0.5s both;
 }
 
 .Dialog .vex-content {
   -webkit-animation: slideDown50Percent 0.5s both;
-          animation: slideDown50Percent 0.5s both;
+  animation: slideDown50Percent 0.5s both;
 }
 
 .Dialog .vex-content {
@@ -1088,7 +1087,7 @@ input[type="button"] {
   position: relative;
   margin: 0 auto;
   max-width: 100%;
-  width: 30em;
+  width: 35em;
 }
 
 .Dialog .vex-dialog-form .vex-dialog-message {
@@ -1195,7 +1194,7 @@ input[type="button"] {
   border-bottom: 1px solid #ccc;
   background-color: #4d4d4d;
   -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -1215,7 +1214,7 @@ input[type="button"] {
 .Dropdown--round .Dropdown-item {
   background-color: #eee;
   -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .Dropdown--round .Dropdown-item:hover {
@@ -1285,8 +1284,8 @@ input[type="button"] {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 .no-flexbox .Editor.FullscreenToggle--isFullscreen > .flex-item:before, .no-flexbox .Editor.FullscreenToggle--isFullscreen > .flex-item:after {
@@ -1305,8 +1304,8 @@ input[type="button"] {
 .FullscreenToggle--isFullscreen .Editor-content {
   -webkit-box-flex: 1;
   -webkit-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
+  -ms-flex: 1;
+  flex: 1;
 }
 
 .js .Editor-header + .Editor-content {
@@ -1316,8 +1315,8 @@ input[type="button"] {
 .Editor-header,
 .Editor-footer {
   -webkit-align-content: space-between;
-      -ms-flex-line-pack: justify;
-          align-content: space-between;
+  -ms-flex-line-pack: justify;
+  align-content: space-between;
   background-color: #fbfbfb;
   border: 1px solid #ccc;
   min-height: 4em;
@@ -1332,15 +1331,15 @@ input[type="button"] {
   display: flex;
   -webkit-box-pack: start;
   -webkit-justify-content: flex-start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
   -webkit-box-align: center;
   -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-          flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
 .Editor-header > *,
@@ -1390,7 +1389,7 @@ input[type="button"] {
   width: 100%;
   height: 100%;
   -webkit-transition: width 0.2s ease, -webkit-transform 0.2s ease;
-          transition: width 0.2s ease, transform 0.2s ease;
+  transition: width 0.2s ease, transform 0.2s ease;
 }
 
 .cke_chrome {
@@ -1403,8 +1402,7 @@ input[type="button"] {
 
 .ace_editor.Editor--hidden {
   -webkit-transform: translateX(-100%);
-      -ms-transform: translateX(-100%);
-          transform: translateX(-100%);
+  transform: translateX(-100%);
 }
 
 .Editor-preview {
@@ -1414,8 +1412,7 @@ input[type="button"] {
 
 .Editor-preview.Editor--hidden {
   -webkit-transform: translateX(100%);
-      -ms-transform: translateX(100%);
-          transform: translateX(100%);
+  transform: translateX(100%);
 }
 
 .Editor-content--isSplit .Editor-preview {
@@ -1432,32 +1429,30 @@ input[type="button"] {
 .cke_chrome {
   border: none !important;
   -webkit-box-shadow: none !important;
-          box-shadow: none !important;
+  box-shadow: none !important;
   border-radius: 0 !important;
   -webkit-box-sizing: border-box !important;
-          box-sizing: border-box !important;
+  -moz-box-sizing: border-box !important;
+  box-sizing: border-box !important;
   width: 100% !important;
   height: 100% !important;
 }
 
 .cke_inner {
   height: 100% !important;
-  display: -webkit-box !important;
-  display: -webkit-flex !important;
-  display: -ms-flexbox !important;
   display: flex !important;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 .cke_contents {
   -webkit-box-flex: 1;
   -webkit-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
+  -ms-flex: 1;
+  flex: 1;
   height: 100% !important;
   position: relative !important;
 }
@@ -1507,7 +1502,7 @@ input[type="button"] {
   line-height: 1.5;
   border-radius: 0.5em;
   -webkit-animation: slideDown 0.5s both;
-          animation: slideDown 0.5s both;
+  animation: slideDown 0.5s both;
   max-height: 20em;
   word-wrap: break-word;
   overflow: auto;
@@ -1531,7 +1526,7 @@ input[type="button"] {
   float: right;
   color: rgba(51, 51, 51, 0.5);
   -webkit-transition: color 0.2s ease;
-          transition: color 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .Notification:hover .Notification-dismiss {
@@ -1544,12 +1539,12 @@ input[type="button"] {
 
 .Notification--fixed {
   -webkit-animation: none;
-          animation: none;
+  animation: none;
 }
 
 .Notification.is-sliding-up {
   -webkit-animation-name: slideRight;
-          animation-name: slideRight;
+  animation-name: slideRight;
 }
 
 .js .Notification.is-hidden {
@@ -1558,32 +1553,25 @@ input[type="button"] {
 
 .Notification--success {
   background-color: #2ecc40;
-  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .Notification--warning {
   background-color: #ff851b;
-  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .Notification--failed {
   background-color: #ff6f55;
-  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .Notification--bug {
-  background-color: #ff0000;
-  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
+  background-image: -webkit-repeating-linear-gradient(45deg, #600, #600 30px, #500 30px, #500 60px);
+  background-image: repeating-linear-gradient(45deg, #600, #600 30px, #500 30px, #500 60px);
+  border: 2px solid #000;
+  color: white;
 }
 
 .Notification--info {
   background-color: #83c8fc;
-  -webkit-transition: background-color 0.2s ease, border-color 0.2s ease;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 /* ====================================================================
@@ -1612,7 +1600,7 @@ select, textarea {
   font-size: 14px;
   font-size: 1rem;
   -webkit-transition: border 0.3s ease, background-color 0.3s ease, -webkit-box-shadow 0.3s ease;
-          transition: border 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  transition: border 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
   background-color: #fff;
 }
 
@@ -1625,7 +1613,7 @@ input[type=datetime]:focus,
 select:focus, textarea:focus {
   outline: none;
   -webkit-box-shadow: inset 0 0 8px #ccc;
-          box-shadow: inset 0 0 8px #ccc;
+  box-shadow: inset 0 0 8px #ccc;
   background-color: #ffffff;
   border-color: #888;
 }
@@ -1728,15 +1716,15 @@ select.Form-input--transparent, textarea.Form-input--transparent {
   display: flex;
   -webkit-box-pack: end;
   -webkit-justify-content: flex-end;
-      -ms-flex-pack: end;
-          justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
   -webkit-box-align: center;
   -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-          flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
 .Form-footer > * {
@@ -1776,9 +1764,9 @@ select.Form-input--transparent, textarea.Form-input--transparent {
   height: 1.5em;
   cursor: pointer;
   -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .Form-toggle:empty ~ .Form-toggle-label:before,
@@ -1790,7 +1778,7 @@ select.Form-input--transparent, textarea.Form-input--transparent {
   bottom: 0;
   left: 0;
   -webkit-transition: all 100ms ease-in;
-          transition: all 100ms ease-in;
+  transition: all 100ms ease-in;
 }
 
 /* ------------------
@@ -1851,19 +1839,19 @@ select.Form-input--transparent, textarea.Form-input--transparent {
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
   -webkit-flex-direction: row;
-      -ms-flex-direction: row;
-          flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
   -webkit-box-pack: start;
   -webkit-justify-content: flex-start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
   -webkit-box-align: center;
   -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-          flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
 .no-flexbox .FileUpload:before, .no-flexbox .FileUpload:after {
@@ -1887,10 +1875,6 @@ select.Form-input--transparent, textarea.Form-input--transparent {
   margin: 0 2em 2em 0;
 }
 
-.FileUpload--onDragOver {
-  border: 2px dashed #888;
-}
-
 .FileUpload-preview {
   background-size: contain;
   background-repeat: no-repeat;
@@ -1905,12 +1889,12 @@ select.Form-input--transparent, textarea.Form-input--transparent {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   -webkit-box-pack: center;
   -webkit-justify-content: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
 }
 
 .no-flexbox .FileUpload-preview > .flex-item:before, .no-flexbox .FileUpload-preview > .flex-item:after {
@@ -1947,6 +1931,10 @@ select.Form-input--transparent, textarea.Form-input--transparent {
   border-radius: 0.5em;
   border: 2px dashed #ccc;
   background-color: #fdfdfd;
+}
+
+.FileUpload--onDragOver {
+  border: 2px dashed #888;
 }
 
 .FileUpload-drop {
@@ -2004,12 +1992,12 @@ select.Form-input--transparent, textarea.Form-input--transparent {
   border-radius: 0.5em;
   background-color: #83c8fc;
   -webkit-transition: width ease 0.5s, opacity ease 0.5s;
-          transition: width ease 0.5s, opacity ease 0.5s;
+  transition: width ease 0.5s, opacity ease 0.5s;
 }
 
 .ProgressBar-fill--jump {
   -webkit-transition: none;
-          transition: none;
+  transition: none;
 }
 
 .ProgressBar-fill:after {
@@ -2023,7 +2011,7 @@ select.Form-input--transparent, textarea.Form-input--transparent {
   background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
   background-size: 50px 50px;
   -webkit-animation: ProgressBar-move 2s linear infinite;
-          animation: ProgressBar-move 2s linear infinite;
+  animation: ProgressBar-move 2s linear infinite;
 }
 
 @-webkit-keyframes ProgressBar-move {
@@ -2079,14 +2067,14 @@ input[type=checkbox] + .Form-checkbox-label:before {
   margin-right: 0.3em;
   width: 1em;
   -webkit-animation: Form-checkbox-untick 180ms ease;
-          animation: Form-checkbox-untick 180ms ease;
+  animation: Form-checkbox-untick 180ms ease;
 }
 
 input[type=checkbox]:checked + .Form-checkbox-label:before {
   content: "\f14a";
   color: #0791f9;
   -webkit-animation: Form-checkbox-tick 180ms ease;
-          animation: Form-checkbox-tick 180ms ease;
+  animation: Form-checkbox-tick 180ms ease;
 }
 
 input[type=checkbox]:disabled + .Form-checkbox-label {
@@ -2101,30 +2089,30 @@ input[type=checkbox]:disabled + .Form-checkbox-label:before {
 @-webkit-keyframes Form-checkbox-tick {
   0% {
     -webkit-transform: scale(0);
-            transform: scale(0);
+    transform: scale(0);
   }
   90% {
     -webkit-transform: scale(1.2);
-            transform: scale(1.2);
+    transform: scale(1.2);
   }
   100% {
     -webkit-transform: scale(1);
-            transform: scale(1);
+    transform: scale(1);
   }
 }
 
 @keyframes Form-checkbox-tick {
   0% {
     -webkit-transform: scale(0);
-            transform: scale(0);
+    transform: scale(0);
   }
   90% {
     -webkit-transform: scale(1.2);
-            transform: scale(1.2);
+    transform: scale(1.2);
   }
   100% {
     -webkit-transform: scale(1);
-            transform: scale(1);
+    transform: scale(1);
   }
 }
 
@@ -2132,12 +2120,12 @@ input[type=checkbox]:disabled + .Form-checkbox-label:before {
   0% {
     opacity: 0;
     -webkit-transform: scale(1.4);
-            transform: scale(1.4);
+    transform: scale(1.4);
   }
   100% {
     opacity: 1;
     -webkit-transform: scale(1);
-            transform: scale(1);
+    transform: scale(1);
   }
 }
 
@@ -2145,12 +2133,12 @@ input[type=checkbox]:disabled + .Form-checkbox-label:before {
   0% {
     opacity: 0;
     -webkit-transform: scale(1.4);
-            transform: scale(1.4);
+    transform: scale(1.4);
   }
   100% {
     opacity: 1;
     -webkit-transform: scale(1);
-            transform: scale(1);
+    transform: scale(1);
   }
 }
 
@@ -2168,7 +2156,7 @@ input[type=checkbox]:disabled + .Form-checkbox-label:before {
   padding: 0.5em 1em;
   margin: 0.25em;
   -webkit-transition: width 0.3s ease;
-          transition: width 0.3s ease;
+  transition: width 0.3s ease;
 }
 
 .Form-taggable .tag:first-child {
@@ -2189,7 +2177,7 @@ input[type=checkbox]:disabled + .Form-checkbox-label:before {
   cursor: pointer;
   color: #666;
   -webkit-transition: all 0.3s ease;
-          transition: all 0.3s ease;
+  transition: all 0.3s ease;
   width: 0;
   margin-left: 0;
 }
@@ -2322,8 +2310,8 @@ select {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 .no-flexbox .Header--tiny > .flex-item:before, .no-flexbox .Header--tiny > .flex-item:after, .no-flexbox
@@ -2362,16 +2350,16 @@ select {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
     -webkit-flex-direction: row;
-        -ms-flex-direction: row;
-            flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
     -webkit-box-pack: start;
     -webkit-justify-content: flex-start;
-        -ms-flex-pack: start;
-            justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
     -webkit-box-align: center;
     -webkit-align-items: center;
-        -ms-flex-align: center;
-            align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
   }
   .no-flexbox .Header--tiny:before, .no-flexbox .Header--tiny:after, .no-flexbox
   .Header--small:before, .no-flexbox
@@ -2448,8 +2436,8 @@ select {
 
 .Header-toolbar {
   -webkit-align-content: space-between;
-      -ms-flex-line-pack: justify;
-          align-content: space-between;
+  -ms-flex-line-pack: justify;
+  align-content: space-between;
 }
 
 .flexbox .Header-toolbar {
@@ -2459,15 +2447,15 @@ select {
   display: flex;
   -webkit-box-pack: start;
   -webkit-justify-content: flex-start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
   -webkit-box-align: center;
   -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-          flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
 .Header-toolbar > * {
@@ -2581,8 +2569,8 @@ select {
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
   -webkit-flex-direction: row;
-      -ms-flex-direction: row;
-          flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
 }
 
 .no-flexbox .ImageEditor:before, .no-flexbox .ImageEditor:after {
@@ -2615,8 +2603,8 @@ select {
   display: flex;
   -webkit-box-align: center;
   -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 
 @media screen and (min-width: 1281px) {
@@ -2629,10 +2617,14 @@ select {
   margin: 0 auto;
 }
 
+.jcrop-holder {
+  margin: 0 auto;
+}
+
 .ImageEditor-toolbar {
   -webkit-align-content: space-between;
-      -ms-flex-line-pack: justify;
-          align-content: space-between;
+  -ms-flex-line-pack: justify;
+  align-content: space-between;
 }
 
 .flexbox .ImageEditor-toolbar {
@@ -2642,15 +2634,15 @@ select {
   display: flex;
   -webkit-box-pack: start;
   -webkit-justify-content: flex-start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
   -webkit-box-align: center;
   -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-          flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
 .ImageEditor-toolbar > * {
@@ -2679,8 +2671,8 @@ select {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 .no-flexbox .ImageEditor-panel > .flex-item:before, .no-flexbox .ImageEditor-panel > .flex-item:after {
@@ -2711,8 +2703,8 @@ select {
 .ImageEditor-flex {
   -webkit-box-flex: 1;
   -webkit-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
+  -ms-flex: 1;
+  flex: 1;
 }
 
 .ImageEditor-apply,
@@ -2737,9 +2729,9 @@ select {
 .pace {
   pointer-events: none;
   -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .Page-progress--minimal .pace-progress {
@@ -2751,9 +2743,9 @@ select {
   width: 100%;
   height: 0.15em;
   -webkit-box-shadow: 0 0 10px #83c8fc, 0 0 5px #83c8fc;
-          box-shadow: 0 0 10px #83c8fc, 0 0 5px #83c8fc;
+  box-shadow: 0 0 10px #83c8fc, 0 0 5px #83c8fc;
   -webkit-transition: opacity 0.25s ease;
-          transition: opacity 0.25s ease;
+  transition: opacity 0.25s ease;
   opacity: 1;
 }
 
@@ -2770,12 +2762,11 @@ select {
   width: 6em;
   height: 6em;
   -webkit-transform: translate(-50%, -50%);
-      -ms-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
   pointer-events: none;
   opacity: 0;
   -webkit-transition: opacity 0.25s ease;
-          transition: opacity 0.25s ease;
+  transition: opacity 0.25s ease;
 }
 
 .Page-progress--spinner .pace-activity.pace-activity-active {
@@ -2785,7 +2776,8 @@ select {
 .Page-progress--spinner .pace-activity::before,
 .Page-progress--spinner .pace-activity::after {
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   position: absolute;
   display: block;
   border: 0.3em solid #888;
@@ -2799,7 +2791,7 @@ select {
   border-right-color: rgba(0, 0, 0, 0.2);
   border-left-color: rgba(0, 0, 0, 0.2);
   -webkit-animation: spin 3s linear infinite;
-          animation: spin 3s linear infinite;
+  animation: spin 3s linear infinite;
 }
 
 .Page-progress--spinner .pace-activity::after {
@@ -2810,7 +2802,7 @@ select {
   border-top-color: rgba(0, 0, 0, 0.2);
   border-bottom-color: rgba(0, 0, 0, 0.2);
   -webkit-animation: spin 1s ease infinite;
-          animation: spin 1s ease infinite;
+  animation: spin 1s ease infinite;
 }
 
 /* ====================================================================
@@ -2822,23 +2814,23 @@ select {
 
 .Page-transition--fade .Block--isEntering,
 .Page-transition--fade .Block--isExiting {
-  -webkit-animation: fadeIn 0.35s ease-out both;
-          animation: fadeIn 0.35s ease-out both;
+  -webkit-animation: fadeIn 0.25s ease-out both;
+  animation: fadeIn 0.25s ease-out both;
 }
 
 .Page-transition--fade .Block--isExiting {
-  -webkit-animation: fadeOut 0.35s ease-out both;
-          animation: fadeOut 0.35s ease-out both;
+  -webkit-animation: fadeOut 0.25s ease-out both;
+  animation: fadeOut 0.25s ease-out both;
 }
 
 .Page-transition--slide .Block--isEntering {
-  -webkit-animation: slideDown4Em 0.35s ease-out both;
-          animation: slideDown4Em 0.35s ease-out both;
+  -webkit-animation: slideDown4Em 0.25s ease-out both;
+  animation: slideDown4Em 0.25s ease-out both;
 }
 
 .Page-transition--slide .Block--isExiting {
-  -webkit-animation: slideUp4Em 0.35s ease-out both;
-          animation: slideUp4Em 0.35s ease-out both;
+  -webkit-animation: slideUp4Em 0.25s ease-out both;
+  animation: slideUp4Em 0.25s ease-out both;
 }
 
 /* ====================================================================
@@ -2860,12 +2852,11 @@ select {
   .MainNav {
     overflow: auto;
     -webkit-transform: translateX(-20em);
-        -ms-transform: translateX(-20em);
-            transform: translateX(-20em);
+    transform: translateX(-20em);
     width: 20em;
     height: 100%;
     -webkit-transition: -webkit-transform 0.2s ease;
-            transition: transform 0.2s ease;
+    transition: transform 0.2s ease;
   }
 }
 
@@ -2956,7 +2947,7 @@ select {
   background-color: transparent;
   -webkit-font-smoothing: antialiased;
   -webkit-transition: background-color 0.2s ease;
-          transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease;
 }
 
 .MainNav-link:hover {
@@ -3038,17 +3029,15 @@ select {
 @media screen and (min-width: 769px) {
   .Headroom {
     -webkit-transition: -webkit-transform 0.2s linear;
-            transition: transform 0.2s linear;
+    transition: transform 0.2s linear;
   }
   .Headroom--pinned {
     -webkit-transform: translateY(0%);
-        -ms-transform: translateY(0%);
-            transform: translateY(0%);
+    transform: translateY(0%);
   }
   .Headroom--unpinned {
     -webkit-transform: translateY(-100%);
-        -ms-transform: translateY(-100%);
-            transform: translateY(-100%);
+    transform: translateY(-100%);
   }
 }
 
@@ -3058,13 +3047,11 @@ select {
 @media screen and (max-width: 768px) {
   #navigation:target {
     -webkit-transform: translateX(0);
-        -ms-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
   }
   #navigation:target ~ .Page {
     -webkit-transform: translateX(20em);
-        -ms-transform: translateX(20em);
-            transform: translateX(20em);
+    transform: translateX(20em);
   }
   #navigation:target ~ .Page .MainNav-close {
     display: block;
@@ -3108,10 +3095,6 @@ select {
   display: none;
 }
 
-.Notice--jsError {
-  background-color: #ff6f55;
-}
-
 /* ====================================================================
    ====================================================================
 
@@ -3133,12 +3116,12 @@ select {
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
   -webkit-flex-direction: row;
-      -ms-flex-direction: row;
-          flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
   -webkit-box-pack: center;
   -webkit-justify-content: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
 }
 
 .no-flexbox .Pagination:before, .no-flexbox .Pagination:after {
@@ -3198,7 +3181,7 @@ select {
   width: 100%;
   height: 100%;
   -webkit-transition: -webkit-transform 2s ease;
-          transition: transform 2s ease;
+  transition: transform 2s ease;
 }
 
 .flexbox .Slider-item {
@@ -3209,16 +3192,16 @@ select {
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
   -webkit-flex-direction: row;
-      -ms-flex-direction: row;
-          flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
   -webkit-box-pack: center;
   -webkit-justify-content: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   -webkit-box-align: center;
   -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 
 .no-flexbox .Slider-item:before, .no-flexbox .Slider-item:after {
@@ -3248,29 +3231,29 @@ select {
 .Slider-item--slideOutLeft,
 .Slider-item--slideOutRight {
   -webkit-animation-duration: 1s;
-          animation-duration: 1s;
+  animation-duration: 1s;
   -webkit-animation-fill-mode: forwards;
-          animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
 }
 
 .Slider-item--slideInLeft {
   -webkit-animation-name: Slider--slideInLeft;
-          animation-name: Slider--slideInLeft;
+  animation-name: Slider--slideInLeft;
 }
 
 .Slider-item--slideInRight {
   -webkit-animation-name: Slider--slideInRight;
-          animation-name: Slider--slideInRight;
+  animation-name: Slider--slideInRight;
 }
 
 .Slider-item--slideOutLeft {
   -webkit-animation-name: Slider--slideOutLeft;
-          animation-name: Slider--slideOutLeft;
+  animation-name: Slider--slideOutLeft;
 }
 
 .Slider-item--slideOutRight {
   -webkit-animation-name: Slider--slideOutRight;
-          animation-name: Slider--slideOutRight;
+  animation-name: Slider--slideOutRight;
 }
 
 .Slider-item--hidden {
@@ -3279,7 +3262,7 @@ select {
 
 .Slider--noTransition {
   -webkit-transition: none;
-          transition: none;
+  transition: none;
 }
 
 .Slider-back,
@@ -3289,7 +3272,7 @@ select {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.2);
   -webkit-transition: width 0.5s ease, background-color 0.5s ease;
-          transition: width 0.5s ease, background-color 0.5s ease;
+  transition: width 0.5s ease, background-color 0.5s ease;
   z-index: 20;
   cursor: pointer;
   width: 1em;
@@ -3316,88 +3299,88 @@ select {
 @-webkit-keyframes Slider--slideInLeft {
   0% {
     -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
   }
   100% {
     -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
   }
 }
 
 @keyframes Slider--slideInLeft {
   0% {
     -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
   }
   100% {
     -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
   }
 }
 
 @-webkit-keyframes Slider--slideInRight {
   0% {
     -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
   }
   100% {
     -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
   }
 }
 
 @keyframes Slider--slideInRight {
   0% {
     -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
   }
   100% {
     -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
   }
 }
 
 @-webkit-keyframes Slider--slideOutLeft {
   0% {
     -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
   }
   100% {
     -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
   }
 }
 
 @keyframes Slider--slideOutLeft {
   0% {
     -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
   }
   100% {
     -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
   }
 }
 
 @-webkit-keyframes Slider--slideOutRight {
   0% {
     -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
   }
   100% {
     -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
   }
 }
 
 @keyframes Slider--slideOutRight {
   0% {
     -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
   }
   100% {
     -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
   }
 }
 
@@ -3423,7 +3406,7 @@ select {
   padding: 0.5em 0;
   cursor: pointer;
   -webkit-transition: all 0.5s ease;
-          transition: all 0.5s ease;
+  transition: all 0.5s ease;
 }
 
 .Accordion-section.TabSwitcher--isActive {
@@ -3442,7 +3425,7 @@ select {
 .Accordion-section-icon {
   color: #666;
   -webkit-transition: -webkit-transform 0.5s ease;
-          transition: transform 0.5s ease;
+  transition: transform 0.5s ease;
 }
 
 .Accordion-section:hover .Accordion-section-icon {
@@ -3456,8 +3439,7 @@ select {
 
 .TabSwitcher--isActive > .Accordion-section-icon {
   -webkit-transform: rotate(90deg);
-      -ms-transform: rotate(90deg);
-          transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 
 /* ====================================================================
@@ -3553,7 +3535,7 @@ table.Table--topAlignedCells th {
   border-radius: 50%;
   background-color: #ccc;
   -webkit-transition: background-color 0.2s ease;
-          transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease;
   color: #fff;
 }
 
@@ -3597,10 +3579,9 @@ table.Table--topAlignedCells th {
   visibility: hidden;
   opacity: 0;
   -webkit-transition: visibility 0.2s ease, opacity 0.2s ease, -webkit-transform 0.2s ease;
-          transition: visibility 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+  transition: visibility 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
   -webkit-transform: translateY(1em);
-      -ms-transform: translateY(1em);
-          transform: translateY(1em);
+  transform: translateY(1em);
   font-size: 1rem;
   font-family: "Roboto", sans-serif;
 }
@@ -3609,8 +3590,7 @@ table.Table--topAlignedCells th {
   visibility: visible;
   opacity: 1;
   -webkit-transform: translateY(0);
-      -ms-transform: translateY(0);
-          transform: translateY(0);
+  transform: translateY(0);
 }
 
 /* ====================================================================
@@ -3623,7 +3603,7 @@ table.Table--topAlignedCells th {
 .Login-message,
 .Login-form {
   -webkit-transition: -webkit-transform 0.9s ease, opacity 0.9s ease, visibility 0.9s ease;
-          transition: transform 0.9s ease, opacity 0.9s ease, visibility 0.9s ease;
+  transition: transform 0.9s ease, opacity 0.9s ease, visibility 0.9s ease;
 }
 
 .Login-message {
@@ -3656,26 +3636,22 @@ table.Table--topAlignedCells th {
 
 .Login--slideUp {
   -webkit-transform: translateY(-100%);
-      -ms-transform: translateY(-100%);
-          transform: translateY(-100%);
+  transform: translateY(-100%);
 }
 
 .Login--slideUp.Block--centered {
   -webkit-transform: translate(-50%, -100%);
-      -ms-transform: translate(-50%, -100%);
-          transform: translate(-50%, -100%);
+  transform: translate(-50%, -100%);
 }
 
 .Login--slideDown {
   -webkit-transform: translateY(50%);
-      -ms-transform: translateY(50%);
-          transform: translateY(50%);
+  transform: translateY(50%);
 }
 
 .Login--slideDown.Block--centered {
   -webkit-transform: translate(-50%, 50%);
-      -ms-transform: translate(-50%, 50%);
-          transform: translate(-50%, 50%);
+  transform: translate(-50%, 50%);
 }
 
 .Login-background {
@@ -3690,7 +3666,7 @@ table.Table--topAlignedCells th {
   background-repeat: no-repeat;
   background-position: center center;
   -webkit-transition: opacity 3s ease;
-          transition: opacity 3s ease;
+  transition: opacity 3s ease;
 }
 
 .js .Login--isHidden {
@@ -3699,12 +3675,12 @@ table.Table--topAlignedCells th {
 
 .Login-bodyTransition {
   -webkit-transition: opacity 1s ease;
-          transition: opacity 1s ease;
+  transition: opacity 1s ease;
 }
 
 .Login--noTransition {
   -webkit-transition: none;
-          transition: none;
+  transition: none;
 }
 
 /* ======================
@@ -3977,35 +3953,30 @@ table.Table--topAlignedCells th {
 .Icon-rotate-90 {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
   -webkit-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
   transform: rotate(90deg);
 }
 
 .Icon-rotate-180 {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
   -webkit-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
   transform: rotate(180deg);
 }
 
 .Icon-rotate-270 {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
   -webkit-transform: rotate(270deg);
-  -ms-transform: rotate(270deg);
   transform: rotate(270deg);
 }
 
 .Icon-flip-horizontal {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0);
   -webkit-transform: scale(-1, 1);
-  -ms-transform: scale(-1, 1);
   transform: scale(-1, 1);
 }
 
 .Icon-flip-vertical {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
   -webkit-transform: scale(1, -1);
-  -ms-transform: scale(1, -1);
   transform: scale(1, -1);
 }
 
@@ -4015,7 +3986,7 @@ table.Table--topAlignedCells th {
 :root .Icon-flip-horizontal,
 :root .Icon-flip-vertical {
   -webkit-filter: none;
-          filter: none;
+  filter: none;
 }
 
 .Icon-stack {

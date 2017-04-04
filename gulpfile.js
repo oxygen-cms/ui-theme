@@ -15,7 +15,6 @@ if(production) {
     console.log("Compiling for production");
 }
 
-
 /* ==============
         SCSS
    ============== */

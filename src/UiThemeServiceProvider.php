@@ -85,7 +85,7 @@ class UiThemeServiceProvider extends ServiceProvider {
 
         $this->app['events']->listen('oxygen.layout.body.after', function() {
             echo $this->app['view']->make('oxygen/ui-theme::bodyLast')->render();
-        }, -1);
+        }, -10);
     }
 
     /**

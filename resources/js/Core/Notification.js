@@ -23,16 +23,20 @@ class NotificationCenter {
     }
 
     static registerHide(notification) {
-        let auto = setTimeout(
-            function() { NotificationCenter.hide(notification); },
-            5000
-        );
+        if(notification.hideAfter != null) {
+            let auto = setTimeout(
+                function() { NotificationCenter.hide(notification); },
+                notification.hideAfter
+            );
+        }
 
         notification.message.addEventListener(
             "click",
             event => {
                 NotificationCenter.hide(notification);
-                clearTimeout(auto);
+                if(typeof auto !== 'undefined') {
+                    clearTimeout(auto);
+                }
             }
         );
     }
@@ -55,6 +59,8 @@ class Notification {
     constructor(options) {
         if (options.log) { console.log(options.log); }
 
+        this.hideAfter = 15 * 1000;
+
         if (options.message) {
             // Constructs a Notification object
             // using a pre-existing message element.
@@ -66,6 +72,9 @@ class Notification {
             this.message = document.createElement("div");
             this.message.classList.add(Notification.classes.item);
             this.message.classList.add("Notification--" + options.status);
+            if(options.status == "failed") {
+                this.hideAfter = null;
+            }
             this.message.innerHTML = options.content +
                 "<span class=\"Notification-dismiss Icon Icon-times\"></span>";
         } else {
