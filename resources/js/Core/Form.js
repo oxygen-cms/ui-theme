@@ -71,10 +71,14 @@ class Form {
 
     handleExit(event) {
         if (event.currentTarget.classList.contains("Form-submit")) { return; }
+        if (!document.body.contains(this.form)) { return; }
         this.generateContent();
-        console.log(getFormData(this.form));
-        console.log(this.originalData);
-        if(!formDataEqual(getFormData(this.form), this.originalData)) {
+        var original = this.originalData;
+        var current = getFormData(this.form);
+        console.log("original form data:", original);
+        console.log("current form data:", current);
+        if(!compareByValue(original, current)) {
+            console.log("=> form data differs");
             var target = event.currentTarget;
 
             if (!(target.getAttribute("data-dialog-disabled") === "true")) {
@@ -214,6 +218,11 @@ function getFormData(form) {
                 file = files[i];
                 data[item.name].push(file);
             }
+        } else if(item.name.endsWith("[]")) {
+            if(typeof data[item.name] == 'undefined' || data[item.name] === null) {
+                data[item.name] = [];
+            }
+            data[item.name].push(item.value);
         } else {
             data[item.name] = item.value;
         }
@@ -238,23 +247,43 @@ function getFormDataObject(data) {
     return formData;
 }
 
-function formDataEqual(a, b) {
-    for(let property in b) {
-        if(b.hasOwnProperty(property)) {
-            if(a[property] !== b[property]) {
+/// The `===` operator or `Object.is` doesn't cut it.
+/// https://gist.github.com/nicbell/6081098
+function compareByValue(obj1, obj2) {
+	//Loop through properties in object 1
+	for (var p in obj1) {
+		//Check property exists on both objects
+		if (obj1.hasOwnProperty(p) !== obj2.hasOwnProperty(p)) {
+            return false;
+        }
+
+		switch (typeof (obj1[p])) {
+			//Deep compare objects
+			case 'object':
+				if (!compareByValue(obj1[p], obj2[p])) { return false; }
+				break;
+			//Compare function code
+			case 'function':
+				if (typeof (obj2[p]) == 'undefined' || (p != 'compare' && obj1[p].toString() != obj2[p].toString())) {
+                    return false;
+                }
+				break;
+			//Compare values
+			default:
+				if (obj1[p] != obj2[p]) { return false; }
+		}
+	}
+
+	//Check object 2 for any extra properties
+	for (var p in obj2) {
+        if(obj2.hasOwnProperty(p)) {
+            if (typeof (obj1[p]) == 'undefined') {
                 return false;
             }
         }
-    }
-    for(let property in a) {
-        if(a.hasOwnProperty(property)) {
-            if(a[property] !== b[property]) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
+	}
+	return true;
+};
 
 Form.disableAsync = false;
 

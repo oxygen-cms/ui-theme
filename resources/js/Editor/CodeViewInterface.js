@@ -17,7 +17,7 @@ class CodeViewInterface {
         object.getSession().setMode("ace/mode/" + this.editor.language);
         object.setTheme(Preferences.get('editor.ace.theme'));
         object.getSession().setUseWrapMode(Preferences.get('editor.ace.wordWrap'));
-        object.setHighlightActiveLine(Preferences.get('user.editor.ace.highlightActiveLine'));
+        object.setHighlightActiveLine(Preferences.get('editor.ace.highlightActiveLine'));
         object.setShowPrintMargin(Preferences.get('editor.ace.showPrintMargin'));
         object.setShowInvisibles(Preferences.get('editor.ace.showInvisibles'));
         object.setReadOnly(this.editor.readOnly);
@@ -29,6 +29,7 @@ class CodeViewInterface {
     }
 
     show(full) {
+        console.log("CodeViewInterface.show");
         this.view.classList.remove(Editor.classes.state.isHidden);
         if (full) {
             this.view.style.width = "100%";

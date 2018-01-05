@@ -48,7 +48,18 @@ class PreviewInterface {
             .then(Oxygen.respond.text)
             .then((data) => {
                 this.view.srcdoc = data;
-            }).catch(Oxygen.respond.handleAPIError);
+            })
+            // this particular endpoint returns an HTML error page, so we provide a custom handler.
+            .catch((error) => {
+                if(error.response && error.response instanceof Response) {
+                    console.error(error);
+                    error.response.text().then((data) => {
+                        this.view.srcdoc = data;
+                    });
+                } else {
+                    throw error;
+                }
+            });
     }
 
     // we can't and don't want to do this

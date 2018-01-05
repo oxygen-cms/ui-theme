@@ -510,6 +510,8 @@ Oxygen.handleAPIError = function (content) {
 };
 "use strict";
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -648,10 +650,16 @@ var Form = function () {
             if (event.currentTarget.classList.contains("Form-submit")) {
                 return;
             }
+            if (!document.body.contains(this.form)) {
+                return;
+            }
             this.generateContent();
-            console.log(getFormData(this.form));
-            console.log(this.originalData);
-            if (!formDataEqual(getFormData(this.form), this.originalData)) {
+            var original = this.originalData;
+            var current = getFormData(this.form);
+            console.log("original form data:", original);
+            console.log("current form data:", current);
+            if (!compareByValue(original, current)) {
+                console.log("=> form data differs");
                 var target = event.currentTarget;
 
                 if (!(target.getAttribute("data-dialog-disabled") === "true")) {
@@ -836,6 +844,11 @@ function getFormData(form) {
                     file = files[i];
                     data[item.name].push(file);
                 }
+            } else if (item.name.endsWith("[]")) {
+                if (typeof data[item.name] == 'undefined' || data[item.name] === null) {
+                    data[item.name] = [];
+                }
+                data[item.name].push(item.value);
             } else {
                 data[item.name] = item.value;
             }
@@ -895,23 +908,47 @@ function getFormDataObject(data) {
     return formData;
 }
 
-function formDataEqual(a, b) {
-    for (var property in b) {
-        if (b.hasOwnProperty(property)) {
-            if (a[property] !== b[property]) {
-                return false;
-            }
+/// The `===` operator or `Object.is` doesn't cut it.
+/// https://gist.github.com/nicbell/6081098
+function compareByValue(obj1, obj2) {
+    //Loop through properties in object 1
+    for (var p in obj1) {
+        //Check property exists on both objects
+        if (obj1.hasOwnProperty(p) !== obj2.hasOwnProperty(p)) {
+            return false;
+        }
+
+        switch (_typeof(obj1[p])) {
+            //Deep compare objects
+            case 'object':
+                if (!compareByValue(obj1[p], obj2[p])) {
+                    return false;
+                }
+                break;
+            //Compare function code
+            case 'function':
+                if (typeof obj2[p] == 'undefined' || p != 'compare' && obj1[p].toString() != obj2[p].toString()) {
+                    return false;
+                }
+                break;
+            //Compare values
+            default:
+                if (obj1[p] != obj2[p]) {
+                    return false;
+                }
         }
     }
-    for (var _property in a) {
-        if (a.hasOwnProperty(_property)) {
-            if (a[_property] !== b[_property]) {
+
+    //Check object 2 for any extra properties
+    for (var p in obj2) {
+        if (obj2.hasOwnProperty(p)) {
+            if (typeof obj1[p] == 'undefined') {
                 return false;
             }
         }
     }
     return true;
-}
+};
 
 Form.disableAsync = false;
 
@@ -1108,7 +1145,7 @@ Notification.classes = {
     container: "Notification-container",
     item: "Notification"
 };
-'use strict';
+"use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -1124,40 +1161,46 @@ var Preferences = function () {
     }
 
     _createClass(Preferences, null, [{
-        key: 'setPreferences',
+        key: "setPreferences",
         value: function setPreferences(preferences) {
             return Preferences.preferences = preferences;
         }
     }, {
-        key: 'get',
+        key: "isDefined",
+        value: function isDefined(o) {
+            return typeof o !== "undefined" && o !== null;
+        }
+    }, {
+        key: "get",
         value: function get(key) {
             var fallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
             var o = Preferences.preferences;
 
-            if (!(typeof o !== "undefined" && o !== null)) {
+            if (!Preferences.isDefined(o)) {
                 return fallback;
             }
 
             var parts = key.split('.');
-            var last = parts.pop();
+            //var last = parts.pop();
             var l = parts.length;
-            var i = 1;
-            var current = parts[0];
+            var i = 0;
 
-            while ((o = o[current]) && i < l) {
-                current = parts[i];
+            while (Preferences.isDefined(o) && i < l) {
+                var idx = parts[i];
+                o = o[idx];
                 i++;
             }
 
-            if (o) {
-                return o[last];
+            if (Preferences.isDefined(o)) {
+                return o;
             } else {
+                console.log("Preferences key ", key, "was not defined, using default ", fallback);
                 return fallback;
             }
         }
     }, {
-        key: 'has',
+        key: "has",
         value: function has(key) {
             var o = Preferences.preferences;
 
@@ -2125,7 +2168,7 @@ var CodeViewInterface = function () {
             object.getSession().setMode("ace/mode/" + this.editor.language);
             object.setTheme(Preferences.get('editor.ace.theme'));
             object.getSession().setUseWrapMode(Preferences.get('editor.ace.wordWrap'));
-            object.setHighlightActiveLine(Preferences.get('user.editor.ace.highlightActiveLine'));
+            object.setHighlightActiveLine(Preferences.get('editor.ace.highlightActiveLine'));
             object.setShowPrintMargin(Preferences.get('editor.ace.showPrintMargin'));
             object.setShowInvisibles(Preferences.get('editor.ace.showInvisibles'));
             object.setReadOnly(this.editor.readOnly);
@@ -2140,6 +2183,7 @@ var CodeViewInterface = function () {
         value: function show(full) {
             var _this = this;
 
+            console.log("CodeViewInterface.show");
             this.view.classList.remove(Editor.classes.state.isHidden);
             if (full) {
                 this.view.style.width = "100%";
@@ -2200,9 +2244,19 @@ var DesignViewInterface = function () {
 
             var config = Preferences.get('editor.ckeditor', {});
             config.customConfig = config.customConfig || '';
+            config.allowedContent = true;
+            config.entities = false;
+            config.protectedSource = [
+            // inline PHP
+            /<\?[\s\S]*?\?>/g,
+            // blade directives
+            /(\n[ \t]*)?@\w+(\((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*\))?\n?/g,
+            // blade echo
+            /{{[\s\S]*?}}}?/g];
             config.contentsCss = this.editor.stylesheets;
 
             // create instance
+            CKEDITOR.dtd.$removeEmpty["span"] = false;
             this.ck = CKEDITOR.replace(this.editor.name + "-editor", config);
             this.ck.on("instanceReady", function (event) {
                 _this.view = document.getElementById("cke_" + _this.editor.name + "-editor");
@@ -2214,12 +2268,20 @@ var DesignViewInterface = function () {
         value: function show(full) {
             var _this2 = this;
 
-            this.ck.on("instanceReady", function (event) {
-                _this2.view.style.display = "block";
+            console.log("DesignViewInterface.show");
+            if (this.view) {
+                this.view.style.display = "block";
                 if (full) {
-                    _this2.view.style.width = "100%";
+                    this.view.style.width = "100%";
                 }
-            });
+            } else {
+                this.ck.on("instanceReady", function (event) {
+                    _this2.view.style.display = "block";
+                    if (full) {
+                        _this2.view.style.width = "100%";
+                    }
+                });
+            }
         }
     }, {
         key: 'hide',
@@ -2535,7 +2597,18 @@ var PreviewInterface = function () {
             console.log("Generating content using data ", data);
             var promise = window.fetch(url, FetchOptions.default().method(method).body(getFormDataObject(data))).then(Oxygen.respond.checkStatus).then(Oxygen.respond.text).then(function (data) {
                 _this.view.srcdoc = data;
-            }).catch(Oxygen.respond.handleAPIError);
+            })
+            // this particular endpoint returns an HTML error page, so we provide a custom handler.
+            .catch(function (error) {
+                if (error.response && error.response instanceof Response) {
+                    console.error(error);
+                    error.response.text().then(function (data) {
+                        _this.view.srcdoc = data;
+                    });
+                } else {
+                    throw error;
+                }
+            });
         }
 
         // we can't and don't want to do this
@@ -2955,7 +3028,6 @@ var ImageEditor = function () {
             this.cropDisableCounter = 2;
 
             return this.jCropApi.setSelect([x, y, x + w, y + h]);
-            console.log("end");
         }
     }, {
         key: "handleCropRelease",

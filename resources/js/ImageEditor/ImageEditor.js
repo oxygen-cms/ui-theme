@@ -270,7 +270,6 @@ class ImageEditor {
             x + w,
             y + h
         ]);
-        console.log("end");
     }
 
     handleCropRelease() {
