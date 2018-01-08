@@ -1245,9 +1245,9 @@ var Slider = function () {
 
             try {
                 for (var _iterator = container.querySelectorAll(Slider.selectors.slider)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var _item = _step.value;
+                    var item = _step.value;
 
-                    Slider.list.push(new Slider(_item));
+                    Slider.list.push(new Slider(item));
                 }
             } catch (err) {
                 _didIteratorError = true;
@@ -1277,8 +1277,6 @@ var Slider = function () {
         this.container = container;
         this.list = this.container.querySelector(Slider.selectors.list);
         this.items = this.container.querySelectorAll(Slider.selectors.item);
-
-        this.total = this.items.length;
         this.interval = this.container.getAttribute("data-interval") || 5000;
 
         this.previousId = 0;
@@ -1288,7 +1286,6 @@ var Slider = function () {
         this.animationTime = 1000;
 
         this.registerEvents();
-        this.hideAll();
         this.next();
 
         if (this.container.getAttribute("data-autoplay") === "true") {
@@ -1314,51 +1311,19 @@ var Slider = function () {
             clearInterval(this.timer);
         }
     }, {
-        key: "getItem",
-        value: function getItem(id) {
-            return this.list.querySelector(":nth-child(" + id + ")");
-        }
-    }, {
         key: "hideAll",
         value: function hideAll() {
-            this.items.className = "";
-            this.items.classList.add(Slider.classes.item);
-            this.items.classList.add(Slider.classes.isHidden);
-        }
-    }, {
-        key: "next",
-        value: function next() {
-            if (!this.shouldAnimate()) {
-                return false;
-            }
-
-            this.previousId = this.currentId;
-
-            this.currentId += 1;
-            if (this.currentId > this.total) {
-                this.currentId = 1;
-            }
-
-            this.nextId = this.currentId + 1;
-            if (this.nextId > this.total) {
-                this.nextId = 1;
-            }
-
-            current = this.getItem(this.currentId);
-            previous = this.getItem(this.previousId);
-
-            this.hideAll();
-
             var _iteratorNormalCompletion2 = true;
             var _didIteratorError2 = false;
             var _iteratorError2 = undefined;
 
             try {
-                for (var _iterator2 = Slider.allClasses()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    item = _step2.value;
+                for (var _iterator2 = this.items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var item = _step2.value;
 
-                    previous.classList.remove(item);
-                    current.classList.remove(item);
+                    item.classList = "";
+                    item.classList.add(Slider.classes.item);
+                    item.classList.add(Slider.classes.isHidden);
                 }
             } catch (err) {
                 _didIteratorError2 = true;
@@ -1374,8 +1339,43 @@ var Slider = function () {
                     }
                 }
             }
+        }
+    }, {
+        key: "getItem",
+        value: function getItem(id) {
+            var item = this.items[id];
+            if (item === undefined || item === null) {
+                console.error("no slider item at index: ", id);
+            }
+            return item;
+        }
+    }, {
+        key: "next",
+        value: function next() {
+            if (!this.shouldAnimate()) {
+                return false;
+            }
 
+            this.previousId = this.currentId;
+
+            this.currentId += 1;
+            if (this.currentId >= this.items.length) {
+                this.currentId = 0;
+            }
+
+            this.nextId = this.currentId + 1;
+            if (this.nextId >= this.items.length) {
+                this.nextId = 0;
+            }
+
+            var current = this.getItem(this.currentId);
+            var previous = this.getItem(this.previousId);
+
+            this.hideAll();
+
+            previous.classList.remove(Slider.classes.isHidden);
             previous.classList.add(Slider.classes.slideOutLeft);
+            current.classList.remove(Slider.classes.isHidden);
             current.classList.add(Slider.classes.slideInRight);
         }
     }, {
@@ -1388,47 +1388,23 @@ var Slider = function () {
             this.nextId = this.currentId;
 
             this.currentId -= 1;
-            if (this.currentId < 1) {
-                this.currentId = this.total;
+            if (this.currentId <= 0) {
+                this.currentId = this.items.length - 1;
             }
 
             this.previousId = this.currentId - 1;
-            if (this.nextId < 1) {
-                this.nextId = this.total;
+            if (this.nextId <= 0) {
+                this.nextId = this.items.length - 1;
             }
 
-            current = this.getItem(this.currentId);
-            next = this.getItem(this.nextId);
+            var current = this.getItem(this.currentId);
+            var next = this.getItem(this.nextId);
 
             this.hideAll();
 
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = undefined;
-
-            try {
-                for (var _iterator3 = Slider.allClasses()[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                    item = _step3.value;
-
-                    next.classList.remove(item);
-                    current.classList.remove(item);
-                }
-            } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                        _iterator3.return();
-                    }
-                } finally {
-                    if (_didIteratorError3) {
-                        throw _iteratorError3;
-                    }
-                }
-            }
-
+            next.classList.remove(Slider.classes.isHidden);
             next.classList.add(Slider.classes.slideOutRight);
+            current.classList.remove(Slider.classes.isHidden);
             current.classList.add(Slider.classes.slideInLeft);
         }
     }, {
@@ -1446,11 +1422,6 @@ var Slider = function () {
             }, this.animationTime);
 
             return true;
-        }
-    }], [{
-        key: "allClasses",
-        value: function allClasses() {
-            return Slider.classes.isHidden + " " + Slider.classes.slideInLeft + " " + Slider.classes.slideInRight + " " + Slider.classes.slideOutLeft + " " + Slider.classes.slideOutRight;
         }
     }]);
 
