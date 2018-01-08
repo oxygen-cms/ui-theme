@@ -71,23 +71,25 @@ gulp.task("vendor", shell.task([
     // Pace,
     'rsync -a node_modules/pace/pace.min.js public/vendor/pace.min.js',
     // JQuery
-    'rsync -a bower_components/jquery/dist/jquery.min.js public/vendor/jquery.min.js',
-    'rsync -a bower_components/jquery/dist/jquery.min.map public/vendor/jquery.min.map',
+    'rsync -a node_modules/jquery/dist/jquery.min.js public/vendor/jquery.min.js',
+    'rsync -a node_modules/jquery/dist/jquery.min.map public/vendor/jquery.min.map',
     // Smooth State
-    'rsync -a bower_components/smoothstate-with-root-option/jquery.smoothState.min.js public/vendor/smoothState.js',
+    'rsync -a node_modules/smoothstate/src/jquery.smoothState.js public/vendor/smoothState.js',
+    'rsync -a node_modules/smoothstate/jquery.smoothState.min.js public/vendor/smoothState.min.js',
     // Headroom
-    'rsync -a bower_components/headroom.js/dist/headroom.min.js public/vendor/headroom.min.js',
+    'rsync -a node_modules/headroom.js/dist/headroom.min.js public/vendor/headroom.min.js',
     // Tagging
-    'rsync -a bower_components/taggingJS/tagging.js public/vendor/tagging.js',
+    'rsync -a node_modules/taggingJS/tagging.min.js public/vendor/tagging.min.js',
     // CkEditor
     'mkdir -p public/vendor/ckeditor-skins',
     'rsync -ar --delete resources/vendor/ckeditor-skins/ public/vendor/ckeditor-skins',
-    'rsync -ar --delete bower_components/ckeditor/ public/vendor/ckeditor',
+    'rsync -ar --delete node_modules/ckeditor/ public/vendor/ckeditor',
+    'rsync -ar --delete node_modules/CKEditor-ShowProtected-Plugin/showprotected/ public/vendor/ckeditor/plugins/showprotected',
     // JCrop
     'mkdir -p public/vendor/jcrop',
-    'rsync -a bower_components/Jcrop/js/jquery.Jcrop.min.js public/vendor/jcrop/jcrop.min.js',
-    'rsync -a bower_components/Jcrop/css/jquery.Jcrop.min.css public/vendor/jcrop/jcrop.min.css',
-    'rsync -a bower_components/Jcrop/css/Jcrop.gif public/vendor/jcrop/Jcrop.gif',
+    'rsync -a node_modules/jcrop/js/Jcrop.min.js public/vendor/jcrop/jcrop.min.js',
+    'rsync -a node_modules/jcrop/css/Jcrop.min.css public/vendor/jcrop/jcrop.min.css',
+    'rsync -a node_modules/jcrop/css/Jcrop.gif public/vendor/jcrop/Jcrop.gif',
 ]));
 
 gulp.task("build", ["js", "scss", "vendor"]);

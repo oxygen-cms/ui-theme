@@ -8,10 +8,19 @@
     "test": "tests"
   },
   "dependencies": {
+    "CKEditor-ShowProtected-Plugin": "https://github.com/IGx89/CKEditor-ShowProtected-Plugin",
+    "Jcrop": "https://github.com/tapmodo/Jcrop/archive/v2.0.4.tar.gz",
     "ace-builds": "^1.2.2",
-    "whatwg-fetch": "^0.11.0",
-    "vex-js": "https://github.com/HubSpot/vex",
-    "pace": "https://github.com/HubSpot/pace"
+    "ckeditor": "^4.8.0",
+    "headroom.js": "^0.9.4",
+    "jcrop": "https://github.com/tapmodo/Jcrop/archive/v2.0.4.tar.gz",
+    "jquery": "^3.2.1",
+    "pace": "https://github.com/HubSpot/pace",
+    "pace-progress": "https://github.com/HubSpot/pace",
+    "smoothstate": "https://github.com/oxygen-cms/smoothState.js",
+    "taggingJS": "https://github.com/sniperwolf/taggingJS",
+    "vex-js": "~2.3.4",
+    "whatwg-fetch": "^0.11.0"
   },
   "devDependencies": {
     "babel-polyfill": "^6.5.0",
