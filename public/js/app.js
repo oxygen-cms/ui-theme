@@ -342,7 +342,7 @@ var EditableList = function () {
             var item = parentOrSelfMatchingSelector(event.target, "." + EditableList.classes.remove);
             if (item) {
                 var row = parentMatchingSelector(event.target, "." + EditableList.classes.row);
-                if (row) {
+                if (row.parentNode) {
                     row.parentNode.removeChild(row);
                     console.log('removed node');
                 }
@@ -3249,8 +3249,11 @@ document.addEventListener("DOMContentLoaded", function () {
     Oxygen.init(document);
 
     if (Preferences.get('pageLoad.smoothState.enabled', true) === true) {
+        console.log("smoothstate enabled");
         window.smoothState = new SmoothState();
         SmoothState.setTheme(Preferences.get('pageLoad.smoothState.theme', 'slide'));
+    } else {
+        console.log("smoothstate disabled");
     }
 
     var progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner"]);

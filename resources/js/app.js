@@ -95,8 +95,11 @@ document.addEventListener("DOMContentLoaded", function() {
     Oxygen.init(document);
 
     if (Preferences.get('pageLoad.smoothState.enabled', true) === true) {
+        console.log("smoothstate enabled");
         window.smoothState = new SmoothState();
         SmoothState.setTheme(Preferences.get('pageLoad.smoothState.theme', 'slide'));
+    } else {
+        console.log("smoothstate disabled");
     }
 
     let progressThemes = Preferences.get('pageLoad.progress.theme', ["minimal", "spinner"]);

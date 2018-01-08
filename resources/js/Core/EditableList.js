@@ -23,7 +23,7 @@ class EditableList {
         let item = parentOrSelfMatchingSelector(event.target, "." + EditableList.classes.remove);
         if(item) {
             var row = parentMatchingSelector(event.target, "." + EditableList.classes.row);
-            if(row) {
+            if(row.parentNode) {
                 row.parentNode.removeChild(row);
                 console.log('removed node');
             }
