@@ -2900,19 +2900,24 @@ var ImageEditor = function () {
                     status: "failed"
                 }));
                 return;
-            } else {
-                this.progressNotification = new Notification({
-                    content: "Processing Image",
-                    status: "success"
-                });
-                NotificationCenter.present(this.progressNotification);
             }
 
             this.applyingChanges = true;
 
             console.log("Processing Image Using Commands: ", data);
 
-            window.fetch(this.image.getAttribute("data-root") + "?" + serializeToQueryString(data), FetchOptions.default().method("GET").wantJson()).then(Oxygen.respond.checkStatus).then(function (response) {
+            var url = this.image.getAttribute("data-root") + "?" + serializeToQueryString(data);
+            var headers = new Headers();
+            headers.set("Accept", "application/json");
+            var options = {
+                method: "GET",
+                credentials: "same-origin",
+                headers: headers
+            };
+
+            console.log("Requesting URL: ", url, options);
+
+            window.fetch(url, options).then(Oxygen.respond.checkStatus).then(function (response) {
                 return response.blob();
             }).then(function (myBlob) {
                 if (_this3.jCropApi != null) {

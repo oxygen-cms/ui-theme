@@ -2613,11 +2613,8 @@ select {
   }
 }
 
+.ImageEditor-content .jcrop-active,
 .ImageEditor-content img {
-  margin: 0 auto;
-}
-
-.jcrop-holder {
   margin: 0 auto;
 }
 

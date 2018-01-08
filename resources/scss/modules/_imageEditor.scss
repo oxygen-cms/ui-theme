@@ -25,13 +25,10 @@
     @include Box--design-checkerboard($color-grey-dark-2, rgba(0, 0, 0, 0), 20px, false);
     @include flex-container(null, null, center);
     @include larger-than($screen-large) { .FullscreenToggle--isFullscreen & { width: 85%; } }
-
-    img {
-        margin: 0 auto;
-    }
 }
 
-.jcrop-holder {
+.ImageEditor-content .jcrop-active,
+.ImageEditor-content img  {
     margin: 0 auto;
 }
 

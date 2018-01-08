@@ -20,7 +20,7 @@
     "smoothstate": "https://github.com/oxygen-cms/smoothState.js",
     "taggingJS": "https://github.com/sniperwolf/taggingJS",
     "vex-js": "~2.3.4",
-    "whatwg-fetch": "^0.11.0"
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "babel-polyfill": "^6.5.0",
