@@ -9,9 +9,8 @@ const    uglify          = require('gulp-uglify');
 const    sourcemaps      = require('gulp-sourcemaps');
 const    rename          = require('gulp-rename');
 const    shell           = require('gulp-shell');
-const    gulpUtil        = require('gulp-util');
 
-const production = process.env.NODE_ENV == "production";
+const production = process.env.NODE_ENV == 'production';
 
 if(production) {
     console.log('Compiling for production');
@@ -26,15 +25,17 @@ function scss() {
         outputStyle: production ? 'compressed' : 'expanded'
     };
 
-    return src('resources/scss/*.scss')
+    let css = src('resources/scss/*.scss')
         .pipe(libsass(sassOptions))
         .pipe(prefix(
             'last 2 versions',
             'Explorer >= 10',
             'Safari >= 5'
         ))
-        .pipe(production ? rename(function(path) { path.extname = '.min.css'; }) : gulpUtil.noop())
-        .pipe(dest('public/css'));
+    if(production) {
+        css = css.pipe(rename(function(path) { path.extname = '.min.css'; }));
+    }
+    return css.pipe(dest('public/css'));
 }
 
 /* ==============
@@ -42,12 +43,16 @@ function scss() {
    ============== */
 
 function js() {
-    return src(['resources/js/util.js', 'resources/js/Core/*.js', 'resources/js/Editor/*.js', 'resources/js/ImageEditor/*.js', 'resources/js/login.js', 'resources/js/app.js'], { base: 'resources/js' })
+    let js = src(['resources/js/util.js', 'resources/js/Core/*.js', 'resources/js/Editor/*.js', 'resources/js/ImageEditor/*.js', 'resources/js/login.js', 'resources/js/app.js'], { base: 'resources/js' })
         .pipe(sourcemaps.init())
             .pipe(babel())
-            .pipe(concat('app.js'))
-            .pipe(production ? uglify() : gulpUtil.noop())
-            .pipe(production ? rename(function(path) { path.extname = '.min.js'; }) : gulpUtil.noop())
+            .pipe(concat('app.js'));
+    if(production) {
+        js = js.pipe(uglify())
+            .pipe(rename(function(path) { path.extname = '.min.js'; }));
+    }
+
+    return js
         .pipe(sourcemaps.write('.'))
         .pipe(dest('public/js'));
 }
@@ -81,7 +86,7 @@ const vendor = shell.task([
         // CkEditor
         'mkdir -p public/vendor/ckeditor-skins',
         'rsync -ar --delete resources/vendor/ckeditor-skins/ public/vendor/ckeditor-skins',
-        'rsync -ar --delete node_modules/ckeditor/ public/vendor/ckeditor',
+        'rsync -ar --delete node_modules/ckeditor4/ public/vendor/ckeditor',
         'rsync -ar --delete node_modules/CKEditor-ShowProtected-Plugin/showprotected/ public/vendor/ckeditor/plugins/showprotected',
         // JCrop
         'mkdir -p public/vendor/jcrop',
