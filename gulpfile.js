@@ -11,7 +11,7 @@ const    rename          = require('gulp-rename');
 const    shell           = require('gulp-shell');
 const    gulpUtil        = require('gulp-util');
 
-const production = gulpUtil.env.release;
+const production = process.env.NODE_ENV == "production";
 
 if(production) {
     console.log('Compiling for production');
