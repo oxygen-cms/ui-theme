@@ -2,10 +2,10 @@
 
 use Oxygen\Auth\Preferences\UserLoader;
 
-Preferences::register('user.general', function($schema) {
+Preferences::register('user.general', function(\Oxygen\Preferences\Schema $schema) {
     $schema->setTitle('General');
     $schema->setLoader(function() {
-        return new UserLoader(App::make('Oxygen\Auth\Repository\UserRepositoryInterface'), Auth::user());
+        return new UserLoader(resolve('Oxygen\Auth\Repository\UserRepositoryInterface'), Auth::user());
     });
 
     $schema->makeFields([

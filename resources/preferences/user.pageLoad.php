@@ -2,10 +2,10 @@
 
 use Oxygen\Auth\Preferences\UserLoader;
 
-Preferences::register('user.pageLoad', function($schema) {
+Preferences::register('user.pageLoad', function(\Oxygen\Preferences\Schema $schema) {
     $schema->setTitle('Page Load');
     $schema->setLoader(function() {
-        return new UserLoader(App::make('Oxygen\Auth\Repository\UserRepositoryInterface'), Auth::user());
+        return new UserLoader(resolve('Oxygen\Auth\Repository\UserRepositoryInterface'), Auth::user());
     });
 
     $schema->makeFields([

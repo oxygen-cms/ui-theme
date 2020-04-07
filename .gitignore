@@ -1,6 +1,7 @@
 /vendor
 /bower_components
 /node_modules
+/node_modules_old
 composer.phar
 composer.lock
 .DS_Store
