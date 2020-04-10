@@ -8,7 +8,7 @@ module.exports = {
     entry: {
         main: './resources/js/app.js',
     },
-    watch: true,
+    // watch: true,
     mode: process.env.NODE_ENV,
     output: {
         filename: 'js/[name].js',

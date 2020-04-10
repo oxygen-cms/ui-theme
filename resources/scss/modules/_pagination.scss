@@ -7,8 +7,9 @@
    ==================================================================== */
 
 .Pagination {
-    margin: 1em auto;
-    padding: 0;
+    margin: 0;
+    background-color: lighten($color-grey-light-2, 3%); // same as Header--main
+    padding: 2em 0;
     list-style-type: none;
     @include flex-container(row, center);
 }

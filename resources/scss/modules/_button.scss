@@ -53,7 +53,7 @@ input[type="button"] {
     position: relative;
     z-index: 1;
 
-    &:before {
+    &:before, &:after {
         position: absolute;
         top: 0;
         content: "";
@@ -80,15 +80,8 @@ input[type="button"] {
     &::after {
         left: -1.30rem;
         z-index: 1;
-        position: absolute;
         top: 0.23rem;
-        content: "";
-        font-size: 0;
-        line-height: 0;
-        width: 0;
         transition: border-color 0.2s ease;
-        border-top: 1.42rem solid transparent;
-        border-bottom: 1.42rem solid transparent;
         border-right: 1.42rem solid darken($color-grey-light-1, 10%);
     }
 
@@ -111,11 +104,21 @@ input[type="button"] {
 
 .Button--forward {
     padding-right: 1em;
+    border-radius: 0.5em 0 0 0.5em;
 
     &:before {
-        right: -1rem;
+        right: -1.3rem;
+        z-index: 2;
         border-left: 1.4rem solid $color-grey-light-1;
         transition: border-left-color 0.2s ease;
+    }
+
+    &::after {
+        right: -1.3rem;
+        z-index: 1;
+        top: 0.23rem;
+        transition: border-color 0.2s ease;
+        border-left: 1.42rem solid darken($color-grey-light-1, 10%);
     }
 
     &:hover:before {
@@ -135,14 +138,18 @@ input[type="button"] {
     background-color: $color-white !important;
     border: 1px solid $color-grey-light-1;
     color: $color-grey-light-1;
+    border-radius: 0.5em;
     cursor: default !important;
 
-    &.Button--back:before {
+    &.Button--back:before,
+    &.Button--forward:before,
+    &.Button--back:after,
+    &.Button--forward:after {
         border: 0;
     }
 
-    &.Button--forward:before {
-        border: 0;
+    &:hover {
+        border: 1px solid $color-grey-light-1;
     }
 }
 
@@ -163,7 +170,7 @@ input[type="button"] {
     background-color: $color-white-15;
     border-bottom: 0.2em solid $color-grey-dark-3;
     color: #444;
-    padding: 0.5em 2em;
+    padding: 1em 2em;
     font-size: 1em;
     transition: background-color 1s ease, color 1s ease, border 1s ease, box-shadow 1s ease;
 

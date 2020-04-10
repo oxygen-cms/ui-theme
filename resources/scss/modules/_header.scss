@@ -41,6 +41,10 @@
 
 .Header--normal {
     padding: 1.5em 2em;
+
+    .heading-gamma {
+        font-size: 1.25em;
+    }
 }
 
 .Header--main {
@@ -94,7 +98,7 @@
     align-content: space-between;
 
     & > * {
-        margin: 0 0.25em;
+        margin: 0.25em;
     }
 
     &.Header-toolbar.Header-toolbar { // nasty specifity hack to override @flex-container's `float: left`
