@@ -7,103 +7,17 @@
    ==================================================================== */
 
 @mixin flex-container($direction: null, $justify: null, $align: null, $descendant: '.flex-item', $wrap: null) {
-    .flexbox & {
-        display: flex;
-        @if($direction != null) {
-            flex-direction: $direction;
-        }
-        @if($justify != null) {
-            justify-content: $justify;
-        }
-        @if($align != null) {
-            align-items: $align;
-        }
-        @if($wrap != null) {
-            flex-wrap: $wrap;
-        }
+    display: flex;
+    @if($direction != null) {
+        flex-direction: $direction;
     }
-
-    // fallbacks
-    .no-flexbox & {
-
-        ///*******************
-          //  JUSTIFY-CONTENT
-        //*******************/
-        @if($direction == "row") {
-            @include clearfix;
-        }
-        @if($direction == "column" and $justify != "flex-start") {
-            //@debug "No fallback for justify-content = center OR flex-end";
-        }
-        @if($justify == "space-between" or $justify == "space-around") {
-            //@debug "No fallback for justify-content = space-around OR space-between";
-        }
-
-
-        ///*******************
-          //    ALIGN-ITEMS
-        //*******************/
-        @if($direction == "row" and $align != "flex-start") {
-            //@debug "No fallback for align-items = center OR flex-end";
-        }
+    @if($justify != null) {
+        justify-content: $justify;
     }
-
-    // child fallbacks
-    .no-flexbox & > #{$descendant} {
-
-
-        ///*******************
-          //  JUSTIFY-CONTENT
-        //*******************/
-        @if($direction == "row") {
-            @if($justify == "flex-start") {
-                float: left;
-            } @elseif($justify == "center") {
-                margin-left: auto;
-                margin-right: auto;
-            } @elseif($justify == "flex-end") {
-                float: right;
-            }
-        }
-
-
-        ///*******************
-        //    ALIGN-ITEMS
-        //*******************/
-        @if($direction == "column") {
-            @include clearfix;
-            @if($align == "flex-start") {
-                float: left;
-            } @elseif($align == "center") {
-                margin-left: auto;
-                margin-right: auto;
-            } @elseif($align == "flex-end") {
-                float: right
-            } @elseif($align == "stretch") {
-                width: 100%;
-            }
-        }
+    @if($align != null) {
+        align-items: $align;
     }
-}
-
-/* =========================
-       SPECIAL ALIGNMENT
-   ========================= */
-
-@mixin align-left() {
-    margin-right: auto;
-    float: left;
-}
-
-@mixin align-right() {
-    margin-left: auto;
-    float: right !important; // overrides float: left in flex-container()
-}
-
-.align-left.align-left.align-left {
-    @include align-left();
-}
-
-.align-right.align-right.align-right {
-    @include align-right();
+    @if($wrap != null) {
+        flex-wrap: $wrap;
+    }
 }

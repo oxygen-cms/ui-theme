@@ -15,18 +15,6 @@
     @return $num / ($num * 0 + 1);
 }
 
-@mixin flex {
-    .flexbox & {
-        @content;
-    }
-}
-
-@mixin no-flex {
-    .no-flexbox & {
-         @content;
-    }
-}
-
 @mixin clearfix {
     &:before,
     &:after {

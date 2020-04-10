@@ -50,10 +50,7 @@
 
 .MainNav-item {
     display: block;
-
-    /*@include smaller-than($tablet-large) {
-        min-height: 4em;
-    }*/
+    cursor: pointer;
 
     @include larger-than($tablet-large) {
         float: left;
@@ -134,10 +131,15 @@
 
 .MainNav-open {
     @include link-reset;
-    color: $color-white;
+    color: $color-grey-light-1;
+    transition: color 1s ease;
     padding: 0.5em;
     font-size: 2em;
     line-height: 2;
+
+    &:hover, &:focus {
+        color: $color-white;
+    }
 }
 
 .MainNav-close {

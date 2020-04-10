@@ -23,4 +23,7 @@
 
 <link rel="stylesheet" href="/vendor/oxygen/ui-theme/css/main<?php if(!config('app.debug')) { echo '.min'; } ?>.css">
 <link href="//fonts.googleapis.com/css?family=Roboto:400,400italic,700|Roboto+Slab" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="/vendor/oxygen/ui-theme/vendor/modernizr.min.js"></script>
+<script>
+    document.documentElement.classList.remove('no-js');
+    document.documentElement.classList.add('js');
+</script>

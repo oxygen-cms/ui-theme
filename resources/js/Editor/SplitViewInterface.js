@@ -1,6 +1,4 @@
-// ==========================
-//     SplitViewInterface
-// ==========================
+import Editor from './Editor';
 
 class SplitViewInterface {
 
@@ -13,28 +11,28 @@ class SplitViewInterface {
     }
 
     show() {
-        var items = this.editor.container.querySelectorAll("." + Editor.classes.editor.content);
+        var items = this.editor.container.querySelectorAll('.' + Editor.classes.editor.content);
         for(let item of items) {
             item.classList.add(Editor.classes.state.contentIsSplit);
         }
 
         var e = this.editor;
 
-        e.show("code", false);
-        e.show("preview", false);
-        e.modes.code.view.style.width = "50%";
-        e.modes.preview.view.style.width = "50%";
-        e.modes.code.ace.addEventListener("change", this.synchronize.bind(this));
+        e.show('code', false);
+        e.show('preview', false);
+        e.modes.code.view.style.width = '50%';
+        e.modes.preview.view.style.width = '50%';
+        e.modes.code.ace.addEventListener('change', this.synchronize.bind(this));
     }
 
     hide() {
-        var items = this.editor.container.querySelectorAll("." + Editor.classes.editor.content);
+        var items = this.editor.container.querySelectorAll('.' + Editor.classes.editor.content);
         for(let item of items) {
             item.classList.remove(Editor.classes.state.contentIsSplit);
         }
 
-        this.editor.hide("code");
-        this.editor.hide("preview");
+        this.editor.hide('code');
+        this.editor.hide('preview');
     }
 
     valueFromForm() {
@@ -44,14 +42,16 @@ class SplitViewInterface {
     }
 
     synchronize() {
-        if(this.currentTimer) {
-            clearTimeout(this.currentTimer);
+        if(!this.currentTimer) {
+            this.currentTimer = setTimeout(() => {
+                if (this.editor.currentMode === 'split') {
+                    this.editor.valueToForm('code');
+                    this.editor.valueFromForm('preview');
+                }
+                this.currentTimer = null;
+            }, 1000);
         }
-        this.currentTimer = setTimeout(() => {
-            if(this.editor.currentMode === "split") {
-                this.editor.valueToForm("code");
-                this.editor.valueFromForm("preview");
-            }
-        }, 1000);
     }
 }
+
+export default SplitViewInterface;

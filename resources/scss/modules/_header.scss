@@ -14,14 +14,21 @@
 .Header--small,
 .Header--normal,
 .Header--main {
-    border-bottom: 1px solid $color-grey-light-1;
+    // border-bottom: 1px solid $color-grey-light-1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
-    @include flex-container(column);
-
-    @include larger-than($tablet-large) {
-      @include flex-container(row, flex-start, center);
-      padding: 1.5em;
+    @include smaller-than($tablet-small) {
+        flex-wrap: wrap;
     }
+}
+
+.Header--tiny,
+.Header--small,
+.Header--normal {
+    background-color: $color-white;
+    border-bottom: 1px solid $color-grey-light-1;
 }
 
 .Header--tiny {
@@ -29,14 +36,25 @@
 }
 
 .Header--small {
-    padding: 1em 1.5em;
+    padding: 0.75em 2em;
+}
+
+.Header--normal {
+    padding: 1.5em 2em;
 }
 
 .Header--main {
-  padding: 1.5em;
+    padding: 3em 2em 3em 2em;
+    background-color: lighten($color-grey-light-2, 3%);
+    border-bottom: 1px solid $color-grey-dark-1;
+
+    &:last-child {
+        border-bottom: 0;
+    }
 }
 
 .Header--block {
+    background-color: $color-white;
     padding: 1em;
 
     .Header-title {
@@ -44,8 +62,10 @@
     }
 }
 
-.Header:last-child {
-    border-bottom: 0;
+.Header--condensedWidthCenter {
+    justify-content: center;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
 }
 
 .Header--block:last-child {
@@ -77,15 +97,9 @@
         margin: 0 0.25em;
     }
 
-    @include smaller-than($tablet-large) {
-        margin-top: 1em;
-    }
-
-    @include larger-than($tablet-large) {
-        &.Header-toolbar.Header-toolbar { // nasty specifity hack to override @flex-container's `float: left`
-            float: right;
-            margin-left: auto;
-        }
+    &.Header-toolbar.Header-toolbar { // nasty specifity hack to override @flex-container's `float: left`
+        float: right;
+        margin-left: auto;
     }
 
     &.Header-toolbar--alignLeft.Header-toolbar--alignLeft.Header-toolbar--alignLeft {
@@ -104,6 +118,7 @@
 }
 
 .Header-subtitle {
+    margin-left: 0.5em;
     color: $color-grey-dark-3;
 
     @include larger-than($tablet-large) {

@@ -52,6 +52,13 @@
                 border-bottom-color: darken($base-color, 25%);
             }
         }
+
+        &:focus {
+            background-color: $hover-color;
+            @if($border == true) {
+                border-bottom-color: darken($base-color, 20%);
+            }
+        }
     }
 }
 

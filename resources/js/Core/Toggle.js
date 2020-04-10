@@ -13,26 +13,27 @@ class Toggle {
     }
 
     registerEvents() {
-        this.toggle.addEventListener("click", event => this.handleToggle(event));
-        if(this.toggle.getAttribute("data-enabled") == undefined) {
-            this.toggle.setAttribute("data-enabled", "false");
+        this.toggle.addEventListener('click', event => this.handleToggle(event));
+        console.log(this.toggle);
+        if(this.toggle.dataset.enabled === undefined) {
+            this.toggle.dataset.enabled = 'false';
         }
     }
 
     handleToggle(event) {
-        if (this.toggle.getAttribute("data-enabled") === "true") {
-            this.toggle.setAttribute("data-enabled", "false");
+        if (this.toggle.dataset.enabled === 'true') {
+            this.toggle.dataset.enabled = 'false';
             this.disableCallback(event);
         } else {
-            this.toggle.setAttribute("data-enabled", "true");
+            this.toggle.dataset.enabled = 'true';
             this.enableCallback(event);
         }
     }
 }
 
 Toggle.classes = {
-    ifEnabled:  "Toggle--ifEnabled",
-    ifDisabled: "Toggle--ifDisabled"
+    ifEnabled:  'Toggle--ifEnabled',
+    ifDisabled: 'Toggle--ifDisabled'
 };
 
 // ================================
@@ -48,11 +49,18 @@ class FullscreenToggle extends Toggle {
         this.disableCallback = this.exitFullscreen;
         this.enterFullscreenCallback = enterFullscreenCallback;
         this.exitFullscreenCallback = exitFullscreenCallback;
+
+        document.addEventListener("fullscreenchange", (e) => {
+            if ((!document.fullscreenElement || document.fullscreenElement == null) && this.toggle.dataset.enabled === 'true') {
+                console.log('exiting fullscreen');
+                this.handleToggle();
+            }
+        });
     }
 
     enterFullscreen() {
-        this.fullscreenElement.classList.add("FullscreenToggle--isFullscreen");
-        document.body.classList.add("Body--noScroll");
+        this.fullscreenElement.classList.add('FullscreenToggle--isFullscreen');
+        document.body.classList.add('Body--noScroll');
 
         var elem = document.documentElement;
         if (elem.requestFullscreen) {
@@ -69,18 +77,22 @@ class FullscreenToggle extends Toggle {
     }
 
     exitFullscreen() {
-        this.fullscreenElement.classList.remove("FullscreenToggle--isFullscreen");
-        document.body.classList.remove("Body--noScroll");
+        this.fullscreenElement.classList.remove('FullscreenToggle--isFullscreen');
+        document.body.classList.remove('Body--noScroll');
 
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
+        if(document.fullscreenElement !== null) {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
         }
 
         (this.exitFullscreenCallback)();
     }
 }
+
+export { Toggle, FullscreenToggle };
 

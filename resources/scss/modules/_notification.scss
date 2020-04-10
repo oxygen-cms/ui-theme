@@ -24,10 +24,11 @@
 
 .Notification {
     display: block;
-    padding: 1.25em;
+    padding: 1.5em;
     margin: 0.5em 0.5em 0 0;
     line-height: 1.5;
-    border-radius: 0.5em;
+    border-radius: 1em;
+    border: 3px solid $color-black;
 
     animation: slideDown 0.5s both;
 
@@ -70,14 +71,17 @@
 
 .Notification--success {
     @include Box--design-flat($color-green, false);
+    border-color: darken($color-green, 10%);
 }
 
 .Notification--warning {
     @include Box--design-flat($color-orange, false);
+    border-color: darken($color-orange, 10%);
 }
 
 .Notification--failed {
     @include Box--design-flat($color-red, false);
+    border-color: darken($color-red, 10%);
 }
 
 .Notification--bug {
@@ -94,4 +98,5 @@
 
 .Notification--info {
     @include Box--design-flat($color-blue, false);
+    border-color: darken($color-blue, 10%);
 }

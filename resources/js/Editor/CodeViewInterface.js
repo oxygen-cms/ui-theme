@@ -1,6 +1,6 @@
-// ================================
-//          CodeViewInterface
-// ================================
+import ace from 'ace-builds';
+import Preferences from '../Core/Preferences';
+import Editor from './Editor';
 
 class CodeViewInterface {
 
@@ -11,10 +11,14 @@ class CodeViewInterface {
 
     create() {
         // edit the textarea
-        var object = ace.edit(this.editor.name + "-ace-editor");
+        ace.config.set('basePath', '/vendor/oxygen/ui-theme/vendor/ace/');
+        ace.config.set('modePath', '/vendor/oxygen/ui-theme/vendor/ace/');
+        ace.config.set('themePath', '/vendor/oxygen/ui-theme/vendor/ace/');
+        ace.config.set('workerPath', '/vendor/oxygen/ui-theme/vendor/ace/');
+        var object = ace.edit(this.editor.name + '-ace-editor');
 
         // set user preferences
-        object.getSession().setMode("ace/mode/" + this.editor.language);
+        object.getSession().setMode('ace/mode/' + this.editor.language);
         object.setTheme(Preferences.get('editor.ace.theme'));
         object.getSession().setUseWrapMode(Preferences.get('editor.ace.wordWrap'));
         object.setHighlightActiveLine(Preferences.get('editor.ace.highlightActiveLine'));
@@ -24,15 +28,15 @@ class CodeViewInterface {
 
         // store object
         this.ace = object;
-        this.view = document.getElementById(this.editor.name + "-ace-editor");
+        this.view = document.getElementById(this.editor.name + '-ace-editor');
         this.view.style.fontSize = Preferences.get('editor.ace.fontSize');
     }
 
     show(full) {
-        console.log("CodeViewInterface.show");
+        console.log('CodeViewInterface.show');
         this.view.classList.remove(Editor.classes.state.isHidden);
         if (full) {
-            this.view.style.width = "100%";
+            this.view.style.width = '100%';
         }
 
         // after animation is completed
@@ -42,7 +46,7 @@ class CodeViewInterface {
     }
 
     hide() {
-        console.log("CodeViewInterface.hide");
+        console.log('CodeViewInterface.hide');
         this.view.classList.add(Editor.classes.state.isHidden);
     }
 
@@ -58,3 +62,5 @@ class CodeViewInterface {
         this.ace.resize();
     }
 }
+
+export default CodeViewInterface;

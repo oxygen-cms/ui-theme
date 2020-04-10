@@ -23,7 +23,9 @@
     border: 4px solid $color-grey-dark-1;
     border-right: 0;
     @include Box--design-checkerboard($color-grey-dark-2, rgba(0, 0, 0, 0), 20px, false);
-    @include flex-container(null, null, center);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     @include larger-than($screen-large) { .FullscreenToggle--isFullscreen & { width: 85%; } }
 }
 
@@ -35,6 +37,7 @@
 .ImageEditor-toolbar {
     @include flex-container(null, flex-start, center, '.flex-item', wrap);
     align-content: space-between;
+    background-color: $color-grey-dark-1;
 
     & > * {
         margin: 0 0.25em;
@@ -49,6 +52,10 @@
     }
 }
 
+.ImageEditor-submit {
+    background-color: $color-grey-dark-1;
+}
+
 .ImageEditor-panel {
     width: 30%;
     height: 100%;
@@ -57,7 +64,7 @@
     @include larger-than($screen-large) { .FullscreenToggle--isFullscreen & { width: 15%; } }
 
     & > .TabSwitcher-content {
-        overflow: scroll;
+        overflow: auto;
         border-top: 2px groove darken($color-grey-dark-3, 10%);
         border-bottom: 2px groove darken($color-grey-dark-3, 10%);
     }

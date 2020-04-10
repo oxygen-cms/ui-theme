@@ -2,6 +2,14 @@
 //             ImageEditor
 // ================================
 
+import Croppr from 'croppr';
+import 'croppr/dist/croppr.min.css';
+import {FullscreenToggle} from '../Core/Toggle';
+import TabSwitcher from '../Core/TabSwitcher';
+import {Notification, NotificationCenter} from '../Core/Notification';
+import {respond} from '../Core/Fetch';
+import {getFormData} from '../Core/Form';
+
 class ImageEditor {
 
     // -----------------
@@ -10,11 +18,10 @@ class ImageEditor {
 
     constructor(container) {
         this.container = container;
-        this.jCropApi = null;
         this.cropDisableCounter = 0;
         this.cropOrigin = { x: 0, y: 0 };
+        this.croppr = null;
         this.image = this.container.querySelector("." + ImageEditor.classes.layout.image);
-        this.$image = $(this.image);
         if (!this.image) { throw new Error("<img> element doesn't exist"); }
 
         this.forms = {
@@ -72,8 +79,8 @@ class ImageEditor {
         this.applyChanges(data);
 
         this.progressNotification = new Notification({
-            content: "Saving Image",
-            status: "success"
+            content: 'Saving Image',
+            status: 'success'
         });
         NotificationCenter.present(this.progressNotification);
     }
@@ -81,8 +88,8 @@ class ImageEditor {
     gatherData() {
         var mode = TabSwitcher.list[0].current;
         switch (mode) {
-            case "simple": return this.getSimpleData();
-            case "advanced": return this.getAdvancedData();
+            case 'simple': return this.getSimpleData();
+            case 'advanced': return this.getAdvancedData();
             default: return {};
         }
     }
@@ -156,70 +163,52 @@ class ImageEditor {
     applyChanges(data) {
         if(this.applyingChanges) {
             NotificationCenter.present(new Notification({
-                content: "Already Processing",
-                status: "failed"
+                content: 'Already Processing',
+                status: 'failed'
             }));
             return;
         }
 
         this.applyingChanges = true;
 
-        console.log("Processing Image Using Commands: ", data);
+        console.log('Processing Image Using Commands: ', data);
 
-        var url = this.image.getAttribute("data-root") + "?" + serializeToQueryString(data);
+        var url = this.image.getAttribute('data-root') + '?' + serializeToQueryString(data);
         var headers = new Headers();
-        headers.set("Accept", "application/json");
+        headers.set('Accept', 'application/json');
         var options = {
-            method: "GET",
-            credentials: "same-origin",
+            method: 'GET',
+            credentials: 'same-origin',
             headers: headers
         };
 
-        console.log("Requesting URL: ", url, options);
+        console.log('Requesting URL: ', url, options);
 
         window.fetch(url, options)
-            .then(Oxygen.respond.checkStatus)
+            .then(respond.checkStatus)
             .then(response => {
                 return response.blob();
             })
             .then(myBlob => {
-                if ((this.jCropApi != null)) { this.jCropApi.destroy(); }
-                this.jCropApi = null;
+                if ((this.croppr !== null)) { this.croppr.destroy(); }
+                this.croppr = null;
                 this.cropOrigin = this.pendingCropOrigin;
 
                 let objectURL = URL.createObjectURL(myBlob);
                 this.image.style.removeProperty('width');
                 this.image.style.removeProperty('height');
                 this.image.src = objectURL;
-
-                //this.image[0].src = "data:image/jpeg;base64," + base64Encode(response);
             })
             .then(
                 r => {
-                    NotificationCenter.present(new Notification({content: "Image Processing Successful", status: "success"}));
+                    NotificationCenter.present(new Notification({content: 'Image Processing Successful', status: 'success'}));
                     this.applyingChanges = false;
                 },
                 e => {
                     this.applyingChanges = false; throw e;
                 }
             )
-            .catch(Oxygen.respond.handleAPIError);
-        /*$.ajax({
-            type:           "GET",
-            url:            this.image.attr("data-root"),
-            data:           data,
-            contentType:    false,
-            success:        this.onRequestEnd.bind(this),
-            error:          () => {
-                //this.progressNotification.hide();
-                //return Ajax.handleError();
-            },
-            xhr:            () => {
-                var object = window.ActiveXObject ? new ActiveXObject("XMLHttp") : new XMLHttpRequest();
-                object.overrideMimeType("text/plain; charset=x-user-defined");
-                return object;
-            }
-        });*/
+            .catch(respond.handleAPIError);
     }
 
     // --------------------------------------------
@@ -227,48 +216,31 @@ class ImageEditor {
     // --------------------------------------------
 
     enableCropping() {
-        /*if(this.jCropApi != null) {
-            this.jCropApi.enable();
-        } else {*/
-            var that = this;
-            this.$image.Jcrop({
-                    trueSize: [this.image.naturalWidth, this.image.naturalHeight],
-                    onChange: this.handleCropSelect.bind(this),
-                    onSelect: this.handleCropSelect.bind(this),
-                    onRelease: this.handleCropRelease.bind(this)
-                }, function() {
-                    that.jCropApi = this;
-                }
-            );
-        //}
+        this.croppr = new Croppr(this.image, {
+            onCropMove: this.handleCropSelect.bind(this)
+            // options
+        });
     }
 
     handleCropSelect(c) {
-        if(this.cropDisableCounter <= 0) {
-            this.fields.crop.x.value = Math.round(c.x + this.cropOrigin.x).toString();
-            this.fields.crop.y.value = Math.round(c.y + this.cropOrigin.y).toString();
-            this.fields.crop.width.value = Math.round(c.w).toString();
-            this.fields.crop.height.value = Math.round(c.h).toString();
-        } else {
-            this.cropDisableCounter--;
-        }
+        this.fields.crop.x.value = Math.round(c.x + this.cropOrigin.x).toString();
+        this.fields.crop.y.value = Math.round(c.y + this.cropOrigin.y).toString();
+        this.fields.crop.width.value = Math.round(c.width).toString();
+        this.fields.crop.height.value = Math.round(c.height).toString();
     }
 
     handleCropInputChange(event) {
-        if(this.jCropApi === null) { return; }
+        if(this.croppr === null) { return; }
         let x = parseInt(this.fields.crop.x.value === "" ? 0 : this.fields.crop.x.value);
         let y = parseInt(this.fields.crop.y.value === "" ? 0 : this.fields.crop.y.value);
         let w = parseInt(this.fields.crop.width.value === "" ? 0 : this.fields.crop.width.value);
         let h = parseInt(this.fields.crop.height.value === "" ? 0 : this.fields.crop.height.value);
 
-        // this counts down from 2, so the next two events generated by Jcrop are ignored.
-        this.cropDisableCounter = 2;
-
-        return this.jCropApi.setSelect([
-            x,
-            y,
-            x + w,
-            y + h
+        console.log(w, h, x, y);
+        return this.croppr.resizeTo([
+            w,
+            h,
+            [x, y]
         ]);
     }
 
@@ -323,3 +295,5 @@ ImageEditor.classes = {
         resize: "ImageEditor-resize-input"
     }
 };
+
+export default ImageEditor;

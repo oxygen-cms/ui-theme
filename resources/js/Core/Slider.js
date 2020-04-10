@@ -158,3 +158,5 @@ Slider.classes = {
 };
 
 Slider.list = [];
+
+export default Slider;

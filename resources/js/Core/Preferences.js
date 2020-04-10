@@ -9,7 +9,7 @@ class Preferences {
     }
 
     static isDefined(o) {
-        return typeof o !== "undefined" && o !== null;
+        return typeof o !== 'undefined' && o !== null;
     }
 
     static get(key, fallback = null) {
@@ -33,7 +33,7 @@ class Preferences {
         if (Preferences.isDefined(o)) {
             return o;
         } else {
-            console.log("Preferences key ", key, "was not defined, using default ", fallback);
+            console.log('Preferences key ', key, 'was not defined, using default ', fallback);
             return fallback;
         }
     }
@@ -46,7 +46,6 @@ class Preferences {
         }
 
         var parts = key.split('.');
-        var last = parts.pop();
         var l = parts.length;
         var i = 1;
         var current = parts[0];
@@ -60,4 +59,5 @@ class Preferences {
     }
 }
 
+export default Preferences;
 

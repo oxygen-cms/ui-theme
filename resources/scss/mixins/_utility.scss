@@ -14,7 +14,6 @@
 
 @mixin link-cursor {
     &:hover {
-        cursor: hand;
         cursor: pointer;
     }
 }

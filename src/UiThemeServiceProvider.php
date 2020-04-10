@@ -47,7 +47,6 @@ class UiThemeServiceProvider extends ServiceProvider {
     protected function addClassesToLayout() {
         $this->app['events']->listen('oxygen.layout.classes', function(&$htmlClasses, &$bodyClasses, &$pageClasses) {
             $htmlClasses[] = 'no-js';
-            $htmlClasses[] = 'no-flexbox';
             $pageClasses[] = 'Page';
         });
 

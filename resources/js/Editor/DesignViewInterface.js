@@ -1,6 +1,6 @@
-// ================================
-//          DesignViewInterface
-//   ================================
+import Preferences from '../Core/Preferences';
+import './basePath';
+import 'ckeditor4';
 
 class DesignViewInterface {
 
@@ -25,33 +25,35 @@ class DesignViewInterface {
         config.contentsCss = this.editor.stylesheets;
 
         // create instance
-        CKEDITOR.dtd.$removeEmpty["span"] = false;
-        this.ck = CKEDITOR.replace(this.editor.name + "-editor", config);
-        this.ck.on("instanceReady", event => {
-            this.view = document.getElementById("cke_" + this.editor.name + "-editor");
+        CKEDITOR.dtd.$removeEmpty['span'] = false;
+        this.ck = CKEDITOR.replace(this.editor.name + '-editor', config);
+        this.ck.on('instanceReady', event => {
+            this.view = document.getElementById('cke_' + this.editor.name + '-editor');
             //put your code here
         });
     }
 
     show(full) {
-        console.log("DesignViewInterface.show");
+        console.log('DesignViewInterface.show');
         if(this.view) {
-            this.view.style.display = "block";
+            this.view.style.display = 'block';
             if (full) {
-                this.view.style.width = "100%";
+                this.view.style.width = '100%';
             }
         } else {
-            this.ck.on("instanceReady", event => {
-                this.view.style.display = "block";
+            this.ck.on('instanceReady', event => {
+                this.view.style.display = 'block';
                 if (full) {
-                    this.view.style.width = "100%";
+                    this.view.style.width = '100%';
                 }
             });
         }
     }
 
     hide() {
-        this.view.style.display = "none";
+        if(this.view) {
+            this.view.style.display = 'none';
+        }
     }
 
     valueFromForm() {
@@ -62,3 +64,5 @@ class DesignViewInterface {
         this.editor.textarea.value = this.ck.getData();
     }
 }
+
+export default DesignViewInterface;

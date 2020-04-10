@@ -13,12 +13,17 @@ $Editor-background--dark: $color-grey-dark-1;
 $Editor-border--dark: $color-grey-dark-1;
 
 .Editor {
-    background-color: $color-white;
     width: 100%;
     overflow: hidden;
+}
 
-    @include larger-than($tablet-large) {
-        width: 90%;
+.Editor--main {
+    padding: 3em 0;
+    background-color: $color-white;
+    // border-bottom: 1px solid $color-grey-light-1;
+
+    &:last-child {
+        border-bottom: 0;
     }
 }
 
@@ -28,18 +33,11 @@ $Editor-border--dark: $color-grey-dark-1;
 
 .Editor.FullscreenToggle--isFullscreen {
     @include flex-container(column);
+    padding: 0;
 }
 
 .Editor-content {
     position: relative;
-
-    .js & {
-        //border: 1px solid $Editor-border;
-    }
-
-    .Editor--dark & {
-        //border-color: $Editor-border--dark;
-    }
 
     .FullscreenToggle--isFullscreen & {
         flex: 1;
@@ -75,14 +73,14 @@ $Editor-border--dark: $color-grey-dark-1;
     display: none;
 }
 
-// specifity hax
-.FullscreenToggle--isFullscreen .Editor-footer.Editor-footer.Editor-footer {
-    display: flex;
-}
-
-.Editor-footer.Editor-footer.Editor-footer {
-    display: none;
-}
+//// specifity hax
+//.FullscreenToggle--isFullscreen .Editor-footer.Editor-footer.Editor-footer {
+//    display: flex;
+//}
+//
+//.Editor-footer.Editor-footer.Editor-footer {
+//    display: none;
+//}
 
 /* ---------------
        CONTENT

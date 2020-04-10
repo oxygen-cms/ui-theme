@@ -1,3 +1,5 @@
+import {parentMatchingSelector, selectorMatches} from "../util";
+
 class Upload {
 
     static registerEvents(container) {
@@ -29,7 +31,7 @@ class Upload {
     static handleChange(event) {
         Upload.addFiles(parentMatchingSelector(event.currentTarget, Upload.selectors.uploadElement), event.currentTarget.files);
         console.dir(event.currentTarget);
-        event.currentTarget.value = ""; // reset the input field, so that the change event is always called.
+        event.currentTarget.value = ''; // reset the input field, so that the change event is always called.
     };
 
     static addFiles(upload, files) {
@@ -41,7 +43,7 @@ class Upload {
             preview.classList.add("FileUpload-preview");
             preview.innerHTML = '<div class="FileUpload-preview-info">' +
                     '<span>' + file.name + '</span>' +
-                    '<button type="button" class="FileUpload-preview-remove Button--transparent Icon Icon-times"></button>' +
+                    '<button type="button" class="FileUpload-preview-remove Button--transparent fa fa-times"></button>' +
                     '<span class="FileUpload-preview-size">' + fileSize(file.size) + '</span>' +
                 '</div>';
             upload.insertBefore(preview, upload.firstChild);
@@ -57,7 +59,7 @@ class Upload {
                 Upload.recalculateDropzoneVisibility(upload, files);
                 preview.parentNode.removeChild(preview);
             });
-            if (input.filesToUpload == null) {
+            if (typeof input.filesToUpload === 'undefined' || input.filesToUpload === null) {
                 input.filesToUpload = [];
             }
             input.filesToUpload.push(file);
@@ -71,7 +73,7 @@ class Upload {
                 let container = document.createElement("div");
                 container.classList.add("Icon-container");
                 let icon = document.createElement("span");
-                icon.classList.add("Icon", "Icon--gigantic", "Icon--light", "Icon-file-text");
+                icon.classList.add("fa", "Icon--gigantic", "Icon--light", "fa-file-text");
                 container.appendChild(icon);
                 preview.insertBefore(container, preview.firstChild);
             }
@@ -116,3 +118,5 @@ function fileSize(sizeInBytes) {
     }
     return output;
 }
+
+export default Upload;

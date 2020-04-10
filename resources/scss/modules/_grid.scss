@@ -8,21 +8,20 @@
 
 .Row {
     @extend .Row--visual;
-    @extend .Row--layout;
-}
-
-.Row--layout {
-    @include larger-than($tablet-large) {
-        @include flex-container(row, flex-start, center, '.flex-item', wrap);
-    }
 }
 
 .Row--wrap {
+    display: flex;
     flex-wrap: wrap;
 }
 
+.Row--spacer {
+    flex: 1;
+}
+
 .Row--visual {
-    padding: 1em;
+    background-color: $color-white;
+    padding: 1.5em;
 
     .Row & {
       padding: 1em 0;
@@ -33,12 +32,26 @@
     align-items: flex-start !important;
 }
 
+.Row--flexSpaceBetween {
+    display: flex;
+    justify-content: space-between;
+}
+
 .Row--border {
     border-bottom: 1px solid $color-grey-light-1;
 
     &:last-child {
         border-bottom: none;
     }
+}
+
+.Row--center {
+    display: flex;
+    justify-content: center;
+}
+
+.Row--fullWidth {
+    padding: 0;
 }
 
 .Row--highlight {
@@ -48,17 +61,8 @@
 
 @include larger-than($tablet-large) {
     .Cell-oneThird,
-    .Cell-twoThirds,
-    .Cell-oneHalf {
-        .no-flexbox & {
-            float: left;
-        }
-    }
-
-    .Cell-oneThird,
     .Cell-twoThirds {
         margin-right: 2.5%;
-        margin-bottom: 2.5%;
 
         .Row--singleLine & {
             margin-bottom: 0;
@@ -96,7 +100,8 @@
     .Cell-twoThirds,
     .Cell-oneHalf {
         display: block;
-        margin-bottom: 0.5em;
+        width: 100%;
+        margin: 0.5em 0;
 
         &:last-child {
             margin-bottom: 0;

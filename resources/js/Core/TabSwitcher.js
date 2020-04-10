@@ -2,6 +2,8 @@
 //          ProgressBar
 // ================================
 
+import {selectorMatches} from "../util";
+
 class TabSwitcher {
 
     static findAll(container) {
@@ -16,8 +18,8 @@ class TabSwitcher {
 
             if (container.length === 0) { container = tabs.parentNode.parentNode.querySelector("." + TabSwitcher.classes.content); }*/
 
-            let tabs = item.matchesSelector(TabSwitcher.selectors.tabs) ? item : item.querySelector(TabSwitcher.selectors.tabs);
-            let content = item.matchesSelector(TabSwitcher.selectors.content) ? item : item.querySelector(TabSwitcher.selectors.content);
+            let tabs = selectorMatches(item, TabSwitcher.selectors.tabs) ? item : item.querySelector(TabSwitcher.selectors.tabs);
+            let content = selectorMatches(item, TabSwitcher.selectors.content) ? item : item.querySelector(TabSwitcher.selectors.content);
 
             TabSwitcher.list.push(new TabSwitcher(tabs, content));
         }
@@ -77,3 +79,5 @@ TabSwitcher.selectors = {
 }
 
 TabSwitcher.list = [];
+
+export default TabSwitcher;
