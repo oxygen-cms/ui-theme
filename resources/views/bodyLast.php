@@ -1,1 +1,1 @@
-<script src="/vendor/oxygen/ui-theme/js/main<?php if(!config('app.debug')) { echo '.min'; } ?>.js"></script>
+<script src="/vendor/oxygen/ui-theme/js/main.js"></script>

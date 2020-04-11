@@ -21,7 +21,7 @@
 <meta name="msapplication-config" content="/vendor/oxygen/ui-theme/img/icon/browserconfig.xml">
 <meta name="application-name" content="Oxygen">
 
-<link rel="stylesheet" href="/vendor/oxygen/ui-theme/css/main<?php if(!config('app.debug')) { echo '.min'; } ?>.css">
+<link rel="stylesheet" href="/vendor/oxygen/ui-theme/css/main.css">
 <link href="//fonts.googleapis.com/css?family=Roboto:400,400italic,700|Roboto+Slab" rel="stylesheet" type="text/css">
 <script>
     document.documentElement.classList.remove('no-js');
