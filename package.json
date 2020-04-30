@@ -18,7 +18,7 @@
     "file-loader": "^6.0.0",
     "headroom.js": "^0.11.0",
     "jcrop": "https://github.com/tapmodo/Jcrop/archive/v2.0.4.tar.gz",
-    "jquery": "^3.2.1",
+    "jquery": "^3.5.0",
     "taggingJS": "https://github.com/sniperwolf/taggingJS",
     "vex-js": "~4.1.0",
     "whatwg-fetch": "^3.0.0"
