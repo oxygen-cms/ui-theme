@@ -10,13 +10,13 @@
     "authors": [
         {
             "name": "Chris Chamberlain",
-            "email": "c.chamberlain@iinet.net.au"
+            "email": "chris@chamberlain.id.au"
         }
     ],
     "require": {
         "php": ">=7.2.0",
-        "oxygen/preferences": "~0.3.0",
-        "oxygen/auth": "~0.3.0",
+        "oxygen/preferences": "~0.3.5",
+        "oxygen/auth": "~0.5.3",
         "illuminate/support": "~6.0"
     },
     "autoload": {
