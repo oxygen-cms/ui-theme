@@ -30,17 +30,6 @@ const setBodyScrollable = function(scrollable) {
 
 const init = function(container) {
 
-    //
-    // -------------------------
-    //       FLASH MESSAGE
-    // -------------------------
-    //
-    // This small delay helps to
-    // reduce lag on page load.
-    //
-
-    NotificationCenter.initializeExistingMessages();
-
     Dialog.registerEvents(container);
 
     //
@@ -68,7 +57,7 @@ const init = function(container) {
     if(document.querySelector('.Content-preview')) {
         initPreviewBox();
     }
-    
+
     if(document.querySelector('.ThemeChooser')) {
         initThemeChooser();
     }

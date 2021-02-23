@@ -14,17 +14,11 @@
 }
 
 html {
-    height: 100%;
     font-size: 87.5%;
 }
 
 body {
-    height: 100%;
     margin: 0;
-
-    background: linear-gradient($color-white-1, $color-white-2);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
     font-family: $font-default;
 
     @include smaller-than($tablet-large) {

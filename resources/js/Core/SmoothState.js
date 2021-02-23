@@ -13,35 +13,37 @@ class SmoothState {
             forms: 'null',
             onStart: {
                 duration: 350,
-                render: this.onStart
+                render: this.onStart.bind(this)
             },
             onProgress: {
                 duration: 0,
-                render: this.onProgress
+                render: this.onProgress.bind(this)
             },
             onReady: {
                 duration: 0,
-                render: this.onReady
+                render: this.onReady.bind(this)
             },
-            onAfter: this.onAfter
+            alterRequest: this.alterRequest.bind(this),
+            onAfter: this.onAfter.bind(this)
         };
-        if(elem !== null) {
-            const tagname = elem.tagName.toLowerCase();
-            // Checks to make sure the smoothState element has an id
-            if (elem.id && tagname !== 'body' && tagname !== 'html') {
-                this.smoothState = new Smoothstate(elem, options);
-                // Makes public methods available via $('element').data('smoothState');
-                // needed for the internal library to function
-                $.data(elem, 'smoothState', this.smoothState);
-            } else if (!elem.id) {
-                // Throw warning if in debug mode
-                console.warn('Every smoothState container needs an id but the following one does not have one:', this);
-            } else if ((tagname === 'body' || tagname === 'html')) {
-                // We dont support making the html or the body element the smoothstate container
-                console.warn('The smoothstate container cannot be the ' + this.tagName + ' tag');
-            }
-        } else {
-            console.warn('Smoothstate container #page not found');
+
+        if(elem === null) {
+            throw new Error('Smoothstate container #page not found');
+        }
+
+        const tagname = elem.tagName.toLowerCase();
+        // Checks to make sure the smoothState element has an id
+        if (elem.id && tagname !== 'body' && tagname !== 'html') {
+            this.smoothState = new Smoothstate(elem, options);
+            // Makes public methods available via $('element').data('smoothState');
+            // needed for the internal library to function
+            $.data(elem, 'smoothState', this.smoothState);
+        } else if (!elem.id) {
+            // Throw warning if in debug mode
+            throw new Error('Every smoothState container needs an id but the following one does not have one:', this);
+        } else if ((tagname === 'body' || tagname === 'html')) {
+            // We dont support making the html or the body element the smoothstate container
+            throw new Error('The smoothstate container cannot be the ' + this.tagName + ' tag');
         }
     }
 
@@ -58,12 +60,11 @@ class SmoothState {
                 return block.classList.add('Block--isExiting');
             }, i * 50);
         }
+    }
 
-        /*setTimeout(function() {
-            if(this.loading) {
-                return document.querySelector('.pace-activity').classList.add('pace-activity-active');
-            }
-        }, blocks.length * 100);*/
+    alterRequest(request) {
+        window.Oxygen.onNavigationBegin(request.url);
+        return request;
     }
 
     onProgress(container) {
@@ -86,6 +87,7 @@ class SmoothState {
     }
 
     onReady(container, content) {
+        window.Oxygen.onNavigationEnd();
         SmoothState.setCursor('auto');
 
         reset();

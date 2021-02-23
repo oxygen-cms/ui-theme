@@ -75,20 +75,6 @@ const respond = {
         return data;
     },
 
-// handle network errors
-// if(error.response.readyState === 0) {
-//     console.error(response);
-// }
-// Oxygen.error.jsonParseError = function(error, text) {
-//     console.error('Error while parsing JSON: ', error);
-//     console.log('Raw response: ', text);
-//
-//     new Notification({
-//         content: 'Could not parse JSON response. This is a bug.',
-//         status: 'failed'
-//     });
-// };
-
     handleAPIError: function (error) {
         if (error.response && error.response instanceof Response) {
             error.response
