@@ -13,36 +13,29 @@ class Dialog {
     }
 
     static handleAlertClick(event) {
-        vex.dialog.alert({
-            unsafeMessage: event.currentTarget.getAttribute('data-dialog-message'),
-            className: Dialog.classes.main
-        });
+        window.Oxygen.openAlertDialog(event.currentTarget.getAttribute('data-dialog-message'));
     }
 
     static handleConfirmClick(event, customConfig) {
         const target = event.currentTarget;
         if(target.getAttribute('data-dialog-disabled') !== 'true') {
-            let defaultConfig;
             event.preventDefault();
             event.stopPropagation();
             event.stopImmediatePropagation();
 
-            defaultConfig = {
-                unsafeMessage: target.getAttribute('data-dialog-message'),
-                callback(value) {
-                    if (value) {
-                        target.setAttribute('data-dialog-disabled', 'true');
-                        target.click();
-                    }
-                },
-                className: Dialog.classes.main
+            let config = {
+                message: target.getAttribute('data-dialog-message'),
+                onConfirm: (value) => {
+                    target.setAttribute('data-dialog-disabled', 'true');
+                    target.click();
+                }
             };
 
-            for (var attribute in customConfig) {
-                defaultConfig[attribute] = customConfig[attribute];
+            for (const attribute in customConfig) {
+                config[attribute] = customConfig[attribute];
             }
 
-            return vex.dialog.confirm(defaultConfig);
+            window.Oxygen.openConfirmDialog(config);
         }
     }
 }

@@ -354,61 +354,6 @@
     font-weight: bold;
 }
 
-/* ============================
-          CHECKBOX
-   ============================ */
-
-%Form-checkbox {
-    display: none;
-
-    & + .Form-checkbox-label {
-        cursor: pointer;
-
-        .Form--dark & {
-            color: $color-white;
-        }
-    }
-
-    & + .Form-checkbox-label:before {
-        display: inline-block;
-        font-family: FontAwesome;
-        font-size: 1.15em;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        vertical-align: middle;
-        content: "\f096";
-        margin-right: 0.3em;
-        width: 1em;
-        animation: Form-checkbox-untick 180ms ease;
-    }
-
-    &:checked + .Form-checkbox-label:before {
-        content: "\f14a";
-        color: darken($color-blue, 25%);
-        animation: Form-checkbox-tick 180ms ease;
-    }
-
-    &:disabled + .Form-checkbox-label {
-        color: $color-grey-light-1;
-
-        &:before {
-            content: "\f0c8";
-            color: #ccc;
-        }
-    }
-}
-
-@keyframes Form-checkbox-tick {
-     0% {  transform: scale(0); }
-     90% {  transform: scale(1.2); }
-     100% {  transform: scale(1); }
-}
-
-@keyframes Form-checkbox-untick {
-    0% {  opacity: 0; transform: scale(1.4); }
-    100% {  opacity: 1; transform: scale(1); }
-}
-
 /* =====================
           TAGGABLE
    ===================== */
@@ -537,10 +482,6 @@ input[type=file] {
     border: 0;
     outline: none;
     font-family: $font-default;
-}
-
-input[type=checkbox] {
-    @extend %Form-checkbox;
 }
 
 input[type=radio] {

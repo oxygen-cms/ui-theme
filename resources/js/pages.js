@@ -8,7 +8,6 @@ import Upload from './Core/Upload';
 import TabSwitcher from './Core/TabSwitcher';
 import Slider from './Core/Slider';
 import Editor from './Editor/Editor';
-import initLogin from './login';
 import initPreviewBox from './previewBox';
 import initThemeChooser from './themeChooser';
 
@@ -41,18 +40,6 @@ const init = function(container) {
     //
 
     ImageEditor.initialize(container);
-
-    //
-    // -------------------------
-    //           LOGIN
-    // -------------------------
-    //
-    // Login form animations.
-    //
-
-    if(document.querySelector('.Login-form')) {
-        initLogin();
-    }
 
     if(document.querySelector('.Content-preview')) {
         initPreviewBox();
