@@ -10,9 +10,14 @@ document.addEventListener('DOMContentLoaded', function() {
         Preferences.setPreferences(window.Oxygen.user);
     }
 
-    if (typeof window.Oxygen.onNavigate === 'undefined') {
-        window.Oxygen.onNavigationBegin = (url) => {console.log('Navigating to', url);}
-        window.Oxygen.onNavigationEnd = () => {console.log('Navigation end');}
+    // these are set by the parent page
+    if (typeof window.Oxygen.onNavigationBegin === 'undefined') {
+        window.Oxygen.onNavigationBegin = (url) => {
+            console.log('Navigating to', url);
+        }
+    }
+    if(typeof window.Oxygen.onNavigationEnd === 'undefined') {
+        window.Oxygen.onNavigationEnd = () => {}
     }
 
     init(document);

@@ -33,10 +33,6 @@ function parentMatchingSelector(elem, selector) {
     return null;
 }
 
-//
-// NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
-// HTMLCollection.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
-
 function selectorMatches(el, selector) {
     var p = Element.prototype;
     var f = p.matches || p.webkitMatchesSelector || p.mozMatchesSelector || p.msMatchesSelector || function(s) {
@@ -44,9 +40,4 @@ function selectorMatches(el, selector) {
     };
     return f.call(el, selector);
 }
-
-// Element.prototype.matchesSelector = function(selector) {
-//     return this[matchesMethod](selector);
-// };
-
 export { parentMatchingSelector, parentOrSelfMatchingSelector, selectorMatches };
