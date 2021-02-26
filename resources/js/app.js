@@ -5,6 +5,12 @@ import SmoothState from './Core/SmoothState';
 import { init, reset } from './pages';
 import '../scss/main.scss';
 
+if(window.location === window.parent.location && window.location.href.search('/oxygen/view') !== -1)
+{
+    // we are *not* inside an iframe, that is bad news
+    window.location.assign(window.location.href.replace('/oxygen/view', '/oxygen'));
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     if ((typeof window.Oxygen.user !== 'undefined' && window.Oxygen.user !== null)) {
         Preferences.setPreferences(window.Oxygen.user);
