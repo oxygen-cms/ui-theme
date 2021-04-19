@@ -42,21 +42,21 @@
         &:hover {
             background-color: $hover-color;
             @if($border == true) {
-                border-bottom-color: darken($base-color, 20%);
+                border-bottom-color: darken($hover-color, 10%);
             }
         }
 
         &:active {
             background-color: $active-color;
             @if($border == true) {
-                border-bottom-color: darken($base-color, 25%);
+                border-bottom-color: darken($active-color, 15%);
             }
         }
 
         &:focus {
             background-color: $hover-color;
             @if($border == true) {
-                border-bottom-color: darken($base-color, 20%);
+                border-bottom-color: darken($hover-color, 10%);
             }
         }
     }

@@ -214,7 +214,8 @@ input[type="button"] {
 }
 
 .Button-color--black {
-    @include Box--design-flat($color-grey-dark-1, true, null, null, true);
+    @include Box--design-flat(darken($color-grey-dark-1, 10%), true, darken($color-grey-dark-1, 15%), darken($color-grey-dark-1, 10%), false);
+    color: #ddd;
 }
 
 .Button-color--green {

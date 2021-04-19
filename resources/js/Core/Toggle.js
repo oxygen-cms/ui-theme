@@ -50,12 +50,12 @@ class FullscreenToggle extends Toggle {
         this.enterFullscreenCallback = enterFullscreenCallback;
         this.exitFullscreenCallback = exitFullscreenCallback;
 
-        document.addEventListener("fullscreenchange", (e) => {
-            if ((!document.fullscreenElement || document.fullscreenElement == null) && this.toggle.dataset.enabled === 'true') {
-                console.log('exiting fullscreen');
-                this.handleToggle();
-            }
-        });
+        // document.addEventListener("fullscreenchange", (e) => {
+        //     if ((!document.fullscreenElement || document.fullscreenElement == null) && this.toggle.dataset.enabled === 'true') {
+        //         console.log('exiting fullscreen');
+        //         this.handleToggle();
+        //     }
+        // });
     }
 
     enterFullscreen() {
