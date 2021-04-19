@@ -44,9 +44,21 @@ class Editor {
             this.fullscreenToggle = new FullscreenToggle(toggle, this.container, this.enterFullscreen, this.exitFullscreen);
         }
 
+        this.onCurrentModeUpdated();
         this.show();
         this.resizeToContent();
         this.registerEvents();
+    }
+
+    onCurrentModeUpdated() {
+        // switch editor button
+        for(let button of this.container.querySelectorAll('.' + Editor.classes.button.switchEditor)) {
+            if(button.getAttribute('data-editor') === this.currentMode) {
+                button.classList.add(Editor.classes.button.activeMode);
+            } else {
+                button.classList.remove(Editor.classes.button.activeMode);
+            }
+        }
     }
 
     getMode(mode) {
@@ -60,16 +72,21 @@ class Editor {
     registerEvents() {
         // switch editor button
         for(let button of this.container.querySelectorAll('.' + Editor.classes.button.switchEditor)) {
-            button.addEventListener('click', this.handleSwitchEditor);
+            button.addEventListener('click', this.handleSwitchEditor.bind(this));
         }
 
         // ask the form to tell us when its data is being read,
         // so we can flush changes to the underlying <input>/<textarea> element
-        var form = parentMatchingSelector(this.container, 'form');
+        let form = parentMatchingSelector(this.container, 'form');
         if(form !== null && form.formObject) {
             form.formObject.contentGenerators.push(form =>
                 this.valueToForm()
             );
+        }
+
+        // switch editor button
+        for(let button of this.container.querySelectorAll('.' + Editor.classes.button.insertMediaItem)) {
+            button.addEventListener('click', this.insertMediaItem.bind(this));
         }
     }
 
@@ -97,6 +114,7 @@ class Editor {
         if (!this.modes[mode]) { this.create(mode); }
         this.modes[mode].show(full);
         this.currentMode = mode;
+        this.onCurrentModeUpdated();
         this.valueFromForm(mode);
     }
 
@@ -131,22 +149,27 @@ class Editor {
 
     // enter fullscreen
     enterFullscreen() {
-        console.log('fullscreen');
         this.resizeToContainer();
     }
 
     // exit fullscreen
     exitFullscreen() {
-        console.log('exit');
-        console.trace();
         this.resizeToContent();
     }
 
     handleSwitchEditor(event) {
-        console.log('Editor.handleSwitchEditor');
         var editorToSwitch = event.currentTarget.getAttribute('data-editor');
         this.hide();
         return this.show(editorToSwitch);
+    }
+
+    insertMediaItem() {
+        console.log('CURRENT MODE', this.currentMode);
+        if(this.currentMode === 'code' || this.currentMode === 'split') {
+            this.modes.code.insertMediaItem();
+        } else {
+            window.Oxygen.openAlertDialog('Please select the "Code" or "Split" view to insert media items');
+        }
     }
 
     handleFormSubmit() {
@@ -169,7 +192,9 @@ Editor.classes = {
     },
     button: {
         switchEditor: 'Editor--switchEditor',
-        fullscreenToggle: 'Editor--toggleFullscreen'
+        fullscreenToggle: 'Editor--toggleFullscreen',
+        activeMode: 'Editor--isActiveMode',
+        insertMediaItem: 'Editor--insertMediaItem'
     }
 };
 

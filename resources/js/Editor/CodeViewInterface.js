@@ -58,6 +58,18 @@ class CodeViewInterface {
         this.editor.textarea.value = this.ace.getValue();
     }
 
+    async insertMediaItem() {
+        try {
+            let result = await window.Oxygen.insertMediaItem();
+            if(result) {
+                this.ace.insert(result);
+            }
+        } catch(e) {
+            console.warn(e);
+        }
+
+    }
+
     resize() {
         this.ace.resize();
     }

@@ -19,8 +19,11 @@ $Editor-border--dark: $color-grey-dark-1;
 
 .Editor--main {
     padding: 3em 0;
-    background-color: $color-white;
-    // border-bottom: 1px solid $color-grey-light-1;
+    background-color: white;
+
+    &:first-child {
+        padding-top: 0;
+    }
 
     &:last-child {
         border-bottom: 0;
@@ -48,39 +51,54 @@ $Editor-border--dark: $color-grey-dark-1;
     border-top: 0;
 }
 
-.Editor-header,
-.Editor-footer {
+.Editor-header {
     @include flex-container(null, flex-start, center, '.flex-item', wrap);
-    align-content: space-between;
 
     background-color: $Editor-background;
-    border: 1px solid $Editor-border;
-    min-height: 4em;
-    padding: 0.5em;
-
-    & > * {
-      margin: 0 0.25em;
-    }
+    border-bottom: 4px solid $Editor-border;
+    padding: 0 0.5rem;
 
     .Editor--dark & {
         background-color: $Editor-background--dark;
-        border: 0;
+        border-color: #555;
+    }
+
+    .Editor-header-item {
+        margin: 0 0.25rem;
+    }
+
+    .Editor-header-item:first-child {
+        margin-left: 0;
+    }
+
+    .Editor-header-item:last-child {
+        margin-right: 0;
+    }
+
+    .Button,
+    .ButtonTabGroup .Button:first-child,
+    .ButtonTabGroup .Button:last-child {
+        border-radius: 0;
+    }
+
+    .Button {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+
+        &:hover {
+            color: white;
+        }
+    }
+
+    .Button.Editor--isActiveMode {
+        background-color: #555;
+        color: white;
     }
 }
 
-.no-js .Editor-header,
-.no-js .Editor-footer {
+.no-js .Editor-header{
     display: none;
 }
-
-//// specifity hax
-//.FullscreenToggle--isFullscreen .Editor-footer.Editor-footer.Editor-footer {
-//    display: flex;
-//}
-//
-//.Editor-footer.Editor-footer.Editor-footer {
-//    display: none;
-//}
 
 /* ---------------
        CONTENT
@@ -132,6 +150,14 @@ $Editor-border--dark: $color-grey-dark-1;
     .Editor--dark & {
         border-color: $Editor-border--dark;
     }
+}
+
+.Editor .Form-submit {
+    display: none;
+}
+
+.Editor.FullscreenToggle--isFullscreen .Form-submit {
+    display: block;
 }
 
 /* ---------------
