@@ -22,7 +22,8 @@ class Dropdown {
             if (selectorMatches(c, 'a[href], form')) { return; }
             c = c.parentNode;
         }
-        var dropdown = c.querySelector('.' + Dropdown.classes.dropdownList);
+        // var dropdown = c.querySelector('.' + Dropdown.classes.dropdownList);
+        var dropdown = c;
         if (dropdown.classList.contains(Dropdown.classes.isActive)) {
             dropdown.classList.remove(Dropdown.classes.isActive);
         } else {
@@ -38,7 +39,7 @@ class Dropdown {
     }
 
     static reset(event) {
-        for(let item of document.querySelectorAll('.' + Dropdown.classes.dropdownList)) {
+        for(let item of document.querySelectorAll('.' + Dropdown.classes.dropdownToggle)) {
             item.classList.remove(Dropdown.classes.isActive);
         }
     }

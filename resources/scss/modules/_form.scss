@@ -73,24 +73,25 @@
 }
 
 .Form-label {
-    display: block;
-    padding-bottom: 0.5em;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    color: $color-grey-dark-2;
-
-    .Form--singleColumn & {
-        padding: 0.5em 0 0.5em 0;
-        width: auto;
-    }
-
-    .Form--dark & {
-        color: $color-white;
-    }
-
-    &.Form-label--inline {
-        display: inline-block;
-    }
+    @extend .label;
+    //display: block;
+    //padding-bottom: 0.5em;
+    //text-transform: uppercase;
+    //font-size: 0.8rem;
+    //color: $color-grey-dark-2;
+    //
+    //.Form--singleColumn & {
+    //    padding: 0.5em 0 0.5em 0;
+    //    width: auto;
+    //}
+    //
+    //.Form--dark & {
+    //    color: $color-white;
+    //}
+    //
+    //&.Form-label--inline {
+    //    display: inline-block;
+    //}
 }
 
 
@@ -433,21 +434,6 @@
           SEARCH
    ============================ */
 
-%Form-search {
-    background-color: $color-white-2;
-    border: 1px solid $color-grey-mid-1;
-    border-radius: 1em;
-    padding-left: 1em;
-
-    &:hover, &:focus {
-        background-color: $color-white-2;
-    }
-}
-
-/* ============================
-          SEARCH
-   ============================ */
-
 %Form-radio {
     margin-right: 0.5em;
 }
@@ -466,7 +452,7 @@ input[type=email],
 input[type=number],
 input[type=search],
 input[type=datetime] {
-    @extend %Form-input;
+    @extend .input;
     width: 20em;
 }
 
@@ -475,7 +461,8 @@ input[type=number] {
 }
 
 input[type=search] {
-    @extend %Form-search;
+    // @extend %Form-search;
+    @extend .input, .is-rounded;
 }
 
 input[type=file] {
@@ -489,9 +476,10 @@ input[type=radio] {
 }
 
 textarea {
-    @extend %Form-input;
-    @include Form-fullWidth();
-    display: block; /* Force newline */
+    @extend .textarea;
+    // @extend %Form-input;
+    // @include Form-fullWidth();
+    // display: block; /* Force newline */
 }
 
 textarea[type="hidden"] {

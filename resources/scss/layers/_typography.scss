@@ -6,22 +6,30 @@
    ====================================================================
    ==================================================================== */
 
-.heading-alpha,
-.heading-beta,
-.heading-gamma,
-.heading-delta {
-    color: $color-grey-dark-1;
-    font-family: 'Roboto Slab';
-    font-weight: normal;
+.heading-beta {
+    @extend .title;
 }
 
-.heading-alpha {
-    font-size: 3em;
-
-    @include larger-than($tablet-small) {
-        font-size: 4em;
-    }
+.heading-gamma {
+    @extend .subtitle;
 }
+
+//.heading-alpha,
+//.heading-beta,
+//.heading-gamma,
+//.heading-delta {
+//    //color: $color-grey-dark-1;
+//    //font-family: 'Roboto Slab';
+//    //font-weight: normal;
+//}
+
+//.heading-alpha {
+//    font-size: 3em;
+//
+//    @include larger-than($tablet-small) {
+//        font-size: 4em;
+//    }
+//}
 
 .heading-beta {
     font-size: 2em;
@@ -117,10 +125,6 @@ ul {
 a {
     color: darken($color-blue, 25%);
     text-decoration: none;
-
-    &:hover, &:active {
-        text-decoration: underline;
-    }
 }
 
 pre, code {

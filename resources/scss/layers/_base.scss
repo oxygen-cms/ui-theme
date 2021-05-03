@@ -13,18 +13,18 @@
     box-sizing: border-box;
 }
 
-html {
-    font-size: 87.5%;
-}
+//html {
+//    font-size: 87.5%;
+//}
 
-body {
-    margin: 0;
-    font-family: $font-default;
-
-    @include smaller-than($tablet-large) {
-        min-width: $mobile-small;
-    }
-}
+//body {
+//    margin: 0;
+//    font-family: $font-default;
+//
+//    @include smaller-than($tablet-large) {
+//        min-width: $mobile-small;
+//    }
+//}
 
 /* body */.Body--noScroll {
     overflow: hidden;

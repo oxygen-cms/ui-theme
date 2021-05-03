@@ -17,17 +17,18 @@ input[type="button"] {
 }
 
 .Button {
-    @include link-reset;
-    @include link-cursor;
-    @include unselectable;
-
-    display: inline-block;
-    margin: 0;
-    padding: 0.75em 1em;
-    border-radius: 0.5em;
-
-    font-size: 1rem;
-    font-weight: normal;
+    // @extend .button;
+    //@include link-reset;
+    //@include link-cursor;
+    //@include unselectable;
+    //
+    //display: inline-block;
+    //margin: 0;
+    //padding: 0.75em 1em;
+    //border-radius: 0.5em;
+    //
+    //font-size: 1rem;
+    //font-weight: normal;
 }
 
 .Button:last-child {
@@ -48,90 +49,91 @@ input[type="button"] {
 
 .Button--back,
 .Button--forward {
-    @include Box--design-flat($color-grey-light-1, true, null, null, true);
-
-    position: relative;
-    z-index: 1;
-
-    &:before, &:after {
-        position: absolute;
-        top: 0;
-        content: "";
-        font-size: 0;
-        line-height: 0;
-        width: 0;
-        border-top: 1.42rem solid transparent;
-        border-bottom: 1.42rem solid transparent;
-    }
+    @extend .button, .is-rounded;
+    //@include Box--design-flat($color-grey-light-1, true, null, null, true);
+    //
+    //position: relative;
+    //z-index: 1;
+    //
+    //&:before, &:after {
+    //    position: absolute;
+    //    top: 0;
+    //    content: "";
+    //    font-size: 0;
+    //    line-height: 0;
+    //    width: 0;
+    //    border-top: 1.42rem solid transparent;
+    //    border-bottom: 1.42rem solid transparent;
+    //}
 }
 
 .Button--back {
-    padding-left: 1em;
-    margin-left: 1em;
-    border-radius: 0 0.5em 0.5em 0;
-
-    &::before {
-        left: -1.30rem;
-        z-index: 2;
-        border-right: 1.42rem solid $color-grey-light-1;
-        transition: border-right-color 0.2s ease;
-    }
-
-    &::after {
-        left: -1.30rem;
-        z-index: 1;
-        top: 0.23rem;
-        transition: border-color 0.2s ease;
-        border-right: 1.42rem solid darken($color-grey-light-1, 10%);
-    }
-
-    &:hover::after {
-        border-right: 1.42rem solid darken($color-grey-light-1, 20%);
-    }
-
-    &:hover:before {
-        border-right-color: darken($color-grey-light-1, 10%);
-    }
-
-    &:active:before {
-        border-right-color: darken($color-grey-light-1, 15%);
-    }
-
-    &:focus:before {
-        border-right-color: darken($color-grey-light-1, 10%);
-    }
+    //padding-left: 1em;
+    //margin-left: 1em;
+    //border-radius: 0 0.5em 0.5em 0;
+    //
+    //&::before {
+    //    left: -1.30rem;
+    //    z-index: 2;
+    //    border-right: 1.42rem solid $color-grey-light-1;
+    //    transition: border-right-color 0.2s ease;
+    //}
+    //
+    //&::after {
+    //    left: -1.30rem;
+    //    z-index: 1;
+    //    top: 0.23rem;
+    //    transition: border-color 0.2s ease;
+    //    border-right: 1.42rem solid darken($color-grey-light-1, 10%);
+    //}
+    //
+    //&:hover::after {
+    //    border-right: 1.42rem solid darken($color-grey-light-1, 20%);
+    //}
+    //
+    //&:hover:before {
+    //    border-right-color: darken($color-grey-light-1, 10%);
+    //}
+    //
+    //&:active:before {
+    //    border-right-color: darken($color-grey-light-1, 15%);
+    //}
+    //
+    //&:focus:before {
+    //    border-right-color: darken($color-grey-light-1, 10%);
+    //}
 }
 
 .Button--forward {
-    padding-right: 1em;
-    border-radius: 0.5em 0 0 0.5em;
-
-    &:before {
-        right: -1.3rem;
-        z-index: 2;
-        border-left: 1.4rem solid $color-grey-light-1;
-        transition: border-left-color 0.2s ease;
-    }
-
-    &::after {
-        right: -1.3rem;
-        z-index: 1;
-        top: 0.23rem;
-        transition: border-color 0.2s ease;
-        border-left: 1.42rem solid darken($color-grey-light-1, 10%);
-    }
-
-    &:hover:before {
-        border-left-color: darken($color-grey-light-1, 10%);
-    }
-
-    &:active:before {
-        border-left-color: darken($color-grey-light-1, 15%)
-    }
-
-    &:focus:before {
-        border-right-color: darken($color-grey-light-1, 10%);
-    }
+    //padding-right: 1em;
+    //border-radius: 0.5em 0 0 0.5em;
+    //
+    //&:before {
+    //    right: -1.3rem;
+    //    z-index: 2;
+    //    border-left: 1.4rem solid $color-grey-light-1;
+    //    transition: border-left-color 0.2s ease;
+    //}
+    //
+    //&::after {
+    //    right: -1.3rem;
+    //    z-index: 1;
+    //    top: 0.23rem;
+    //    transition: border-color 0.2s ease;
+    //    border-left: 1.42rem solid darken($color-grey-light-1, 10%);
+    //}
+    //
+    //&:hover:before {
+    //    border-left-color: darken($color-grey-light-1, 10%);
+    //}
+    //
+    //&:active:before {
+    //    border-left-color: darken($color-grey-light-1, 15%)
+    //}
+    //
+    //&:focus:before {
+    //    border-right-color: darken($color-grey-light-1, 10%);
+    //}
 }
 
 .Button[disabled] {
@@ -202,32 +204,39 @@ input[type="button"] {
    ================= */
 
 .Button-color--dark-grey {
-    @include Box--design-flat($color-grey-mid-1, true, null, null, true);
+    @extend .button, .is-dark;
+    // @include Box--design-flat($color-grey-mid-1, true, null, null, true);
 }
 
 .Button-color--grey {
-    @include Box--design-flat($color-grey-light-1, true, null, null, true);
+    @extend .button, .is-light;
+    //@include Box--design-flat($color-grey-light-1, true, null, null, true);
 }
 
 .Button-color--white {
-    @include Box--design-flat($color-grey-light-2, true, null, null, true);
+    @extend .button;
+    //@include Box--design-flat($color-grey-light-2, true, null, null, true);
 }
 
 .Button-color--black {
-    @include Box--design-flat(darken($color-grey-dark-1, 10%), true, darken($color-grey-dark-1, 15%), darken($color-grey-dark-1, 10%), false);
-    color: #ddd;
+    @extend .button, .is-black;
+    //@include Box--design-flat(darken($color-grey-dark-1, 10%), true, darken($color-grey-dark-1, 15%), darken($color-grey-dark-1, 10%), false);
+    //color: #ddd;
 }
 
 .Button-color--green {
-    @include Box--design-flat($color-green, true, null, null, true);
+    @extend .button, .is-success;
+    //@include Box--design-flat($color-green, true, null, null, true);
 }
 
 .Button-color--red {
-    @include Box--design-flat($color-red, true, null, null, true);
+    @extend .button, .is-danger;
+    // @include Box--design-flat($color-red, true, null, null, true);
 }
 
 .Button-color--blue {
-    @include Box--design-flat($color-blue, true, null, null, true);
+    @extend .button, .is-primary;
+    // @include Box--design-flat($color-blue, true, null, null, true);
 }
 
 /* =========================
@@ -235,28 +244,33 @@ input[type="button"] {
    ========================= */
 
 .ButtonTabGroup {
-    @include flex-container(row, flex-start, stretch, '.Button');
+    @extend .field, .has-addons;
+    // @include flex-container(row, flex-start, stretch, '.Button');
+}
+
+.Header-toolbar .ButtonTabGroup {
+    margin-bottom: 0;
 }
 
 .ButtonTabGroup .Button {
-    display: inline-block;
-    margin: 0;
-    border-radius: 0;
-    border-right: 1px solid $color-grey-dark-3;
+    //display: inline-block;
+    //margin: 0;
+    //border-radius: 0;
+    //border-right: 1px solid $color-grey-dark-3;
 }
 
 .ButtonTabGroup--dark .Button {
-    border-right: 1px solid darken($color-grey-dark-3, 10%);
+    // border-right: 1px solid darken($color-grey-dark-3, 10%);
 }
 
 .ButtonTabGroup .Button:first-child {
-    border-top-left-radius: 0.5em;
-    border-bottom-left-radius: 0.5em;
+    //border-top-left-radius: 0.5em;
+    //border-bottom-left-radius: 0.5em;
 }
 
 .ButtonTabGroup .Button:last-child {
-    border-left-width: 0;
-    border-top-right-radius: 0.5em;
-    border-bottom-right-radius: 0.5em;
-    border-right: 0;
+    //border-left-width: 0;
+    //border-top-right-radius: 0.5em;
+    //border-bottom-right-radius: 0.5em;
+    //border-right: 0;
 }

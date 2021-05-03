@@ -10,8 +10,11 @@
 @import "mixins/utility";
 
 // Layers
-@import "layers/base";
 @import "layers/typography";
+
+@import "../../node_modules/bulma/bulma.sass";
+
+@import "layers/base";
 
 // Modules
 @import "modules/animations";
@@ -22,7 +25,6 @@
 @import "modules/dialog";
 @import "modules/dropdown";
 @import "modules/editor";
-@import "modules/notification";
 @import "modules/form";
 @import "modules/header";
 @import "modules/icon";
