@@ -29,7 +29,7 @@ class UiThemeServiceProvider extends ServiceProvider {
         ], 'public');
 
         $this->app[PreferencesManager::class]->loadDirectory(__DIR__ . '/../resources/preferences', [
-            'user.general', 'user.editor', 'user.pageLoad'
+            'user.general', 'user.editor'
         ]);
 
         $this->addClassesToLayout();
@@ -51,8 +51,8 @@ class UiThemeServiceProvider extends ServiceProvider {
         });
 
         $this->app['events']->listen('oxygen.layout.attributes', function(&$htmlAttributes, &$bodyAttributes, &$pageAttributes) {
-            if($this->app['auth']->check() && $this->app['auth']->user()->getPreferences()->get('fontSize') !== '87.5%') {
-                $htmlAttributes['style'] = 'font-size: ' . $this->app['auth']->user()->getPreferences()->get('fontSize') . ';';
+            if($this->app['auth']->check() && $this->app[PreferencesManager::class]->get('user.general::fontSize') !== '87.5%') {
+                $htmlAttributes['style'] = 'font-size: ' . $this->app[PreferencesManager::class]->get('user.general::fontSize') . ';';
             }
 
             $pageAttributes['id'] = 'page';

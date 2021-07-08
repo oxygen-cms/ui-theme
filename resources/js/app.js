@@ -1,8 +1,7 @@
 import Dropdown from './Core/Dropdown';
 import { Form } from './Core/Form';
 import Preferences from './Core/Preferences';
-import SmoothState from './Core/SmoothState';
-import { init, reset } from './pages';
+import { init } from './pages';
 import '../scss/main.scss';
 
 if(window.location === window.parent.location && window.location.href.search('/oxygen/view') !== -1)
@@ -11,7 +10,8 @@ if(window.location === window.parent.location && window.location.href.search('/o
     window.location.assign(window.location.href.replace('/oxygen/view', '/oxygen'));
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+// we only support running inside of the Vue.js <LegacyPage> component
+window.Oxygen.onLoadedInsideIFrame = () => {
     if ((typeof window.Oxygen.user !== 'undefined' && window.Oxygen.user !== null)) {
         Preferences.setPreferences(window.Oxygen.user);
     }
@@ -28,14 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     init(document);
 
-    if (Preferences.get('pageLoad.smoothState.enabled', true) === true) {
-        console.log('smoothstate enabled');
-        window.smoothState = new SmoothState();
-        SmoothState.setTheme(Preferences.get('pageLoad.smoothState.theme', 'page'));
-    } else {
-        console.log('smoothstate disabled');
-    }
-
     Form.registerKeydownHandler();
     Dropdown.registerGlobalEvent();
-});
+}

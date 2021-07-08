@@ -1,4 +1,3 @@
-import {NotificationCenter} from './Core/Notification';
 import Dialog from './Core/Dialog';
 import ImageEditor from './ImageEditor/ImageEditor';
 import Dropdown from './Core/Dropdown';
