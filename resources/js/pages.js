@@ -7,8 +7,6 @@ import Upload from './Core/Upload';
 import TabSwitcher from './Core/TabSwitcher';
 import Slider from './Core/Slider';
 import Editor from './Editor/Editor';
-import initPreviewBox from './previewBox';
-import initThemeChooser from './themeChooser';
 
 window.Oxygen = window.Oxygen || {};
 
@@ -39,14 +37,6 @@ const init = function(container) {
     //
 
     ImageEditor.initialize(container);
-
-    if(document.querySelector('.Content-preview')) {
-        initPreviewBox();
-    }
-
-    if(document.querySelector('.ThemeChooser')) {
-        initThemeChooser();
-    }
 
     //
     // -------------------------

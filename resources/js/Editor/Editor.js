@@ -2,7 +2,7 @@ import SplitViewInterface from './SplitViewInterface';
 import PreviewInterface from './PreviewInterface';
 import CodeViewInterface from './CodeViewInterface';
 import DesignViewInterface from './DesignViewInterface';
-import { FullscreenToggle } from '../Core/Toggle';
+import {FullscreenToggle, Toggle} from '../Core/Toggle';
 import { parentMatchingSelector } from "../util";
 import Preferences from "../Core/Preferences";
 
@@ -14,14 +14,47 @@ class Editor {
             editor = editors[i];
             var textarea = document.querySelector('textarea[name=\"' + editor.name + '\"]');
             if (textarea) {
-                console.log('Editor found');
-                if(!editor.mode) { editor.mode = Preferences.get('editor.defaultMode'); }
-                console.log(editor);
+                if(!editor.mode) {
+                    editor.mode = Preferences.get('editor.defaultMode');
+                }
+                console.log('Found editor', editor);
+
+                var fullscreenImmediately = false;
+                // in certain situations we go straight into fullscreen editing!!
+                if(editor.name === 'content') {
+                    let queryParams = decodeURI(window.location.search)
+                        .substring(1)
+                        .split('&')
+                        .map(param => param.split('='))
+                        .reduce((values, [ key, value ]) => {
+                            values[ key ] = value
+                            return values
+                        }, {});
+                    if(queryParams['mode']) {
+                        fullscreenImmediately = true;
+                        editor.mode = queryParams['mode'];
+                    }
+                }
+
                 var e = new Editor(editor.name, editor.language, editor.mode, editor.readOnly, editor.stylesheets);
+                if(fullscreenImmediately) {
+                    e.fullscreenToggle.set(true);
+                }
+
                 Editor.list.push(e);
             } else {
                 console.log('Editor not found');
                 console.log(editor);
+            }
+        }
+    }
+
+    static onIframeLoadedEditablePage(id) {
+        for(let editor of Editor.list) {
+            if(editor.modes.preview) {
+                if(editor.modes.preview.onLoadedPage(id)) {
+                    break;
+                }
             }
         }
     }
@@ -101,6 +134,9 @@ class Editor {
                 break;
             case 'preview':
                 this.modes.preview = new PreviewInterface(this);
+                if(this.fullscreenToggle.get()) {
+                    this.modes.preview.onEnteredFullscreen();
+                }
                 break;
             case 'split':
                 this.modes.split = new SplitViewInterface(this);
@@ -111,6 +147,7 @@ class Editor {
 
     show(m, full = true) {
         var mode = this.getMode(m);
+        console.log('Showing', mode);
         if (!this.modes[mode]) { this.create(mode); }
         this.modes[mode].show(full);
         this.currentMode = mode;
@@ -120,6 +157,7 @@ class Editor {
 
     hide(m) {
         var mode = this.getMode(m);
+        console.log('Hiding', mode);
         this.modes[mode].hide();
         this.valueToForm(mode);
     }
@@ -150,11 +188,19 @@ class Editor {
     // enter fullscreen
     enterFullscreen() {
         this.resizeToContainer();
+
+        if(this.modes.preview) {
+            this.modes.preview.onEnteredFullscreen();
+        }
     }
 
     // exit fullscreen
     exitFullscreen() {
         this.resizeToContent();
+
+        if(this.modes.preview) {
+            this.modes.preview.onExitedFullscreen();
+        }
     }
 
     handleSwitchEditor(event) {
@@ -177,6 +223,8 @@ class Editor {
     }
 }
 
+window.Oxygen.onLoadedContentPageInsideIframe = Editor.onIframeLoadedEditablePage;
+
 Editor.list = [];
 Editor.classes = {
     editor: {
@@ -194,7 +242,8 @@ Editor.classes = {
         switchEditor: 'Editor--switchEditor',
         fullscreenToggle: 'Editor--toggleFullscreen',
         activeMode: 'Editor--isActiveMode',
-        insertMediaItem: 'Editor--insertMediaItem'
+        insertMediaItem: 'Editor--insertMediaItem',
+        toggleRenderLayout: 'Editor--toggleRenderLayout'
     }
 };
 

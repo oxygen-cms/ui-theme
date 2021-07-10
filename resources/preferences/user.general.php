@@ -19,8 +19,8 @@ Preferences::register('user.general', function(Schema $schema) {
             'options'       => [
                 '62.5%'         => '10',
                 '75%'           => '12',
-                '87.5%'         => '14 (default)',
-                '100%'          => '16',
+                '87.5%'         => '14',
+                '100%'          => '16 (default)',
                 '112.5%'        => '18',
                 '125%'          => '20',
                 '150%'          => '24',

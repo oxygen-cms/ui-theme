@@ -51,9 +51,15 @@ class Form {
     registerEvents() {
         // Exit Dialog
         if (this.form.classList.contains(Form.classes.warnBeforeExit)) {
-            for(let item of document.querySelectorAll('a, button[type=\'submit\']')) {
-                item.addEventListener('click', event => this.handleExit(event)); // displays exit dialog
-            }
+            window.addEventListener('beforeunload', (e) => {
+                let confirmationMessage = 'It looks like you have been editing something. '
+                    + 'If you leave before saving, your changes will be lost.';
+
+                if(this.isFormDirty()) {
+                    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+                    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+                }
+            });
         }
 
         // Submit asynchronously
@@ -71,70 +77,78 @@ class Form {
         }
     }
 
-    handleExit(event) {
-        if (event.currentTarget.classList.contains('Form-submit')) { return; }
-        if (!document.body.contains(this.form)) { return; }
+    isFormDirty() {
+        if (!document.body.contains(this.form)) { return false; }
         this.generateContent();
         var original = this.originalData;
         var current = getFormData(this.form);
-        // console.log('original form data:', original);
-        // console.log('current form data:', current);
-        if(!compareByValue(original, current)) {
-            console.log('=> form data differs');
-            var target = event.currentTarget;
-
-            if (!(target.getAttribute('data-dialog-disabled') === 'true')) {
-                event.preventDefault();
-                event.stopPropagation();
-                event.stopImmediatePropagation();
-
-                const dialog = vex.dialog.confirm({
-                    message:  Form.messages.confirmation,
-                    className: Dialog.classes.main,
-                    buttons: [
-                        {
-                            text: 'Save',
-                            type: 'button',
-                            className: 'vex-dialog-button-primary',
-                            click: function(event) {
-                                dialog.value = 'save';
-                                dialog.close();
-                            }
-                        },
-                        $.extend({}, vex.dialog.buttons.NO, {text: 'Cancel'}),
-                        {
-                            text: 'Don\'t Save',
-                            type: 'button',
-                            className: 'vex-dialog-button-secondary vex-dialog-button-left',
-                            click: function(event) {
-                                dialog.value = 'continue';
-                                dialog.close();
-                            }
-                        }
-                    ],
-                    callback: (value) => {
-                        if(value === 'continue') {
-                            console.log('not saving form');
-                            target.setAttribute('data-dialog-disabled', 'true');
-                            return target.click();
-                        } else if(value === 'save') {
-                            console.log('saving form');
-                            if (this.form.classList.contains(Form.classes.submitAsync)) {
-                                this.submitAsync(true);
-                                target.setAttribute('data-dialog-disabled', 'true');
-                                target.click();
-                            } else {
-                                // not sure if this works
-                                this.submit();
-                                //target.attr('data-dialog-disabled', 'true');
-                                //target.click();
-                            }
-                        }
-                    }
-                });
-            }
-        }
+        return !compareByValue(original, current);
     }
+
+    // handleExit(event) {
+    //     if (event.currentTarget.classList.contains('Form-submit')) { return; }
+    //     if (!document.body.contains(this.form)) { return; }
+    //     this.generateContent();
+    //     var original = this.originalData;
+    //     var current = getFormData(this.form);
+    //     // console.log('original form data:', original);
+    //     // console.log('current form data:', current);
+    //     if(!compareByValue(original, current)) {
+    //         console.log('=> form data differs');
+    //         var target = event.currentTarget;
+    //
+    //         if (!(target.getAttribute('data-dialog-disabled') === 'true')) {
+    //             event.preventDefault();
+    //             event.stopPropagation();
+    //             event.stopImmediatePropagation();
+    //
+    //             const dialog = vex.dialog.confirm({
+    //                 message:  Form.messages.confirmation,
+    //                 className: Dialog.classes.main,
+    //                 buttons: [
+    //                     {
+    //                         text: 'Save',
+    //                         type: 'button',
+    //                         className: 'vex-dialog-button-primary',
+    //                         click: function(event) {
+    //                             dialog.value = 'save';
+    //                             dialog.close();
+    //                         }
+    //                     },
+    //                     $.extend({}, vex.dialog.buttons.NO, {text: 'Cancel'}),
+    //                     {
+    //                         text: 'Don\'t Save',
+    //                         type: 'button',
+    //                         className: 'vex-dialog-button-secondary vex-dialog-button-left',
+    //                         click: function(event) {
+    //                             dialog.value = 'continue';
+    //                             dialog.close();
+    //                         }
+    //                     }
+    //                 ],
+    //                 callback: (value) => {
+    //                     if(value === 'continue') {
+    //                         console.log('not saving form');
+    //                         target.setAttribute('data-dialog-disabled', 'true');
+    //                         return target.click();
+    //                     } else if(value === 'save') {
+    //                         console.log('saving form');
+    //                         if (this.form.classList.contains(Form.classes.submitAsync)) {
+    //                             this.submitAsync(true);
+    //                             target.setAttribute('data-dialog-disabled', 'true');
+    //                             target.click();
+    //                         } else {
+    //                             // not sure if this works
+    //                             this.submit();
+    //                             //target.attr('data-dialog-disabled', 'true');
+    //                             //target.click();
+    //                         }
+    //                     }
+    //                 }
+    //             });
+    //         }
+    //     }
+    // }
 
     submit() {
         this.form.querySelector('button[type="submit"]').click();

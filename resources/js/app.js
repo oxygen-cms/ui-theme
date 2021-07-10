@@ -4,14 +4,15 @@ import Preferences from './Core/Preferences';
 import { init } from './pages';
 import '../scss/main.scss';
 
-if(window.location === window.parent.location && window.location.href.search('/oxygen/view') !== -1)
-{
+if(window.location === window.parent.location && window.location.href.search('/oxygen/view') !== -1) {
     // we are *not* inside an iframe, that is bad news
     window.location.assign(window.location.href.replace('/oxygen/view', '/oxygen'));
 }
 
 // we only support running inside of the Vue.js <LegacyPage> component
 window.Oxygen.onLoadedInsideIFrame = () => {
+    console.log('Loading inside iframe');
+
     if ((typeof window.Oxygen.user !== 'undefined' && window.Oxygen.user !== null)) {
         Preferences.setPreferences(window.Oxygen.user);
     }

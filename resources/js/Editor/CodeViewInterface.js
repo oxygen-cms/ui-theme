@@ -33,7 +33,6 @@ class CodeViewInterface {
     }
 
     show(full) {
-        console.log('CodeViewInterface.show');
         this.view.classList.remove(Editor.classes.state.isHidden);
         if (full) {
             this.view.style.width = '100%';
@@ -46,7 +45,6 @@ class CodeViewInterface {
     }
 
     hide() {
-        console.log('CodeViewInterface.hide');
         this.view.classList.add(Editor.classes.state.isHidden);
     }
 
