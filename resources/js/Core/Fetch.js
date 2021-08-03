@@ -66,8 +66,8 @@ const respond = {
 
     redirect: function (data) {
         if (data.redirect) {
-            if (window.smoothState && !(data.hardRedirect === true)) {
-                window.smoothState.load(data.redirect, false);
+            if(data.hardRedirect) {
+                window.Oxygen.hardRedirect(data.redirect);
             } else {
                 window.location.replace(data.redirect);
             }
