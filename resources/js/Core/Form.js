@@ -2,11 +2,8 @@
 // - display a message upon exit if there are any unsaved changes.
 // - send an async request with the form data on submit or change
 
-import vex from 'vex-js/dist/js/vex.combined';
 import { NotificationCenter, Notification } from './Notification';
 import { FetchOptions, respond } from './Fetch';
-import $ from 'jquery';
-import Dialog from './Dialog';
 
 class Form {
 
@@ -14,11 +11,6 @@ class Form {
         for(let item of container.querySelectorAll('form')) {
             item.formObject = new Form(item);
         }
-
-        // TODO: fix taggable inputs
-        // $(container).find(Form.classes.taggableInput).tagging({
-        //     'edit-on-delete': false
-        // });
     }
 
     static registerKeydownHandler() {
@@ -28,8 +20,7 @@ class Form {
     static handleKeydown(event) {
         // check for Command/Control S
         if ((event.ctrlKey || event.metaKey) && event.which === 83) {
-
-            var forms = document.getElementsByTagName('form');
+            let forms = document.getElementsByTagName('form');
             for (let i = 0; i < forms.length; i++) {
                 let form = forms[i];
                 if(form.classList.contains(Form.classes.submitOnKeydown) && form.formObject) {
@@ -80,8 +71,9 @@ class Form {
     isFormDirty() {
         if (!document.body.contains(this.form)) { return false; }
         this.generateContent();
-        var original = this.originalData;
-        var current = getFormData(this.form);
+        let original = this.originalData;
+        let current = getFormData(this.form);
+        console.log('comparing', original, current);
         return !compareByValue(original, current);
     }
 
