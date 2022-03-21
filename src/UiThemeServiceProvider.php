@@ -79,10 +79,6 @@ class UiThemeServiceProvider extends ServiceProvider {
 
     protected function addScriptsToLayout() {
         $this->app['events']->listen('oxygen.layout.body.after', function() {
-            echo $this->app['view']->make('oxygen/ui-theme::body')->render();
-        });
-
-        $this->app['events']->listen('oxygen.layout.body.after', function() {
             echo $this->app['view']->make('oxygen/ui-theme::bodyLast')->render();
         }, -10);
     }
