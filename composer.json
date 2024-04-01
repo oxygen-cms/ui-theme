@@ -15,8 +15,8 @@
     ],
     "require": {
         "php": "^8.1",
-        "oxygen/preferences": "dev-laravel10",
-        "oxygen/auth": "dev-laravel10",
+        "oxygen/preferences": "~0.6.0",
+        "oxygen/auth": "~0.8.0",
         "illuminate/support": "^10.0"
     },
     "autoload": {
